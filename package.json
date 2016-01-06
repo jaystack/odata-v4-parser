@@ -1,0 +1,14 @@
+{
+  "name": "odata-parser",
+  "version": "0.0.1",
+  "description": "OData v4 Parser",
+  "main": "lib/parser.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
