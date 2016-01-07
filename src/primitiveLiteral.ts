@@ -2,10 +2,10 @@ import * as Utils from './utils';
 import * as Lexer from './lexer';
 import * as NameOrIdentifier from './nameOrIdentifier';
 
-export function nullValue(value:Array<number>, index:number):Lexer.Token {
+export function nullValue(value:number[], index:number):Lexer.Token {
 	if (Utils.equals(value, index, 'null')) return Lexer.tokenize(value, index, index + 4, 'null', Lexer.TokenType.Literal);
 }
-export function booleanValue(value:Array<number>, index:number):Lexer.Token {
+export function booleanValue(value:number[], index:number):Lexer.Token {
 	if (Utils.equals(value, index, 'true')) return Lexer.tokenize(value, index, index + 4, 'Edm.Boolean', Lexer.TokenType.Literal);
 	if (Utils.equals(value, index, 'false')) return Lexer.tokenize(value, index, index + 5, 'Edm.Boolean', Lexer.TokenType.Literal);
 }
@@ -20,7 +20,7 @@ export function guidValue(value, index) {
 		value[index + 23] == 0x2d &&
 		Utils.required(value, index + 24, Lexer.HEXDIG, 12)) return Lexer.tokenize(value, index, index + 36, 'Edm.Guid', Lexer.TokenType.Literal);
 }
-export function sbyteValue(value:Array<number>, index:number):Lexer.Token {
+export function sbyteValue(value:number[], index:number):Lexer.Token {
 	var start = index;
 	if (Lexer.SIGN(value[index])) index++;
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 3);
@@ -30,7 +30,7 @@ export function sbyteValue(value:Array<number>, index:number):Lexer.Token {
 		if (val >= -128 && val <= 127) return Lexer.tokenize(value, start, next, 'Edm.SByte', Lexer.TokenType.Literal);
 	}
 }
-export function byteValue(value:Array<number>, index:number):Lexer.Token {
+export function byteValue(value:number[], index:number):Lexer.Token {
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 3);
 	if (next) {
 		if (Lexer.DIGIT(value[next])) return;
@@ -38,7 +38,7 @@ export function byteValue(value:Array<number>, index:number):Lexer.Token {
 		if (val >= 0 && val <= 255) return Lexer.tokenize(value, index, next, 'Edm.Byte', Lexer.TokenType.Literal);
 	}
 }
-export function int16Value(value:Array<number>, index:number):Lexer.Token {
+export function int16Value(value:number[], index:number):Lexer.Token {
 	var start = index;
 	if (Lexer.SIGN(value[index])) index++;
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 5);
@@ -48,7 +48,7 @@ export function int16Value(value:Array<number>, index:number):Lexer.Token {
 		if (val >= -32768 && val <= 32767) return Lexer.tokenize(value, start, next, 'Edm.Int16', Lexer.TokenType.Literal);
 	}
 }
-export function int32Value(value:Array<number>, index:number):Lexer.Token {
+export function int32Value(value:number[], index:number):Lexer.Token {
 	var start = index;
 	if (Lexer.SIGN(value[index])) index++;
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 10);
@@ -58,7 +58,7 @@ export function int32Value(value:Array<number>, index:number):Lexer.Token {
 		if (val >= -2147483648 && val <= 2147483647) return Lexer.tokenize(value, start, next, 'Edm.Int32', Lexer.TokenType.Literal);
 	}
 }
-export function int64Value(value:Array<number>, index:number):Lexer.Token {
+export function int64Value(value:number[], index:number):Lexer.Token {
 	var start = index;
 	if (Lexer.SIGN(value[index])) index++;
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 19);
@@ -68,7 +68,7 @@ export function int64Value(value:Array<number>, index:number):Lexer.Token {
 		if (val >= '0' && val <= (value[start] == 0x2d ? '9223372036854775808' : '9223372036854775807')) return Lexer.tokenize(value, start, next, 'Edm.Int64', Lexer.TokenType.Literal);
 	}
 }
-export function decimalValue(value:Array<number>, index:number):Lexer.Token {
+export function decimalValue(value:number[], index:number):Lexer.Token {
 	var start = index;
 	if (Lexer.SIGN(value[index])) index++;
 	var intNext = Utils.required(value, index, Lexer.DIGIT, 1);
@@ -85,7 +85,7 @@ export function decimalValue(value:Array<number>, index:number):Lexer.Token {
 
 	return Lexer.tokenize(value, start, end, 'Edm.Decimal', Lexer.TokenType.Literal);
 }
-export function doubleValue(value:Array<number>, index:number):Lexer.Token {
+export function doubleValue(value:number[], index:number):Lexer.Token {
 	var start = index;
 	var end = index;
 	var nanInfLen = Lexer.nanInfinity(value, index);
@@ -116,14 +116,14 @@ export function doubleValue(value:Array<number>, index:number):Lexer.Token {
 
 	return Lexer.tokenize(value, start, end, 'Edm.Double', Lexer.TokenType.Literal);
 }
-export function singleValue(value:Array<number>, index:number):Lexer.Token {
+export function singleValue(value:number[], index:number):Lexer.Token {
 	var token = doubleValue(value, index);
 	if (token) {
 		token.value = 'Edm.Single';
 	}
 	return token;
 }
-export function stringValue(value:Array<number>, index:number):Lexer.Token {
+export function stringValue(value:number[], index:number):Lexer.Token {
 	var start = index;
 	if (Lexer.SQUOTE(value[start])) {
 		index++;
@@ -154,7 +154,7 @@ export function stringValue(value:Array<number>, index:number):Lexer.Token {
 		return Lexer.tokenize(value, start, index, 'Edm.String', Lexer.TokenType.Literal);
 	}
 }
-export function durationValue(value:Array<number>, index:number):Lexer.Token {
+export function durationValue(value:number[], index:number):Lexer.Token {
 	if (!Utils.equals(value, index, 'duration')) return;
 	var start = index;
 	index += 8;
@@ -202,7 +202,7 @@ export function durationValue(value:Array<number>, index:number):Lexer.Token {
 
 	return Lexer.tokenize(value, start, end, 'Edm.Duration', Lexer.TokenType.Literal);
 }
-export function binaryValue(value:Array<number>, index:number):Lexer.Token {
+export function binaryValue(value:number[], index:number):Lexer.Token {
 	var start = index;
 	if (!Utils.equals(value, index, 'binary')) return;
 	index += 6;
@@ -223,7 +223,7 @@ export function binaryValue(value:Array<number>, index:number):Lexer.Token {
 
 	return Lexer.tokenize(value, start, index, 'Edm.Binary' /*new Edm.Binary(stringify(value, valStart, index - 1))*/, Lexer.TokenType.Literal);
 }
-export function dateValue(value:Array<number>, index:number):Lexer.Token {
+export function dateValue(value:number[], index:number):Lexer.Token {
 	var yearNext = Lexer.year(value, index);
 	if (yearNext == index || value[yearNext] != 0x2d) return;
 	var monthNext = Lexer.month(value, yearNext + 1);
@@ -233,7 +233,7 @@ export function dateValue(value:Array<number>, index:number):Lexer.Token {
 	if (dayNext == monthNext + 1 || value[dayNext] == 0x54) return;
 	return Lexer.tokenize(value, index, dayNext, 'Edm.Date', Lexer.TokenType.Literal);
 }
-export function dateTimeOffsetValue(value:Array<number>, index:number):Lexer.Token {
+export function dateTimeOffsetValue(value:number[], index:number):Lexer.Token {
 	var yearNext = Lexer.year(value, index);
 	if (yearNext == index || value[yearNext] != 0x2d) return;
 	var monthNext = Lexer.month(value, yearNext + 1);
@@ -267,7 +267,7 @@ export function dateTimeOffsetValue(value:Array<number>, index:number):Lexer.Tok
 
 	return Lexer.tokenize(value, index, end, 'Edm.DateTimeOffset', Lexer.TokenType.Literal);
 }
-export function timeOfDayValue(value:Array<number>, index:number):Lexer.Token {
+export function timeOfDayValue(value:number[], index:number):Lexer.Token {
 	var hourNext = Lexer.hour(value, index);
 	if (hourNext == index || !Lexer.COLON(value[hourNext])) return;
 	var minuteNext = Lexer.minute(value, hourNext + 1);
@@ -288,7 +288,7 @@ export function timeOfDayValue(value:Array<number>, index:number):Lexer.Token {
 }
 
 // geography and geometry literals
-export function positionLiteral(value:Array<number>, index:number):Lexer.Token {
+export function positionLiteral(value:number[], index:number):Lexer.Token {
 	var longitude = doubleValue(value, index);
 	if (!longitude) return;
 
@@ -299,7 +299,7 @@ export function positionLiteral(value:Array<number>, index:number):Lexer.Token {
 
 	return Lexer.tokenize(value, index, latitude.next, { longitude, latitude }, Lexer.TokenType.Literal);
 }
-export function pointData(value:Array<number>, index:number):Lexer.Token {
+export function pointData(value:number[], index:number):Lexer.Token {
 	if (!Lexer.OPEN(value[index])) return;
 	var start = index;
 	index++;
@@ -325,7 +325,7 @@ export function ringLiteral(value:number[], index:number):Lexer.Token {
 export function polygonData(value:number[], index:number):Lexer.Token {
 	return multiGeoLiteralFactory(value, index, '', ringLiteral);
 }
-export function sridLiteral(value:Array<number>, index:number):Lexer.Token {
+export function sridLiteral(value:number[], index:number):Lexer.Token {
 	if (!Utils.equals(value, index, 'SRID')) return;
 	var start = index;
 	index += 4;
@@ -342,7 +342,7 @@ export function sridLiteral(value:Array<number>, index:number):Lexer.Token {
 
 	return Lexer.tokenize(value, start, index, 'SRID', Lexer.TokenType.Literal);
 }
-export function pointLiteral(value:Array<number>, index:number):Lexer.Token {
+export function pointLiteral(value:number[], index:number):Lexer.Token {
 	if (!Utils.equals(value, index, 'Point')) return;
 	var start = index;
 	index += 5;
@@ -450,7 +450,7 @@ export function geoLiteral(value:number[], index:number):Lexer.Token {
 		pointLiteral(value, index) ||
 		polygonLiteral(value, index);
 }
-export function fullPointLiteral(value:Array<number>, index:number):Lexer.Token {
+export function fullPointLiteral(value:number[], index:number):Lexer.Token {
 	return fullGeoLiteralFactory(value, index, pointLiteral);
 }
 export function fullCollectionLiteral(value:number[], index:number):Lexer.Token {
@@ -481,7 +481,7 @@ export function fullGeoLiteralFactory(value:number[], index:number, literal:Func
 	return Lexer.tokenize(value, index, token.next, { srid, value: token }, Lexer.TokenType.Literal);
 }
 
-export function geographyCollection(value:Array<number>, index:number):Lexer.Token {
+export function geographyCollection(value:number[], index:number):Lexer.Token {
 	var prefix = Lexer.geographyPrefix(value, index);
 	if (prefix == index) return;
 	var start = index;
@@ -511,7 +511,7 @@ export function geographyMultiPoint(value:number[], index:number):Lexer.Token {
 export function geographyMultiPolygon(value:number[], index:number):Lexer.Token {
 	return geoLiteralFactory(value, index, 'Edm.GeographyMultiPolygon', Lexer.geographyPrefix, fullMultiPolygonLiteral);
 }
-export function geographyPoint(value:Array<number>, index:number):Lexer.Token {
+export function geographyPoint(value:number[], index:number):Lexer.Token {
 	return geoLiteralFactory(value, index, 'Edm.GeographyPoint', Lexer.geographyPrefix, fullPointLiteral);
 }
 export function geographyPolygon(value:number[], index:number):Lexer.Token {
@@ -532,13 +532,13 @@ export function geometryMultiPoint(value:number[], index:number):Lexer.Token {
 export function geometryMultiPolygon(value:number[], index:number):Lexer.Token {
 	return geoLiteralFactory(value, index, 'Edm.GeometryMultiPolygon', Lexer.geometryPrefix, fullMultiPolygonLiteral);
 }
-export function geometryPoint(value:Array<number>, index:number):Lexer.Token {
+export function geometryPoint(value:number[], index:number):Lexer.Token {
 	return geoLiteralFactory(value, index, 'Edm.GeometryPoint', Lexer.geometryPrefix, fullPointLiteral);
 }
 export function geometryPolygon(value:number[], index:number):Lexer.Token {
 	return geoLiteralFactory(value, index, 'Edm.GeometryPolygon', Lexer.geometryPrefix, fullPolygonLiteral);
 }
-export function geoLiteralFactory(value:Array<number>, index:number, type:string, prefix:Function, literal:Function):Lexer.Token {
+export function geoLiteralFactory(value:number[], index:number, type:string, prefix:Function, literal:Function):Lexer.Token {
 	var prefixNext = prefix(value, index);
 	if (prefixNext == index) return;
 	var start = index;
@@ -557,7 +557,7 @@ export function geoLiteralFactory(value:Array<number>, index:number, type:string
 	return Lexer.tokenize(value, start, index, type, Lexer.TokenType.Literal);
 }
 
-export function primitiveLiteral(value:Array<number>, index:number):Lexer.Token {
+export function primitiveLiteral(value:number[], index:number):Lexer.Token {
 	return nullValue(value, index) ||
 		booleanValue(value, index) ||
 		guidValue(value, index) ||

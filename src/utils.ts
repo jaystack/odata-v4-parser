@@ -1,4 +1,4 @@
-export function stringify(value:Array<number>, index:number, next:number):string{
+export function stringify(value:number[], index:number, next:number):string{
 	return Array.prototype.map.call(value.slice(index, next), function (ch) { return String.fromCharCode(ch); }).join('');
 }
 
@@ -10,7 +10,7 @@ export function is(value:number, compare:string){
 	return false;
 }
 
-export function equals(value:Array<number>, index:number, compare:string){
+export function equals(value:number[], index:number, compare:string){
 	var i = 0;
 	while (value[index + i] == compare.charCodeAt(i) && i < compare.length) {
 		i++;
@@ -18,7 +18,7 @@ export function equals(value:Array<number>, index:number, compare:string){
 	return i == compare.length ? i : 0;
 }
 
-export function required(value:Array<number>, index:number, comparer:Function, min?:number, max?:number) {
+export function required(value:number[], index:number, comparer:Function, min?:number, max?:number) {
 	var i = 0;
 
 	max = max || (value.length - index);

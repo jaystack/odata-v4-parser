@@ -1,7 +1,6 @@
 import * as Utils from './utils';
 import * as Lexer from './lexer';
 import * as PrimitiveLiteral from './primitiveLiteral';
-import * as NameOrIdentifier from './nameOrIdentifier';
 import * as Expressions from './expressions';
 
 var parserFactory = function(fn){
