@@ -98,6 +98,18 @@ export class TokenType{
 	static RefExpression = 'RefExpression'
 	static ValueExpression = 'ValueExpression'
 	static RootExpression = 'RootExpression'
+	static QueryOptions = 'QueryOptions'
+	static Filter = 'Filter'
+	static OrderBy = 'OrderBy'
+	static OrderByItem = 'OrderByItem'
+	static Skip = 'Skip'
+	static Top = 'Top'
+	static Format = 'Format'
+	static InlineCount = 'InlineCount'
+	static Select = 'Select'
+	static SelectItem = 'SelectItem'
+	static SelectPath = 'SelectPath'
+	static AliasAndValue = 'AliasAndValue'
 }
 
 export class Token{

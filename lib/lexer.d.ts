@@ -96,6 +96,18 @@ export declare class TokenType {
     static RefExpression: string;
     static ValueExpression: string;
     static RootExpression: string;
+    static QueryOptions: string;
+    static Filter: string;
+    static OrderBy: string;
+    static OrderByItem: string;
+    static Skip: string;
+    static Top: string;
+    static Format: string;
+    static InlineCount: string;
+    static Select: string;
+    static SelectItem: string;
+    static SelectPath: string;
+    static AliasAndValue: string;
 }
 export declare class Token {
     position: number;
