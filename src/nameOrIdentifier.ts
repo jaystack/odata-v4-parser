@@ -2,7 +2,7 @@ import * as Utils from './utils';
 import * as Lexer from './lexer';
 import * as PrimitiveLiteral from './primitiveLiteral';
 
-export function enumeration(value:number[], index:number):Lexer.Token {
+export function enumeration(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var type = qualifiedEnumTypeName(value, index);
 	if (!type) return;
 	var start = index;
@@ -23,7 +23,7 @@ export function enumeration(value:number[], index:number):Lexer.Token {
 		value: enumVal
 	}, Lexer.TokenType.Enum);
 }
-export function enumValue(value:number[], index:number):Lexer.Token {
+export function enumValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var val = singleEnumValue(value, index);
 	if (!val) return;
 	var start = index;
@@ -40,25 +40,25 @@ export function enumValue(value:number[], index:number):Lexer.Token {
 
 	return Lexer.tokenize(value, start, index, { values: arr }, Lexer.TokenType.EnumValue);
 }
-export function singleEnumValue(value:number[], index:number):Lexer.Token {
+export function singleEnumValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return enumerationMember(value, index) ||
 		enumMemberValue(value, index);
 }
-export function enumMemberValue(value:number[], index:number):Lexer.Token {
+export function enumMemberValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var token = PrimitiveLiteral.int64Value(value, index);
 	if (token){
 		token.type = Lexer.TokenType.EnumMemberValue;
 		return token;
 	}
 }
-export function singleQualifiedTypeName(value:number[], index:number):Lexer.Token {
+export function singleQualifiedTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return qualifiedEntityTypeName(value, index) ||
 		qualifiedComplexTypeName(value, index) ||
 		qualifiedTypeDefinitionName(value, index) ||
 		qualifiedEnumTypeName(value, index) ||
 		primitiveTypeName(value, index);
 }
-export function qualifiedTypeName(value:number[], index:number):Lexer.Token {
+export function qualifiedTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (Utils.equals(value, index, 'Collection')) {
 		var start = index;
 		index += 10;
@@ -77,7 +77,7 @@ export function qualifiedTypeName(value:number[], index:number):Lexer.Token {
 		token.type = Lexer.TokenType.Collection;
 	} else return singleQualifiedTypeName(value, index);
 };
-export function qualifiedEntityTypeName(value:number[], index:number):Lexer.Token {
+export function qualifiedEntityTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	var namespaceNext = namespace(value, index);
 
@@ -87,7 +87,7 @@ export function qualifiedEntityTypeName(value:number[], index:number):Lexer.Toke
 
 	return Lexer.tokenize(value, start, nameNext.next, 'EntityTypeName', Lexer.TokenType.Identifier);
 };
-export function qualifiedComplexTypeName(value:number[], index:number):Lexer.Token {
+export function qualifiedComplexTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	var namespaceNext = namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
@@ -96,7 +96,7 @@ export function qualifiedComplexTypeName(value:number[], index:number):Lexer.Tok
 
 	return Lexer.tokenize(value, start, nameNext.next, 'ComplexTypeName', Lexer.TokenType.Identifier);
 };
-export function qualifiedTypeDefinitionName(value:number[], index:number):Lexer.Token {
+export function qualifiedTypeDefinitionName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	var namespaceNext = namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
@@ -105,7 +105,7 @@ export function qualifiedTypeDefinitionName(value:number[], index:number):Lexer.
 
 	return Lexer.tokenize(value, start, nameNext.next, 'TypeDefinitionName', Lexer.TokenType.Identifier);
 };
-export function qualifiedEnumTypeName(value:number[], index:number):Lexer.Token {
+export function qualifiedEnumTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	var namespaceNext = namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
@@ -114,7 +114,7 @@ export function qualifiedEnumTypeName(value:number[], index:number):Lexer.Token 
 
 	return Lexer.tokenize(value, start, nameNext.next, 'EnumTypeName', Lexer.TokenType.Identifier);
 };
-export function namespace(value:number[], index:number):number {
+export function namespace(value:number[] | Uint8Array, index:number):number {
 	var part = namespacePart(value, index);
 	while (part && part.next > index) {
 		index = part.next;
@@ -130,7 +130,7 @@ export function namespace(value:number[], index:number):number {
 
 	return index - 1;
 };
-export function odataIdentifier(value:number[], index:number, tokenType?:Lexer.TokenType):Lexer.Token {
+export function odataIdentifier(value:number[] | Uint8Array, index:number, tokenType?:Lexer.TokenType):Lexer.Token {
 	var start = index;
 	if (Lexer.identifierLeadingCharacter(value[index])) {
 		index++;
@@ -141,16 +141,16 @@ export function odataIdentifier(value:number[], index:number, tokenType?:Lexer.T
 
 	if (index > start) return Lexer.tokenize(value, start, index, { name: Utils.stringify(value, start, index) }, tokenType || Lexer.TokenType.ODataIdentifier);
 }
-export function namespacePart(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.NamespacePart); }
-export function entitySetName(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntitySetName); }
-export function singletonEntity(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.SingletonEntity); }
-export function entityTypeName(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityTypeName); }
-export function complexTypeName(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexTypeName); }
-export function typeDefinitionName(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.TypeDefinitionName); }
-export function enumerationTypeName(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EnumerationTypeName); }
-export function enumerationMember(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EnumerationMember); }
-export function termName(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.TermName); }
-export function primitiveTypeName(value:number[], index:number):Lexer.Token {
+export function namespacePart(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.NamespacePart); }
+export function entitySetName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntitySetName); }
+export function singletonEntity(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.SingletonEntity); }
+export function entityTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityTypeName); }
+export function complexTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexTypeName); }
+export function typeDefinitionName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.TypeDefinitionName); }
+export function enumerationTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EnumerationTypeName); }
+export function enumerationMember(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EnumerationMember); }
+export function termName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.TermName); }
+export function primitiveTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, 'Edm.')) return;
 	var start = index;
 	index += 4;
@@ -189,33 +189,33 @@ export function primitiveTypeName(value:number[], index:number):Lexer.Token {
 
 	if (end > index) return Lexer.tokenize(value, start, end, 'PrimitiveTypeName', Lexer.TokenType.Identifier);
 };
-export function primitiveProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveProperty); }
-export function primitiveKeyProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveKeyProperty); }
-export function primitiveNonKeyProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveNonKeyProperty); }
-export function primitiveColProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionProperty); }
-export function complexProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexProperty); }
-export function complexColProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexColProperty); }
-export function streamProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.StreamProperty); }
+export function primitiveProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveProperty); }
+export function primitiveKeyProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveKeyProperty); }
+export function primitiveNonKeyProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveNonKeyProperty); }
+export function primitiveColProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionProperty); }
+export function complexProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexProperty); }
+export function complexColProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexColProperty); }
+export function streamProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.StreamProperty); }
 
-export function navigationProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.NavigationProperty); }
-export function entityNavigationProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityNavigationProperty); }
-export function entityColNavigationProperty(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionNavigationProperty); }
+export function navigationProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.NavigationProperty); }
+export function entityNavigationProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityNavigationProperty); }
+export function entityColNavigationProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionNavigationProperty); }
 
-export function action(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.Action); }
-export function actionImport(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ActionImport); }
+export function action(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.Action); }
+export function actionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ActionImport); }
 
-export function odataFunction(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.Function); }
+export function odataFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.Function); }
 
-export function entityFunction(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunction); }
-export function entityColFunction(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunction); }
-export function complexFunction(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunction); }
-export function complexColFunction(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunction); }
-export function primitiveFunction(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunction); }
-export function primitiveColFunction(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunction); }
+export function entityFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunction); }
+export function entityColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunction); }
+export function complexFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunction); }
+export function complexColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunction); }
+export function primitiveFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunction); }
+export function primitiveColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunction); }
 
-export function entityFunctionImport(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunctionImport); }
-export function entityColFunctionImport(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunctionImport); }
-export function complexFunctionImport(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunctionImport); }
-export function complexColFunctionImport(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunctionImport); }
-export function primitiveFunctionImport(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunctionImport); }
-export function primitiveColFunctionImport(value:number[], index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunctionImport); }
+export function entityFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunctionImport); }
+export function entityColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunctionImport); }
+export function complexFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunctionImport); }
+export function complexColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunctionImport); }
+export function primitiveFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunctionImport); }
+export function primitiveColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunctionImport); }

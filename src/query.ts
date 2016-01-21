@@ -4,7 +4,7 @@ import * as PrimitiveLiteral from './primitiveLiteral';
 import * as NameOrIdentifier from './nameOrIdentifier';
 import * as Expressions from './expressions';
 
-export function queryOptions(value:number[], index:number):Lexer.Token {
+export function queryOptions(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var token = queryOption(value, index);
 	if (!token) return;
 	var start = index;
@@ -25,13 +25,13 @@ export function queryOptions(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, { options }, Lexer.TokenType.QueryOptions);
 }
 
-export function queryOption(value:number[], index:number):Lexer.Token {
+export function queryOption(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return systemQueryOption(value, index) ||
 		aliasAndValue(value, index);// ||
 		// customQueryOption(value, index);
 }
 
-export function systemQueryOption(value:number[], index:number):Lexer.Token {
+export function systemQueryOption(value:number[] | Uint8Array, index:number):Lexer.Token {
 	// return expand(value, index) ||
 	return filter(value, index) ||
 		format(value, index) ||
@@ -45,7 +45,7 @@ export function systemQueryOption(value:number[], index:number):Lexer.Token {
 		top(value, index);
 }
 
-export function id(value:number[], index:number):Lexer.Token {
+export function id(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$id')) return;
 	var start = index;
 	index += 3;
@@ -56,7 +56,7 @@ export function id(value:number[], index:number):Lexer.Token {
 	//TODO: navigation
 }
 
-export function filter(value:number[], index:number):Lexer.Token {
+export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$filter')) return;
 	var start = index;
 	index += 7;
@@ -71,7 +71,7 @@ export function filter(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.Filter);
 }
 
-export function orderby(value:number[], index:number):Lexer.Token {
+export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$orderby')) return;
 	var start = index;
 	index += 8;
@@ -98,7 +98,7 @@ export function orderby(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.OrderBy);
 }
 
-export function orderbyItem(value:number[], index:number):Lexer.Token {
+export function orderbyItem(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var expr = Expressions.commonExpr(value, index);
 	if (!expr) return;
 	var start = index;
@@ -118,7 +118,7 @@ export function orderbyItem(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, { expr, direction }, Lexer.TokenType.OrderByItem);
 }
 
-export function skip(value:number[], index:number):Lexer.Token {
+export function skip(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$skip')) return;
 	var start = index;
 	index += 5;
@@ -133,7 +133,7 @@ export function skip(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.Skip);
 }
 
-export function top(value:number[], index:number):Lexer.Token {
+export function top(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$top')) return;
 	var start = index;
 	index += 4;
@@ -148,7 +148,7 @@ export function top(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.Top);
 }
 
-export function format(value:number[], index:number):Lexer.Token {
+export function format(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$format')) return;
 	var start = index;
 	index += 7;
@@ -171,7 +171,7 @@ export function format(value:number[], index:number):Lexer.Token {
 	if (format) return Lexer.tokenize(value, start, index, { format }, Lexer.TokenType.Format);
 }
 
-export function inlinecount(value:number[], index:number):Lexer.Token {
+export function inlinecount(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$count')) return;
 	var start = index;
 	index += 6;
@@ -188,7 +188,7 @@ export function inlinecount(value:number[], index:number):Lexer.Token {
 
 //TODO: search
 
-export function select(value:number[], index:number):Lexer.Token {
+export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$select')) return;
 	var start = index;
 	index += 7;
@@ -213,7 +213,7 @@ export function select(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Select);
 }
 
-export function selectItem(value:number[], index:number):Lexer.Token {
+export function selectItem(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	var item;
 	var op = allOperationsInSchema(value, index);
@@ -245,13 +245,13 @@ export function selectItem(value:number[], index:number):Lexer.Token {
 	if (index > start) return Lexer.tokenize(value, start, index, item, Lexer.TokenType.SelectItem);
 }
 
-export function allOperationsInSchema(value:number[], index:number):number {
+export function allOperationsInSchema(value:number[] | Uint8Array, index:number):number {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext > index && value[namespaceNext] == 0x2e && Lexer.STAR(value[namespaceNext + 1])) return namespaceNext + 2;
 	return index;
 }
 
-export function selectProperty(value:number[], index:number):Lexer.Token {
+export function selectProperty(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var token = selectPath(value, index) ||
 		NameOrIdentifier.primitiveProperty(value, index) ||
 		NameOrIdentifier.primitiveColProperty(value, index) ||
@@ -275,7 +275,7 @@ export function selectProperty(value:number[], index:number):Lexer.Token {
 	return token;
 }
 
-export function selectPath(value:number[], index:number):Lexer.Token {
+export function selectPath(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var token = NameOrIdentifier.complexProperty(value, index) ||
 		NameOrIdentifier.complexColProperty(value, index);
 	if (!token) return;
@@ -294,7 +294,7 @@ export function selectPath(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.SelectPath);
 }
 
-export function qualifiedActionName(value:number[], index:number):Lexer.Token {
+export function qualifiedActionName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
 	var start = index;
@@ -306,7 +306,7 @@ export function qualifiedActionName(value:number[], index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.Action);
 }
 
-export function qualifiedFunctionName(value:number[], index:number):Lexer.Token {
+export function qualifiedFunctionName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
 	var start = index;
@@ -343,7 +343,7 @@ export function qualifiedFunctionName(value:number[], index:number):Lexer.Token 
 
 //TODO: skiptoken
 
-export function aliasAndValue(value:number[], index:number):Lexer.Token {
+export function aliasAndValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var alias = Expressions.parameterAlias(value, index);
 	if (!alias) return;
 	var start = index;

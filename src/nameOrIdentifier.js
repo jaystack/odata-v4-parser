@@ -1,3 +1,4 @@
+"use strict";
 var Utils = require('./utils');
 var Lexer = require('./lexer');
 var PrimitiveLiteral = require('./primitiveLiteral');

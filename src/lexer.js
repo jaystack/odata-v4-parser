@@ -1,3 +1,4 @@
+"use strict";
 var Utils = require('./utils');
 var TokenType = (function () {
     function TokenType() {
@@ -112,7 +113,7 @@ var TokenType = (function () {
     TokenType.SelectPath = 'SelectPath';
     TokenType.AliasAndValue = 'AliasAndValue';
     return TokenType;
-})();
+}());
 exports.TokenType = TokenType;
 var Token = (function () {
     function Token(token) {
@@ -123,7 +124,7 @@ var Token = (function () {
         this.raw = token.raw;
     }
     return Token;
-})();
+}());
 exports.Token = Token;
 function tokenize(value, index, next, tokenValue, tokenType) {
     return new Token({

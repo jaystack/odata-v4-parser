@@ -6,11 +6,12 @@
         "target": "es5",
         "emitDecoratorMetadata": true,
         "declaration": true,
-        "watch": true,
+        "watch": false,
         "sourceMap": true
     },
     "exclude": [
         "lib",
+        "test",
         "node_modules",
         "src/path.ts"
     ]

@@ -127,7 +127,7 @@ export class Token{
 	}
 }
 
-export function tokenize(value:number[], index:number, next:number, tokenValue:any, tokenType:TokenType):Token {
+export function tokenize(value:number[] | Uint8Array, index:number, next:number, tokenValue:any, tokenType:TokenType):Token {
 	return new Token({
 		position: index,
 		next: next,
@@ -158,17 +158,17 @@ export function HTAB(value:number):boolean { return value == 0x09; }
 export function VCHAR(value:number):boolean { return value >= 0x21 && value <= 0x7e; }
 
 // punctuation
-export function OWS(value:number[], index:number):number {
+export function OWS(value:number[] | Uint8Array, index:number):number {
 	index = index || 0;
 	while (SP(value[index]) || HTAB(value[index]) || value[index] == 0x20 || value[index] == 0x09) {
 		index++;
 	}
 	return index;
 }
-export function RWS(value:number[], index:number):number {
+export function RWS(value:number[] | Uint8Array, index:number):number {
 	return OWS(value, index);
 }
-export function BWS(value:number[], index:number):number {
+export function BWS(value:number[] | Uint8Array, index:number):number {
 	return OWS(value, index);
 }
 
@@ -188,23 +188,23 @@ export function unreserved(value:number):boolean { return ALPHA(value) || DIGIT(
 export function otherDelims(value:number):boolean { return value == 0x21 || OPEN(value) || CLOSE(value) || STAR(value) || value == 0x2b || COMMA(value) || SEMI(value); }
 // sub-delims     =       "$" / "&" / "'" /                                     "=" / other-delims
 export function subDelims(value:number):boolean { return value == 0x24 || value == 0x26 || SQUOTE(value) || EQ(value) || otherDelims(value); }
-export function pctEncoded(value:number[], index:number):number {
+export function pctEncoded(value:number[] | Uint8Array, index:number):number {
 	if (value[index] != 0x25 || !HEXDIG(value[index + 1]) || !HEXDIG(value[index + 2])) return index;
 	return index + 3;
 }
 // pct-encoded-no-SQUOTE = "%" ( "0" / "1" /   "3" / "4" / "5" / "6" / "8" / "9" / A-to-F ) HEXDIG
 //                       / "%" "2" ( "0" / "1" / "2" / "3" / "4" / "5" / "6" /   "8" / "9" / A-to-F )
-export function pctEncodedNoSQUOTE(value:number[], index:number):number {
+export function pctEncodedNoSQUOTE(value:number[] | Uint8Array, index:number):number {
 	if (Utils.equals(value, index, '%27')) return index;
 	return pctEncoded(value, index);
 }
-export function pchar(value:number[], index:number):number {
+export function pchar(value:number[] | Uint8Array, index:number):number {
 	if (unreserved(value[index]) || subDelims(value[index]) || COLON(value[index]) || AT(value[index])) return index + 1;
 	var encoded = pctEncoded(value, index);
 	if (encoded > index) return encoded;
 	return index;
 }
-export function pcharNoSQUOTE(value:number[], index:number):number {
+export function pcharNoSQUOTE(value:number[] | Uint8Array, index:number):number {
 	if (unreserved(value[index]) || otherDelims(value[index]) || value[index] == 0x24 || value[index] == 0x26 || EQ(value[index]) || COLON(value[index]) || AT(value[index])) return index + 1;
 	var encoded = pctEncodedNoSQUOTE(value, index);
 	if (encoded > index) return encoded;
@@ -212,7 +212,7 @@ export function pcharNoSQUOTE(value:number[], index:number):number {
 }
 //export function pchar(value:number):boolean { return unreserved(value) || otherDelims(value) || value == 0x24 || value == 0x26 || EQ(value) || COLON(value) || AT(value); }
 export function base64char(value:number):boolean { return ALPHA(value) || DIGIT(value) || value == 0x2d || value == 0x5f; }
-export function base64b16(value:number[], index:number):number {
+export function base64b16(value:number[] | Uint8Array, index:number):number {
 	var start = index;
 	if (!base64char(value[index]) && !base64char(value[index + 1])) return start;
 	index += 2;
@@ -223,7 +223,7 @@ export function base64b16(value:number[], index:number):number {
 	if (value[index] == 0x3d) index++;
 	return index;
 }
-export function base64b8(value:number[], index:number):number {
+export function base64b8(value:number[] | Uint8Array, index:number):number {
 	var start = index;
 	if (!base64char(value[index])) return start;
 	index++;
@@ -234,15 +234,15 @@ export function base64b8(value:number[], index:number):number {
 	if (value[index] == 0x3d && value[index + 1] == 0x3d) index += 2;
 	return index;
 }
-export function nanInfinity(value:number[], index:number):number {
+export function nanInfinity(value:number[] | Uint8Array, index:number):number {
 	return Utils.equals(value, index, 'NaN') || Utils.equals(value, index, '-INF') || Utils.equals(value, index, 'INF');
 }
 export function oneToNine(value:number):boolean { return value != 0x30 && DIGIT(value); }
-export function zeroToFiftyNine(value:number[], index:number):number {
+export function zeroToFiftyNine(value:number[] | Uint8Array, index:number):number {
 	if (value[index] >= 0x30 && value[index] <= 0x35 && DIGIT(value[index + 1])) return index + 2;
 	return index;
 }
-export function year(value:number[], index:number):number {
+export function year(value:number[] | Uint8Array, index:number):number {
 	var start = index;
 	var end = index;
 	if (value[index] == 0x2d) index++;
@@ -250,35 +250,35 @@ export function year(value:number[], index:number):number {
 		(oneToNine(value[index]) && (end = Utils.required(value, index + 1, DIGIT, 3)))) return end;
 	return start;
 }
-export function month(value:number[], index:number):number {
+export function month(value:number[] | Uint8Array, index:number):number {
 	if ((value[index] == 0x30 && oneToNine(value[index + 1])) ||
 		(value[index] == 0x31 && value[index + 1] >= 0x30 && value[index + 1] <= 0x32)) return index + 2;
 	return index;
 }
-export function day(value:number[], index:number):number {
+export function day(value:number[] | Uint8Array, index:number):number {
 	if ((value[index] == 0x30 && oneToNine(value[index + 1])) ||
 		((value[index] == 0x31 || value[index] == 0x32) && DIGIT(value[index + 1])) ||
 		(value[index] == 0x33 && (value[index + 1] == 0x30 || value[index + 1] == 0x31))) return index + 2;
 	return index;
 }
-export function hour(value:number[], index:number):number {
+export function hour(value:number[] | Uint8Array, index:number):number {
 	if (((value[index] == 0x30 || value[index] == 0x31) && DIGIT(value[index + 1])) ||
 		(value[index] == 0x32 && (value[index + 1] == 0x31 || value[index + 1] == 0x32 || value[index + 1] == 0x33))) return index + 2;
 	return index;
 }
-export function minute(value:number[], index:number):number {
+export function minute(value:number[] | Uint8Array, index:number):number {
 	return zeroToFiftyNine(value, index);
 }
-export function second(value:number[], index:number):number {
+export function second(value:number[] | Uint8Array, index:number):number {
 	return zeroToFiftyNine(value, index);
 }
-export function fractionalSeconds(value:number[], index:number):number {
+export function fractionalSeconds(value:number[] | Uint8Array, index:number):number {
 	return Utils.required(value, index, DIGIT, 1, 12);
 }
-export function geographyPrefix(value:number[], index:number):number {
+export function geographyPrefix(value:number[] | Uint8Array, index:number):number {
 	return Utils.equals(value, index, 'geography') ? index + 9 : index;
 }
-export function geometryPrefix(value:number[], index:number):number {
+export function geometryPrefix(value:number[] | Uint8Array, index:number):number {
 	return Utils.equals(value, index, 'geometry') ? index + 8 : index;
 }
 export function identifierLeadingCharacter(value:number):boolean {
@@ -287,7 +287,7 @@ export function identifierLeadingCharacter(value:number):boolean {
 export function identifierCharacter(value:number):boolean {
 	return identifierLeadingCharacter(value) || DIGIT(value);
 }
-export function beginObject(value:number[], index:number):number {
+export function beginObject(value:number[] | Uint8Array, index:number):number {
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
@@ -298,7 +298,7 @@ export function beginObject(value:number[], index:number):number {
 	bws = BWS(value, index);
 	return bws;
 }
-export function endObject(value:number[], index:number):number {
+export function endObject(value:number[] | Uint8Array, index:number):number {
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
@@ -309,7 +309,7 @@ export function endObject(value:number[], index:number):number {
 	bws = BWS(value, index);
 	return bws;
 }
-export function beginArray(value:number[], index:number):number {
+export function beginArray(value:number[] | Uint8Array, index:number):number {
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
@@ -320,7 +320,7 @@ export function beginArray(value:number[], index:number):number {
 	bws = BWS(value, index);
 	return bws;
 }
-export function endArray(value:number[], index:number):number {
+export function endArray(value:number[] | Uint8Array, index:number):number {
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
@@ -331,12 +331,12 @@ export function endArray(value:number[], index:number):number {
 	bws = BWS(value, index);
 	return bws;
 }
-export function quotationMark(value:number[], index:number):number {
+export function quotationMark(value:number[] | Uint8Array, index:number):number {
 	if (DQUOTE(value[index])) return index + 1;
 	if (Utils.equals(value, index, '%22')) return index + 3;
 	return index;
 }
-export function nameSeparator(value:number[], index:number):number {
+export function nameSeparator(value:number[] | Uint8Array, index:number):number {
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
@@ -345,7 +345,7 @@ export function nameSeparator(value:number[], index:number):number {
 	bws = BWS(value, index);
 	return bws;
 }
-export function valueSeparator(value:number[], index:number):number {
+export function valueSeparator(value:number[] | Uint8Array, index:number):number {
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
@@ -354,7 +354,7 @@ export function valueSeparator(value:number[], index:number):number {
 	bws = BWS(value, index);
 	return bws;
 }
-export function escape(value:number[], index:number):number {
+export function escape(value:number[] | Uint8Array, index:number):number {
 	if (Utils.equals(value, index, '\\')) return index + 1;
 	if (Utils.equals(value, index, '%5C')) return index + 3;
 	return index;

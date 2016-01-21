@@ -1,3 +1,4 @@
+"use strict";
 function stringify(value, index, next) {
     return Array.prototype.map.call(value.slice(index, next), function (ch) { return String.fromCharCode(ch); }).join('');
 }
