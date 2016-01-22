@@ -24,6 +24,6 @@ gulp.task('test', ['build'], function(){
 });
 
 gulp.task('tdd', ['test'], function(){
-	return gulp.watch(['src/**/*.ts', 'test/**/*.ts'], ['test']);
+	return gulp.watch(['src/**/*.ts', 'test/**/*.ts', 'test/**/*.json'], ['test']);
 });
 gulp.task('default', ['build']);
