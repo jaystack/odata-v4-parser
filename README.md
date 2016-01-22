@@ -4,7 +4,8 @@ OData v4 parser based on OASIS Standard OData v4 ABNF grammar
 
 ## How to build
 
-Simply just use ```$ tsc```
+Simply just use ```$ gulp build```
+Run TDD tests use ```$ gulp tdd```
 
 ## How to use
 
