@@ -29,7 +29,12 @@
     "-Name": "Binary with X",
     "-Rule": "binary",
     "-FailAt": "0",
-    "Input": "X'1a2B3c4D'"
+    "Input": "X'1a2B3c4D'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Binary"
+    }
   },
   {
     "-Name": "Binary - empty",
@@ -256,195 +261,380 @@
   {
     "-Name": "DateTimeOffset: CEST",
     "-Rule": "dateTimeOffsetValue",
-    "Input": "2012-09-03T14:53+02:00"
+    "Input": "2012-09-03T14:53+02:00", 
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.DateTimeOffset"
+    } 
   },
   {
     "-Name": "DateTimeOffset: UTC",
     "-Rule": "dateTimeOffsetValue",
-    "Input": "2012-09-03T12:53Z"
+    "Input": "2012-09-03T12:53Z",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.DateTimeOffset"
+    } 
   },
   {
     "-Name": "DateTimeOffset: 24:00",
     "-Rule": "dateTimeOffsetValue",
     "-FailAt": "12",
-    "Input": "2012-09-03T24:00-03:00"
+    "Input": "2012-09-03T24:00-03:00",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.DateTimeOffset"
+    } 
   },
   {
     "-Name": "Decimal",
     "-Rule": "decimalValue",
-    "Input": "3.14"
+    "Input": "3.14",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Duration in body",
     "-Rule": "durationValue",
-    "Input": "P6DT23H59M59.9999S"
+    "Input": "P6DT23H59M59.9999S",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    } 
   },
   {
     "-Name": "Duration in body: no years allowed",
     "-Rule": "durationValue",
     "-FailAt": "2",
-    "Input": "P1Y6DT23H59M59.9999S"
+    "Input": "P1Y6DT23H59M59.9999S",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    } 
   },
   {
     "-Name": "Duration in body: no months allowed",
     "-Rule": "durationValue",
     "-FailAt": "2",
-    "Input": "P1M6DT23H59M59.9999S"
+    "Input": "P1M6DT23H59M59.9999S",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    } 
   },
   {
     "-Name": "Duration in URL",
     "-Rule": "duration",
-    "Input": "duration'P6DT23H59M59.9999S'"
+    "Input": "duration'P6DT23H59M59.9999S'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    } 
   },
   {
     "-Name": "Decimal: integer",
     "-Rule": "decimalValue",
-    "Input": "-2"
+    "Input": "-2",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Decimal: integer",
     "-Rule": "decimalValue",
     "-FailAt": "4",
-    "Input": "+42."
+    "Input": "+42.",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Decimal: no digit before decimal point",
     "-Rule": "decimalValue",
     "-FailAt": "0",
-    "Input": ".1"
+    "Input": ".1",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Decimal in URL",
     "-Rule": "decimalValue",
-    "Input": "3.14"
+    "Input": "3.14",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Double",
     "-Rule": "doubleValue",
-    "Input": "3.14"
+    "Input": "3.14",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Double"
+    } 
   },
   {
     "-Name": "Double with exponent",
     "-Rule": "doubleValue",
-    "Input": "-0.314e1"
+    "Input": "-0.314e1",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Negative infinity",
     "-Rule": "doubleValue",
-    "Input": "-INF"
+    "Input": "-INF",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Positive infinity",
     "-Rule": "doubleValue",
-    "Input": "INF"
+    "Input": "INF",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Not a Number",
     "-Rule": "doubleValue",
-    "Input": "NaN"
+    "Input": "NaN",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Double in URL",
     "-Rule": "doubleValue",
-    "Input": "-0.314e1"
+    "Input": "-0.314e1",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Decimal"
+    } 
   },
   {
     "-Name": "Single in URL",
     "-Rule": "singleValue",
-    "Input": "-0.314e1"
+    "Input": "-0.314e1",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Single"
+    } 
   },
   {
     "-Name": "Byte",
     "-Rule": "byteValue",
-    "Input": "255"
+    "Input": "255",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Byte"
+    } 
   },
   {
     "-Name": "SByte",
     "-Rule": "sbyteValue",
-    "Input": "-128"
+    "Input": "-128",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.SByte"
+    } 
   },
   {
     "-Name": "Int16",
     "-Rule": "int16Value",
-    "Input": "+32000"
+    "Input": "+32000",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Int16"
+    } 
   },
   {
     "-Name": "Int32",
     "-Rule": "int32Value",
-    "Input": "-2000000000"
+    "Input": "-2000000000",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Int32"
+    } 
   },
   {
     "-Name": "Int64",
     "-Rule": "int64Value",
-    "Input": "1234567890123456789"
+    "Input": "1234567890123456789",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Int64"
+    }  
   },
   {
     "-Name": "Null: unqualified",
     "-Rule": "nullValue",
-    "Input": "null"
+    "Input": "null",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Null"
+    }  
   },
   {
     "-Name": "String",
     "-Rule": "string",
-    "Input": "'ABCDEFGHIHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$&('')*+,;=@'"
+    "Input": "'ABCDEFGHIHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$&('')*+,;=@'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.String"
+    }  
   },
   {
     "-Name": "String",
     "-Rule": "string",
-    "Input": "'O''Neil'"
+    "Input": "'O''Neil'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.String"
+    }  
   },
   {
     "-Name": "String",
     "-Rule": "string",
-    "Input": "%27O'%27Neil'"
+    "Input": "%27O'%27Neil'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.String"
+    }  
   },
   {
     "-Name": "String",
     "-Rule": "string",
     "-FailAt": "3",
-    "Input": "'O'Neil'"
+    "Input": "'O'Neil'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.String"
+    }  
   },
   {
     "-Name": "String",
     "-Rule": "string",
     "-FailAt": "5",
-    "Input": "'O%27Neil'"
+    "Input": "'O%27Neil'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.String"
+    }  
   },
   {
     "-Name": "String",
     "-Rule": "string",
-    "Input": "'%26%28'"
+    "Input": "'%26%28'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.String"
+    }  
   },
   {
     "-Name": "primitive value in request body - enumeration member",
     "-Rule": "primitiveValue",
-    "Input": "Yellow"
+    "Input": "Yellow",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.???"
+    }   
   },
   {
     "-Name": "primitive value in request body - geo point",
     "-Rule": "primitiveValue",
-    "Input": "SRID=0;Point(142.1 64.1)"
+    "Input": "SRID=0;Point(142.1 64.1)",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyPoint"
+    }   
   },
   {
     "-Name": "primitive value in request body - integer",
     "-Rule": "primitiveValue",
-    "Input": "0123456789"
+    "Input": "0123456789",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Int32"
+    }   
   },
   {
     "-Name": "primitive value in request body - guid",
     "-Rule": "primitiveValue",
-    "Input": "01234567-89ab-cdef-0123-456789abcdef"
+    "Input": "01234567-89ab-cdef-0123-456789abcdef",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Guid"
+    }   
   },
   {
     "-Name": "primitive value in request body - binary",
     "-Rule": "primitiveValue",
-    "Input": "a123456789abcdefABA="
+    "Input": "a123456789abcdefABA=",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Binary"
+    }   
   },
   {
     "-Name": "primitive value in request body - binary with line breaks and spaces",
     "-Rule": "primitiveValue",
     "-FailAt": "8",
-    "Input": "a1234567 89abcdefABA"
+    "Input": "a1234567 89abcdefABA",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Binary"
+    }   
   },
   {
     "-Name": "Resource Path - Entity Set",
@@ -464,7 +654,12 @@
   {
     "-Name": "Key",
     "-Rule": "string",
-    "Input": "'Hugo''s%20Tavern'"
+    "Input": "'Hugo''s%20Tavern'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.String"
+    }
   },
   {
     "-Name": "Resource Path - Entity",
@@ -474,40 +669,75 @@
   {
     "-Name": "Correct Guid",
     "-Rule": "guidValue",
-    "Input": "01234567-89ab-cdef-0123-456789abcdef"
+    "Input": "01234567-89ab-cdef-0123-456789abcdef",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Guid"
+    }
   },
   {
     "-Name": "Guid with wrong character",
     "-Rule": "guidValue",
     "-FailAt": "5",
-    "Input": "01234g67-89ab-cdef-0123-456789abcdef"
+    "Input": "01234g67-89ab-cdef-0123-456789abcdef",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Guid"
+    }
   },
   {
     "-Name": "Guid with less than 32 digits",
     "-Rule": "guidValue",
     "-FailAt": "23",
-    "Input": "01234567-89ab-cdef-456789abcdef"
+    "Input": "01234567-89ab-cdef-456789abcdef",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Guid"
+    }
   },
   {
     "-Name": "TimeOfDay",
     "-Rule": "timeOfDayValue",
-    "Input": "11:22:33"
+    "Input": "11:22:33",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.TimeOfDay"
+    }
   },
   {
     "-Name": "TimeOfDay: no seconds",
     "-Rule": "timeOfDayValue",
-    "Input": "11:22"
+    "Input": "11:22",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.TimeOfDay"
+    }
   },
   {
     "-Name": "TimeOfDay: fractional seconds",
     "-Rule": "timeOfDayValue",
-    "Input": "11:22:33.4444444"
+    "Input": "11:22:33.4444444",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.TimeOfDay"
+    }
   },
   {
     "-Name": "TimeOfDay: 24:00",
     "-Rule": "timeOfDayValue",
     "-FailAt": "1",
-    "Input": "24:00:00"
+    "Input": "24:00:00",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.TimeOfDay"
+    }
   },
   {
     "-Name": "Identifier",
@@ -1226,13 +1456,23 @@
     "-Name": "5.1.1.1.1 boolean - only true and false",
     "-Rule": "booleanValue",
     "-FailAt": "0",
-    "Input": "0"
+    "Input": "0",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Boolean"
+    }   
   },
   {
     "-Name": "5.1.1.1.1 boolean - only true and false",
     "-Rule": "booleanValue",
     "-FailAt": "0",
-    "Input": "1"
+    "Input": "1",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Boolean"
+    }   
   },
   {
     "-Name": "5.1.1.1.1 Equals - Property",
@@ -2233,82 +2473,162 @@
   {
     "-Name": "GeographyCollection",
     "-Rule": "geographyCollection",
-    "Input": "geography'SRID=0;Collection(LineString(142.1 64.1,3.14 2.78))'"
+    "Input": "geography'SRID=0;Collection(LineString(142.1 64.1,3.14 2.78))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyCollection"
+    }
   },
   {
     "-Name": "GeographyLineString",
     "-Rule": "geographyLineString",
-    "Input": "geography'SRID=0;LineString(142.1 64.1,3.14 2.78)'"
+    "Input": "geography'SRID=0;LineString(142.1 64.1,3.14 2.78)'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyLineString"
+    }
   },
   {
     "-Name": "GeographyMultiLineString",
     "-Rule": "geographyMultiLineString",
-    "Input": "geography'SRID=0;MultiLineString((142.1 64.1,3.14 2.78),(142.1 64.1,3.14 2.78))'"
+    "Input": "geography'SRID=0;MultiLineString((142.1 64.1,3.14 2.78),(142.1 64.1,3.14 2.78))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyMultiLineString"
+    }
   },
   {
     "-Name": "GeographyMultiPoint",
     "-Rule": "geographyMultiPoint",
-    "Input": "geography'SRID=0;MultiPoint()'"
+    "Input": "geography'SRID=0;MultiPoint()'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyMultiPoint"
+    }
   },
   {
     "-Name": "GeographyMultiPoint",
     "-Rule": "geographyMultiPoint",
-    "Input": "geography'SRID=0;MultiPoint((142.1 64.1),(1 2))'"
+    "Input": "geography'SRID=0;MultiPoint((142.1 64.1),(1 2))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyMultiPoint"
+    }
   },
   {
     "-Name": "GeographyMultiPolygon",
     "-Rule": "geographyMultiPolygon",
-    "Input": "geography'SRID=0;MultiPolygon(((1 1,1 1),(1 1,2 2,3 3,1 1)))'"
+    "Input": "geography'SRID=0;MultiPolygon(((1 1,1 1),(1 1,2 2,3 3,1 1)))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyMultiPolygon"
+    }
   },
   {
     "-Name": "GeographyPoint",
     "-Rule": "geographyPoint",
-    "Input": "geography'SRID=0;Point(142.1 64.1)'"
+    "Input": "geography'SRID=0;Point(142.1 64.1)'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyPoint"
+    }
   },
   {
     "-Name": "GeographyPolygon",
     "-Rule": "geographyPolygon",
-    "Input": "geography'SRID=0;Polygon((1 1,1 1),(1 1,2 2,3 3,1 1))'"
+    "Input": "geography'SRID=0;Polygon((1 1,1 1),(1 1,2 2,3 3,1 1))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeographyPolygon"
+    }
   },
   {
     "-Name": "GeometryCollection",
     "-Rule": "geometryCollection",
-    "Input": "geometry'SRID=0;Collection(LineString(142.1 64.1,3.14 2.78))'"
+    "Input": "geometry'SRID=0;Collection(LineString(142.1 64.1,3.14 2.78))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryCollection"
+    }
   },
   {
     "-Name": "GeometryLineString",
     "-Rule": "geometryLineString",
-    "Input": "geometry'SRID=0;LineString(142.1 64.1,3.14 2.78)'"
+    "Input": "geometry'SRID=0;LineString(142.1 64.1,3.14 2.78)'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryLineString"
+    }
   },
   {
     "-Name": "GeometryMultiLineString",
     "-Rule": "geometryMultiLineString",
-    "Input": "geometry'SRID=0;MultiLineString((142.1 64.1,3.14 2.78),(142.1 64.1,3.14 2.78))'"
+    "Input": "geometry'SRID=0;MultiLineString((142.1 64.1,3.14 2.78),(142.1 64.1,3.14 2.78))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryMultiLineString"
+    }
   },
   {
     "-Name": "GeometryMultiPoint",
     "-Rule": "geometryMultiPoint",
-    "Input": "geometry'SRID=0;MultiPoint()'"
+    "Input": "geometry'SRID=0;MultiPoint()'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryMultiPoint"
+    }
   },
   {
     "-Name": "GeometryMultiPoint",
     "-Rule": "geometryMultiPoint",
-    "Input": "geometry'SRID=0;MultiPoint((142.1 64.1),(1 2))'"
+    "Input": "geometry'SRID=0;MultiPoint((142.1 64.1),(1 2))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryMultiPoint"
+    }
   },
   {
     "-Name": "GeometryMultiPolygon",
     "-Rule": "geometryMultiPolygon",
-    "Input": "geometry'SRID=0;MultiPolygon(((1 1,1 1),(1 1,2 2,3 3,1 1)))'"
+    "Input": "geometry'SRID=0;MultiPolygon(((1 1,1 1),(1 1,2 2,3 3,1 1)))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryMultiPoint"
+    }
   },
   {
     "-Name": "GeometryPoint",
     "-Rule": "geometryPoint",
-    "Input": "geometry'SRID=0;Point(142.1 64.1)'"
+    "Input": "geometry'SRID=0;Point(142.1 64.1)'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryPoint"
+    }
   },
   {
     "-Name": "GeometryPolygon",
     "-Rule": "geometryPolygon",
-    "Input": "geometry'SRID=0;Polygon((1 1,1 1),(1 1,2 2,3 3,1 1))'"
+    "Input": "geometry'SRID=0;Polygon((1 1,1 1),(1 1,2 2,3 3,1 1))'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.GeometryPolygon"
+    }
   },
   {
     "-Name": "Functions in commonExpr",
@@ -2839,5 +3159,5 @@
     "-Name": "Preferences - wait",
     "-Rule": "preference",
     "Input": "wait=0"
-  }
+  } 
 ]

@@ -2,17 +2,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var PrimitiveLiteral = require('../src/primitiveLiteral');
-var example_cases = require('./example-cases');
 var cases = require('./cases');
-describe('Primitive literals from example json', function () {
-    example_cases.forEach(function (item, index, array) {
-        var title = 'should parse ' + item['-Name'] + ' #' + index;
-        it(title, function () {
-            var source = new Uint8Array(new Buffer(item.Input));
-            expect(PrimitiveLiteral.primitiveLiteral(source, 0)).to.deep.equal(item.result);
-        });
-    });
-});
 describe('Primitive literals from json', function () {
     cases.forEach(function (item, index, array) {
         var title = '#' + index + ' should parse ' + item['-Name'];
@@ -24,8 +14,8 @@ describe('Primitive literals from json', function () {
                 if (item.result.raw === undefined)
                     item.result.raw = item.Input;
                 if (item['-FailAt'] !== undefined) {
-                    console.log(item["-Rule"]);
-                    var literal_1 = PrimitiveLiteral[item["-Rule"]](source, 0);
+                    var literalFunctionName = getLiteralFunctionName(item["-Rule"]);
+                    var literal_1 = PrimitiveLiteral[literalFunctionName](source, 0);
                     expect(literal_1).to.be.undefined;
                     return;
                 }
@@ -35,3 +25,13 @@ describe('Primitive literals from json', function () {
         }
     });
 });
+function getLiteralFunctionName(itemRule) {
+    switch (itemRule) {
+        case 'string':
+            return 'stringValue';
+        case 'primitiveValue':
+            return 'primitiveLiteral';
+        default:
+            return itemRule;
+    }
+}
