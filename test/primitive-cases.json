@@ -1,7 +1,7 @@
 [
   {
     "-Name": "Binary with X",
-    "-Rule": "binary",
+    "-Rule": "binaryValue",
     "-FailAt": "0",
     "Input": "X'1a2B3c4D'",
     "result_error": {
@@ -148,7 +148,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Date"
-    } 
+    }
   },
   {
     "-Name": "Date: negative",
@@ -158,7 +158,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Date"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: no seconds",
@@ -168,7 +168,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: seconds",
@@ -178,7 +178,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: subseconds",
@@ -188,7 +188,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: year zero",
@@ -198,7 +198,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: negative",
@@ -208,7 +208,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: Midnight this day",
@@ -219,7 +219,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: Midnight this day with seconds",
@@ -230,17 +230,17 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: CEST",
     "-Rule": "dateTimeOffsetValue",
-    "Input": "2012-09-03T14:53+02:00", 
+    "Input": "2012-09-03T14:53+02:00",
     "result_error": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: UTC",
@@ -250,7 +250,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "DateTimeOffset: 24:00",
@@ -261,7 +261,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
-    } 
+    }
   },
   {
     "-Name": "Decimal",
@@ -271,7 +271,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Decimal"
-    } 
+    }
   },
   {
     "-Name": "Duration in body",
@@ -281,7 +281,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Duration"
-    } 
+    }
   },
   {
     "-Name": "Duration in body: no years allowed",
@@ -292,7 +292,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Duration"
-    } 
+    }
   },
   {
     "-Name": "Duration in body: no months allowed",
@@ -303,7 +303,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Duration"
-    } 
+    }
   },
   {
     "-Name": "Duration in URL",
@@ -313,7 +313,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Duration"
-    } 
+    }
   },
   {
     "-Name": "Decimal: integer",
@@ -323,7 +323,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Decimal"
-    } 
+    }
   },
   {
     "-Name": "Decimal: integer",
@@ -334,7 +334,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Decimal"
-    } 
+    }
   },
   {
     "-Name": "Decimal: no digit before decimal point",
@@ -345,7 +345,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Decimal"
-    } 
+    }
   },
   {
     "-Name": "Decimal in URL",
@@ -355,77 +355,77 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Decimal"
-    } 
+    }
   },
   {
     "-Name": "Double",
     "-Rule": "doubleValue",
     "Input": "3.14",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.Double"
-    } 
+    }
   },
   {
     "-Name": "Double with exponent",
     "-Rule": "doubleValue",
     "Input": "-0.314e1",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
-      "value": "Edm.Decimal"
-    } 
+      "value": "Edm.Double"
+    }
   },
   {
     "-Name": "Negative infinity",
     "-Rule": "doubleValue",
     "Input": "-INF",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
-      "value": "Edm.Decimal"
-    } 
+      "value": "Edm.Double"
+    }
   },
   {
     "-Name": "Positive infinity",
     "-Rule": "doubleValue",
     "Input": "INF",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
-      "value": "Edm.Decimal"
-    } 
+      "value": "Edm.Double"
+    }
   },
   {
     "-Name": "Not a Number",
     "-Rule": "doubleValue",
     "Input": "NaN",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
-      "value": "Edm.Decimal"
-    } 
+      "value": "Edm.Double"
+    }
   },
   {
     "-Name": "Double in URL",
     "-Rule": "doubleValue",
     "Input": "-0.314e1",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
-      "value": "Edm.Decimal"
-    } 
+      "value": "Edm.Double"
+    }
   },
   {
     "-Name": "Single in URL",
     "-Rule": "singleValue",
     "Input": "-0.314e1",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.Single"
-    } 
+    }
   },
   {
     "-Name": "Byte",
@@ -435,7 +435,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Byte"
-    } 
+    }
   },
   {
     "-Name": "SByte",
@@ -445,7 +445,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.SByte"
-    } 
+    }
   },
   {
     "-Name": "Int16",
@@ -455,7 +455,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Int16"
-    } 
+    }
   },
   {
     "-Name": "Int32",
@@ -465,7 +465,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Int32"
-    } 
+    }
   },
   {
     "-Name": "Int64",
@@ -475,37 +475,37 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Int64"
-    }  
+    }
   },
   {
     "-Name": "Null: unqualified",
     "-Rule": "nullValue",
     "Input": "null",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
-      "value": "Edm.Null"
-    }  
+      "value": "null"
+    }
   },
   {
     "-Name": "String",
     "-Rule": "string",
     "Input": "'ABCDEFGHIHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$&('')*+,;=@'",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"
-    }  
+    }
   },
   {
     "-Name": "String",
     "-Rule": "string",
     "Input": "'O''Neil'",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"
-    }  
+    }
   },
   {
     "-Name": "String",
@@ -515,7 +515,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"
-    }  
+    }
   },
   {
     "-Name": "String",
@@ -526,7 +526,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"
-    }  
+    }
   },
   {
     "-Name": "String",
@@ -537,7 +537,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"
-    }  
+    }
   },
   {
     "-Name": "String",
@@ -547,7 +547,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"
-    }  
+    }
   },
   {
     "-Name": "primitive value in request body - enumeration member",
@@ -557,7 +557,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.???"
-    }   
+    }
   },
   {
     "-Name": "primitive value in request body - geo point",
@@ -567,7 +567,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.GeographyPoint"
-    }   
+    }
   },
   {
     "-Name": "primitive value in request body - integer",
@@ -577,7 +577,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Int32"
-    }   
+    }
   },
   {
     "-Name": "primitive value in request body - guid",
@@ -587,7 +587,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Guid"
-    }   
+    }
   },
   {
     "-Name": "primitive value in request body - binary",
@@ -597,7 +597,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Binary"
-    }   
+    }
   },
   {
     "-Name": "primitive value in request body - binary with line breaks and spaces",
@@ -608,13 +608,13 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Binary"
-    }   
+    }
   },
   {
     "-Name": "Key",
     "-Rule": "string",
     "Input": "'Hugo''s%20Tavern'",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"
@@ -702,7 +702,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Boolean"
-    }   
+    }
   },
   {
     "-Name": "5.1.1.1.1 boolean - only true and false",
@@ -713,7 +713,7 @@
       "position": 0,
       "type": "Literal",
       "value": "Edm.Boolean"
-    }   
+    }
   },
   {
     "-Name": "GeographyCollection",
@@ -739,7 +739,7 @@
     "-Name": "GeographyMultiLineString",
     "-Rule": "geographyMultiLineString",
     "Input": "geography'SRID=0;MultiLineString((142.1 64.1,3.14 2.78),(142.1 64.1,3.14 2.78))'",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.GeographyMultiLineString"

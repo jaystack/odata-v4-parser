@@ -77,7 +77,7 @@ export function decimalValue(value:number[] | Uint8Array, index:number):Lexer.To
 	var end = intNext;
 	if (value[intNext] == 0x2e) {
 		end = Utils.required(value, intNext + 1, Lexer.DIGIT, 1);
-		if (end == intNext + 1) return;
+		if (!end || end == intNext + 1) return;
 	} else return;
 
 	//TODO: detect only decimal value, no double/single detection here
@@ -134,12 +134,13 @@ export function stringValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 			var next = value[nextIndex];
 
 			if (Lexer.SQUOTE(ch)) {
+				index++;
 				if (!Lexer.SQUOTE(next)) {
-					index++;
+					if (Lexer.pcharNoSQUOTE(value, next) > index) return;
 					break;
 				} else {
 					ch = 0x27;
-					index++;
+					nextIndex++;
 				}
 			} else {
 				nextIndex = Math.max(Lexer.RWS(value, index), Lexer.pcharNoSQUOTE(value, index));
@@ -503,7 +504,7 @@ export function geographyLineString(value:number[] | Uint8Array, index:number):L
 	return geoLiteralFactory(value, index, 'Edm.GeographyLineString', Lexer.geographyPrefix, fullLineStringLiteral);
 }
 export function geographyMultiLineString(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return geoLiteralFactory(value, index, 'Edm.geographyMultiLineString', Lexer.geographyPrefix, fullMultiLineStringLiteral);
+	return geoLiteralFactory(value, index, 'Edm.GeographyMultiLineString', Lexer.geographyPrefix, fullMultiLineStringLiteral);
 }
 export function geographyMultiPoint(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return geoLiteralFactory(value, index, 'Edm.GeographyMultiPoint', Lexer.geographyPrefix, fullMultiPointLiteral);

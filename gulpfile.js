@@ -20,7 +20,11 @@ gulp.task('test', ['build'], function(){
 		module: 'commonjs'
 	}))
 	.pipe(gulp.dest('test'))
-	.pipe(mocha());
+	.pipe(mocha())
+	.on('error', function(err){
+		console.log(err.toString());
+		this.emit('end');
+	});
 });
 
 gulp.task('tdd', ['test'], function(){

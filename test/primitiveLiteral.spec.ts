@@ -2,27 +2,29 @@
 import * as chai from 'chai';
 var expect = chai.expect;
 
-import * as PrimitiveLiteral from '../src/primitiveLiteral';
+import * as PrimitiveLiteral from '../lib/primitiveLiteral';
 const cases = require('./primitive-cases');
 
 describe('Primitive literals from json', () => {
   cases.forEach(function(item, index, array) {
-    const title = '#' + index + ' should parse ' + item['-Name'];
+    const title = '#' + index + ' should parse ' + item['-Name'] + ': ' + item.Input;
     let resultName = "result";
-    if (item.result === undefined) { resultName = "result_error"; }
+    if (item.result === undefined) {
+        resultName = "result_error";
+        item['-FailAt'] = item['-FailAt'] || 0;
+    }
     if (item[resultName] !== undefined) {
       it(title, () => {
         let source = new Uint8Array(new Buffer(item.Input));
         if (item[resultName].next === undefined) item[resultName].next = item.Input.length;
         if (item[resultName].raw === undefined) item[resultName].raw = item.Input;
 
+        let literalFunctionName = getLiteralFunctionName(item["-Rule"] || 'primitiveLiteral');
+        let literal = (PrimitiveLiteral[literalFunctionName] || PrimitiveLiteral.primitiveLiteral)(source, 0);
         if (item['-FailAt'] !== undefined) {
-          let literalFunctionName = getLiteralFunctionName(item["-Rule"]);
-          let literal = PrimitiveLiteral[literalFunctionName](source, 0);
           expect(literal).to.be.undefined;
           return;
         }
-        let literal = PrimitiveLiteral.primitiveLiteral(source, 0);
         expect(literal).to.deep.equal(item[resultName]);
       });
     }
