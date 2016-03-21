@@ -17,6 +17,7 @@ var parserFactory = function(fn){
 				pos = token.next;
 				tokens.push(token);
 			} else {
+				//throw new Error('Fail at ' + pos);
 				pos++;
 			}
 		}
@@ -25,7 +26,7 @@ var parserFactory = function(fn){
 };
 
 export class Parser{
-	filter(source:string, options:any):Lexer.Token { return parserFactory(Expressions.boolCommonExpr)(source, options) }
-	keys(source:string, options:any):Lexer.Token { return parserFactory(Expressions.keyPredicate)(source, options) }
-	literal(source:string, options:any):Lexer.Token { return parserFactory(PrimitiveLiteral.primitiveLiteral)(source, options) }
+	filter(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.boolCommonExpr)(source, options) }
+	keys(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.keyPredicate)(source, options) }
+	literal(source:string, options?:any):Lexer.Token { return parserFactory(PrimitiveLiteral.primitiveLiteral)(source, options) }
 }

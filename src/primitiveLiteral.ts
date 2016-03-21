@@ -136,7 +136,7 @@ export function stringValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 			if (Lexer.SQUOTE(ch)) {
 				index++;
 				if (!Lexer.SQUOTE(next)) {
-					if (Lexer.pcharNoSQUOTE(value, next) > index) return;
+					if (Lexer.pcharNoSQUOTE(value, next) > index && !Lexer.CLOSE(value[index]) && Lexer.RWS(value, index) == index) return;
 					break;
 				} else {
 					ch = 0x27;
