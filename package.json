@@ -16,5 +16,8 @@
     "gulp-typescript": "^2.10.0",
     "merge2": "^1.0.0",
     "mocha": "^2.3.4"
+  },
+  "dependencies": {
+    "odata-metadata": "^0.1.0"
   }
 }

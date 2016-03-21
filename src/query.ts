@@ -3,9 +3,10 @@ import * as Lexer from './lexer';
 import * as PrimitiveLiteral from './primitiveLiteral';
 import * as NameOrIdentifier from './nameOrIdentifier';
 import * as Expressions from './expressions';
+import { Edm } from 'odata-metadata';
 
-export function queryOptions(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = queryOption(value, index);
+export function queryOptions(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var token = queryOption(value, index, metadata);
 	if (!token) return;
 	var start = index;
 	index = token.next;
@@ -17,7 +18,7 @@ export function queryOptions(value:number[] | Uint8Array, index:number):Lexer.To
 		if (value[index] != 0x26) break;
 		index++;
 
-		token = queryOption(value, index);
+		token = queryOption(value, index, metadata);
 		if (!token) return;
 		index = token.next;
 	}
@@ -25,21 +26,21 @@ export function queryOptions(value:number[] | Uint8Array, index:number):Lexer.To
 	return Lexer.tokenize(value, start, index, { options }, Lexer.TokenType.QueryOptions);
 }
 
-export function queryOption(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return systemQueryOption(value, index) ||
-		aliasAndValue(value, index);// ||
+export function queryOption(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return systemQueryOption(value, index, metadata) ||
+		aliasAndValue(value, index, metadata);// ||
 		// customQueryOption(value, index);
 }
 
-export function systemQueryOption(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function systemQueryOption(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	// return expand(value, index) ||
-	return filter(value, index) ||
+	return filter(value, index, metadata) ||
 		format(value, index) ||
 		id(value, index) ||
 		inlinecount(value, index) ||
-		orderby(value, index) ||
+		orderby(value, index, metadata) ||
 		// search(value, index) ||
-		select(value, index) ||
+		select(value, index, metadata) ||
 		skip(value, index) ||
 		// skiptoken(value, index) ||
 		top(value, index);
@@ -56,7 +57,7 @@ export function id(value:number[] | Uint8Array, index:number):Lexer.Token {
 	//TODO: navigation
 }
 
-export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function filter(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, '$filter')) return;
 	var start = index;
 	index += 7;
@@ -64,14 +65,14 @@ export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Lexer.EQ(value[index])) return;
 	index++;
 
-	var expr = Expressions.boolCommonExpr(value, index);
+	var expr = Expressions.boolCommonExpr(value, index, metadata);
 	if (!expr) return;
 	index = expr.next;
 
 	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.Filter);
 }
 
-export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function orderby(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, '$orderby')) return;
 	var start = index;
 	index += 8;
@@ -80,7 +81,7 @@ export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
 	index++;
 
 	var items = [];
-	var token = orderbyItem(value, index);
+	var token = orderbyItem(value, index, metadata);
 	if (!token) return;
 	index = token.next;
 
@@ -89,7 +90,7 @@ export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
 
 		if (Lexer.COMMA(value[index])){
 			index++;
-			var token = orderbyItem(value, index);
+			var token = orderbyItem(value, index, metadata);
 			if (!token) return;
 			index = token.next;
 		}else break;
@@ -98,8 +99,8 @@ export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.OrderBy);
 }
 
-export function orderbyItem(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var expr = Expressions.commonExpr(value, index);
+export function orderbyItem(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var expr = Expressions.commonExpr(value, index, metadata);
 	if (!expr) return;
 	var start = index;
 	index = expr.next;
@@ -188,7 +189,7 @@ export function inlinecount(value:number[] | Uint8Array, index:number):Lexer.Tok
 
 //TODO: search
 
-export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function select(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, '$select')) return;
 	var start = index;
 	index += 7;
@@ -197,7 +198,7 @@ export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
 	index++;
 
 	var items = [];
-	var token = selectItem(value, index);
+	var token = selectItem(value, index, metadata);
 	if (!token) return;
 	while (token){
 		items.push(token);
@@ -205,7 +206,7 @@ export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
 
 		if (Lexer.COMMA(value[index])){
 			index++;
-			token = selectItem(value, index);
+			token = selectItem(value, index, metadata);
 			if (!token) return;
 		}else break;
 	}
@@ -213,7 +214,7 @@ export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Select);
 }
 
-export function selectItem(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function selectItem(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var start = index;
 	var item;
 	var op = allOperationsInSchema(value, index);
@@ -224,7 +225,7 @@ export function selectItem(value:number[] | Uint8Array, index:number):Lexer.Toke
 		item = { value: '*' };
 		index++;
 	}else{
-		var name = NameOrIdentifier.qualifiedEntityTypeName(value, index) ||
+		var name = NameOrIdentifier.qualifiedEntityTypeName(value, index, metadata) ||
 			NameOrIdentifier.qualifiedComplexTypeName(value, index);
 
 		if (name && value[name.next] != 0x2f) return;
@@ -233,9 +234,9 @@ export function selectItem(value:number[] | Uint8Array, index:number):Lexer.Toke
 			item.name = name;
 		}
 
-		var select = selectProperty(value, index) ||
-			qualifiedActionName(value, index) ||
-			qualifiedFunctionName(value, index);
+		var select = selectProperty(value, index, metadata) ||
+			qualifiedActionName(value, index, metadata) ||
+			qualifiedFunctionName(value, index, metadata);
 		if (!select) return;
 		index = select.next;
 
@@ -251,11 +252,11 @@ export function allOperationsInSchema(value:number[] | Uint8Array, index:number)
 	return index;
 }
 
-export function selectProperty(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = selectPath(value, index) ||
-		NameOrIdentifier.primitiveProperty(value, index) ||
-		NameOrIdentifier.primitiveColProperty(value, index) ||
-		NameOrIdentifier.navigationProperty(value, index);
+export function selectProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var token = selectPath(value, index, metadata) ||
+		NameOrIdentifier.primitiveProperty(value, index, metadata) ||
+		NameOrIdentifier.primitiveColProperty(value, index, metadata) ||
+		NameOrIdentifier.navigationProperty(value, index, metadata);
 	if (!token) return;
 	var start = index;
 	index = token.next;
@@ -263,7 +264,7 @@ export function selectProperty(value:number[] | Uint8Array, index:number):Lexer.
 	if (token.type == Lexer.TokenType.SelectPath){
 		if (value[index] == 0x2f){
 			index++;
-			var prop = selectProperty(value, index);
+			var prop = selectProperty(value, index, metadata);
 			if (!prop) return;
 			var path = Lexer.clone(token);
 			token.next = prop.next;
@@ -275,9 +276,9 @@ export function selectProperty(value:number[] | Uint8Array, index:number):Lexer.
 	return token;
 }
 
-export function selectPath(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = NameOrIdentifier.complexProperty(value, index) ||
-		NameOrIdentifier.complexColProperty(value, index);
+export function selectPath(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var token = NameOrIdentifier.complexProperty(value, index, metadata) ||
+		NameOrIdentifier.complexColProperty(value, index, metadata);
 	if (!token) return;
 	var start = index;
 	index = token.next;
@@ -294,25 +295,25 @@ export function selectPath(value:number[] | Uint8Array, index:number):Lexer.Toke
 	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.SelectPath);
 }
 
-export function qualifiedActionName(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function qualifiedActionName(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
 	var start = index;
 	index = namespaceNext + 1;
 
-	var action = NameOrIdentifier.action(value, index);
+	var action = NameOrIdentifier.action(value, index, metadata);
 	if (!action) return;
 
 	return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.Action);
 }
 
-export function qualifiedFunctionName(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function qualifiedFunctionName(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
 	var start = index;
 	index = namespaceNext + 1;
 
-	var fn = NameOrIdentifier.odataFunction(value, index);
+	var fn = NameOrIdentifier.odataFunction(value, index, metadata);
 	if (!fn) return;
 	index = fn.next;
 	var tokenValue:any = { name: fn };
@@ -343,7 +344,7 @@ export function qualifiedFunctionName(value:number[] | Uint8Array, index:number)
 
 //TODO: skiptoken
 
-export function aliasAndValue(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function aliasAndValue(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var alias = Expressions.parameterAlias(value, index);
 	if (!alias) return;
 	var start = index;
@@ -352,7 +353,7 @@ export function aliasAndValue(value:number[] | Uint8Array, index:number):Lexer.T
 	if (!Lexer.EQ(value[index])) return;
 	index++;
 
-	var paramValue = Expressions.parameterValue(value, index);
+	var paramValue = Expressions.parameterValue(value, index, metadata);
 	if (!paramValue) return;
 	index = paramValue.next;
 

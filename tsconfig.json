@@ -12,7 +12,6 @@
     "exclude": [
         "lib",
         "test",
-        "node_modules",
-        "src/path.ts"
+        "node_modules"
     ]
 }

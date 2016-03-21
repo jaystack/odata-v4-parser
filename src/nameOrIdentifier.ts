@@ -1,6 +1,7 @@
 import * as Utils from './utils';
 import * as Lexer from './lexer';
 import * as PrimitiveLiteral from './primitiveLiteral';
+import { Edm } from 'odata-metadata';
 
 export function enumeration(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var type = qualifiedEnumTypeName(value, index);
@@ -51,21 +52,21 @@ export function enumMemberValue(value:number[] | Uint8Array, index:number):Lexer
 		return token;
 	}
 }
-export function singleQualifiedTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return qualifiedEntityTypeName(value, index) ||
+export function singleQualifiedTypeName(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return qualifiedEntityTypeName(value, index, metadata) ||
 		qualifiedComplexTypeName(value, index) ||
 		qualifiedTypeDefinitionName(value, index) ||
 		qualifiedEnumTypeName(value, index) ||
 		primitiveTypeName(value, index);
 }
-export function qualifiedTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function qualifiedTypeName(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (Utils.equals(value, index, 'Collection')) {
 		var start = index;
 		index += 10;
 		if (!Lexer.SQUOTE(value[index])) return;
 		index++;
 
-		var token = singleQualifiedTypeName(value, index);
+		var token = singleQualifiedTypeName(value, index, metadata);
 		if (!token) return;
 		else index = token.next;
 
@@ -75,14 +76,14 @@ export function qualifiedTypeName(value:number[] | Uint8Array, index:number):Lex
 		token.next = index;
 		token.raw = Utils.stringify(value, token.position, token.next);
 		token.type = Lexer.TokenType.Collection;
-	} else return singleQualifiedTypeName(value, index);
+	} else return singleQualifiedTypeName(value, index, metadata);
 };
-export function qualifiedEntityTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function qualifiedEntityTypeName(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var start = index;
 	var namespaceNext = namespace(value, index);
 
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
-	var nameNext = entityTypeName(value, namespaceNext + 1);
+	var nameNext = entityTypeName(value, namespaceNext + 1, metadata);
 	if (nameNext && nameNext.next == namespaceNext + 1) return;
 
 	return Lexer.tokenize(value, start, nameNext.next, 'EntityTypeName', Lexer.TokenType.Identifier);
@@ -141,10 +142,17 @@ export function odataIdentifier(value:number[] | Uint8Array, index:number, token
 
 	if (index > start) return Lexer.tokenize(value, start, index, { name: Utils.stringify(value, start, index) }, tokenType || Lexer.TokenType.ODataIdentifier);
 }
+function typeSafeODataIdentifier(tokenType:Lexer.TokenType, type:Function, value:number[] | Uint8Array, index:number, metadata:Edm.Edmx, filter?:Function):Lexer.Token {
+	var token = odataIdentifier(value, index, tokenType);
+	if (token && Utils.metadata(token.raw, metadata, type, filter)) return token;
+}
+
 export function namespacePart(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.NamespacePart); }
 export function entitySetName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntitySetName); }
 export function singletonEntity(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.SingletonEntity); }
-export function entityTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityTypeName); }
+export function entityTypeName(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.EntityTypeName, Edm.EntityType, value, index, metadata);
+}
 export function complexTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexTypeName); }
 export function typeDefinitionName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.TypeDefinitionName); }
 export function enumerationTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EnumerationTypeName); }
@@ -189,33 +197,153 @@ export function primitiveTypeName(value:number[] | Uint8Array, index:number):Lex
 
 	if (end > index) return Lexer.tokenize(value, start, end, 'PrimitiveTypeName', Lexer.TokenType.Identifier);
 };
-export function primitiveProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveProperty); }
-export function primitiveKeyProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveKeyProperty); }
-export function primitiveNonKeyProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveNonKeyProperty); }
-export function primitiveColProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionProperty); }
-export function complexProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexProperty); }
-export function complexColProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexColProperty); }
-export function streamProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.StreamProperty); }
+const primitiveTypes:string[] = [
+	'Edm.Binary', 'Edm.Boolean', 'Edm.Byte', 'Edm.Date', 'Edm.DateTimeOffset', 'Edm.Decimal', 'Edm.Double', 'Edm.Duration', 'Edm.Guid',
+	'Edm.Int16', 'Edm.Int32', 'Edm.Int64', 'Edm.SByte', 'Edm.Single', 'Edm.Stream', 'Edm.String', 'Edm.TimeOfDay',
+	'Edm.GeographyCollection', 'Edm.GeographyLineString', 'Edm.GeographyMultiLineString', 'Edm.GeographyMultiPoint', 'Edm.GeographyMultiPolygon', 'Edm.GeographyPoint', 'Edm.GeographyPolygon',
+	'Edm.GeometryCollection', 'Edm.GeometryLineString', 'Edm.GeometryMultiLineString', 'Edm.GeometryMultiPoint', 'Edm.GeometryMultiPolygon', 'Edm.GeometryPoint', 'Edm.GeometryPolygon'
+];
+function isPrimitiveTypeName(type:string):boolean {
+	return primitiveTypes.indexOf(type) >= 0;
+}
+export function primitiveProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveProperty, Edm.Property, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == -1 && isPrimitiveTypeName(prop.type);
+	});
+}
+export function primitiveKeyProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveKeyProperty, Edm.Property, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == -1 && isPrimitiveTypeName(prop.type) && prop.parent.key.propertyRefs.filter(function(ref){ return ref.name == name; }).length > 0;
+	});
+}
+export function primitiveNonKeyProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveNonKeyProperty, Edm.Property, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == -1 && isPrimitiveTypeName(prop.type) && prop.parent.key.propertyRefs.filter(function(ref){ return ref.name == name; }).length == 0;
+	});
+}
+export function primitiveColProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveCollectionProperty, Edm.Property, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == 0 && isPrimitiveTypeName(prop.type.slice(11, -1));
+	});
+}
+export function complexProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.ComplexProperty, Edm.Property, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == -1 && !isPrimitiveTypeName(prop.type);
+	});
+}
+export function complexColProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.ComplexColProperty, Edm.Property, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == 0 && isPrimitiveTypeName(prop.type.slice(11, -1));
+	});
+}
+export function streamProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.StreamProperty, Edm.Property, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type == 'Edm.Stream';
+	});
+}
 
-export function navigationProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.NavigationProperty); }
-export function entityNavigationProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityNavigationProperty); }
-export function entityColNavigationProperty(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionNavigationProperty); }
+export function navigationProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.NavigationProperty, Edm.NavigationProperty, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == -1;
+	});
+}
+export function entityNavigationProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.EntityNavigationProperty, Edm.NavigationProperty, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == -1;
+	});
+}
+export function entityColNavigationProperty(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.EntityCollectionNavigationProperty, Edm.NavigationProperty, value, index, metadata, function(prop, name){
+		return prop.name == name && prop.type.indexOf('Collection') == 0;
+	});
+}
 
-export function action(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.Action); }
-export function actionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ActionImport); }
+export function action(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.Action, Edm.Action, value, index, metadata);
+}
+export function actionImport(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.ActionImport, Edm.ActionImport, value, index, metadata);
+}
 
-export function odataFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.Function); }
+export function odataFunction(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.Function, Edm.Function, value, index, metadata);
+}
 
-export function entityFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunction); }
-export function entityColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunction); }
-export function complexFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunction); }
-export function complexColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunction); }
-export function primitiveFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunction); }
-export function primitiveColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunction); }
+export function entityFunction(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.EntityFunction, Edm.Function, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == -1 && metadata.dataServices.schemas.filter(function(schema){
+			return schema.entityTypes.filter(function(entityType){
+				return entityType.name == fn.returnType.type;
+			}).length > 0;
+		}).length > 0;
+	});
+}
+export function entityColFunction(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.EntityCollectionFunction, Edm.Function, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == 0 && metadata.dataServices.schemas.filter(function(schema){
+			return schema.entityTypes.filter(function(entityType){
+				return entityType.name == fn.returnType.type.slice(11, -1);
+			}).length > 0;
+		}).length > 0;
+	});
+}
+export function complexFunction(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.ComplexFunction, Edm.Function, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == -1 && !isPrimitiveTypeName(fn.returnType.type);
+	});
+}
+export function complexColFunction(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.ComplexCollectionFunction, Edm.Function, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == 0 && !isPrimitiveTypeName(fn.returnType.type.slice(11, -1));
+	});
+}
+export function primitiveFunction(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveFunction, Edm.Function, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == -1 && isPrimitiveTypeName(fn.returnType.type);
+	});
+}
+export function primitiveColFunction(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveCollectionFunction, Edm.Function, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == 0 && isPrimitiveTypeName(fn.returnType.type.slice(11, -1));
+	});
+}
 
-export function entityFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunctionImport); }
-export function entityColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunctionImport); }
-export function complexFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunctionImport); }
-export function complexColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunctionImport); }
-export function primitiveFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunctionImport); }
-export function primitiveColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunctionImport); }
+//fn imports
+export function entityFunctionImport(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.EntityFunctionImport, Edm.FunctionImport, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == -1 && metadata.dataServices.schemas.filter(function(schema){
+			return schema.entityTypes.filter(function(entityType){
+				return entityType.name == fn.returnType.type;
+			}).length > 0;
+		}).length > 0;
+	});
+}
+export function entityColFunctionImport(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.EntityCollectionFunctionImport, Edm.FunctionImport, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == 0 && metadata.dataServices.schemas.filter(function(schema){
+			return schema.entityTypes.filter(function(entityType){
+				return entityType.name == fn.returnType.type.slice(11, -1);
+			}).length > 0;
+		}).length > 0;
+	});
+}
+export function complexFunctionImport(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.ComplexFunctionImport, Edm.FunctionImport, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == -1 && !isPrimitiveTypeName(fn.returnType.type);
+	});
+}
+export function complexColFunctionImport(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.ComplexCollectionFunctionImport, Edm.FunctionImport, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == 0 && !isPrimitiveTypeName(fn.returnType.type.slice(11, -1));
+	});
+}
+export function primitiveFunctionImport(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveFunctionImport, Edm.FunctionImport, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == -1 && isPrimitiveTypeName(fn.returnType.type);
+	});
+}
+export function primitiveColFunctionImport(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return typeSafeODataIdentifier(Lexer.TokenType.PrimitiveCollectionFunctionImport, Edm.FunctionImport, value, index, metadata, function(fn, name){
+		return fn.name == name && fn.returnType.type.indexOf('Collection') == 0 && isPrimitiveTypeName(fn.returnType.type.slice(11, -1));
+	});
+}

@@ -3,15 +3,16 @@ import * as Lexer from './lexer';
 import * as PrimitiveLiteral from './primitiveLiteral';
 import * as NameOrIdentifier from './nameOrIdentifier';
 import * as Expressions from './expressions';
+import { Edm } from 'odata-metadata';
 
-export function complexColInUri(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function complexColInUri(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var begin = Lexer.beginArray(value, index);
 	if (begin == index) return;
 	var start = index;
 	index = begin;
 
 	var items = [];
-	var token = complexInUri(value, index);
+	var token = complexInUri(value, index, metadata);
 	if (token){
 		while (token){
 			items.push(token);
@@ -26,7 +27,7 @@ export function complexColInUri(value:number[] | Uint8Array, index:number):Lexer
 				if (separator == index) return;
 				index = separator;
 
-				token = complexInUri(value, index);
+				token = complexInUri(value, index, metadata);
 				if (!token) return;
 			}
 		}
@@ -39,17 +40,17 @@ export function complexColInUri(value:number[] | Uint8Array, index:number):Lexer
 	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Array);
 }
 
-export function complexInUri(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function complexInUri(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var begin = Lexer.beginObject(value, index);
 	if (begin == index) return;
 	var start = index;
 	index = begin;
 
 	var items = [];
-	var token = annotationInUri(value, index) ||
+	var token = annotationInUri(value, index, metadata) ||
 		primitivePropertyInUri(value, index) ||
-		complexPropertyInUri(value, index) ||
-		collectionPropertyInUri(value, index) ||
+		complexPropertyInUri(value, index, metadata) ||
+		collectionPropertyInUri(value, index, metadata) ||
 		navigationPropertyInUri(value, index);
 	if (token){
 		while (token){
@@ -65,10 +66,10 @@ export function complexInUri(value:number[] | Uint8Array, index:number):Lexer.To
 				if (separator == index) return;
 				index = separator;
 
-				token = annotationInUri(value, index) ||
+				token = annotationInUri(value, index, metadata) ||
 					primitivePropertyInUri(value, index) ||
-					complexPropertyInUri(value, index) ||
-					collectionPropertyInUri(value, index) ||
+					complexPropertyInUri(value, index, metadata) ||
+					collectionPropertyInUri(value, index, metadata) ||
 					navigationPropertyInUri(value, index);
 				if (!token) return;
 			}
@@ -82,14 +83,14 @@ export function complexInUri(value:number[] | Uint8Array, index:number):Lexer.To
 	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Object);
 }
 
-export function collectionPropertyInUri(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function collectionPropertyInUri(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var mark = Lexer.quotationMark(value, index);
 	if (mark == index) return;
 	var start = index;
 	index = mark;
 
-	var prop = NameOrIdentifier.primitiveColProperty(value, index) ||
-		NameOrIdentifier.complexColProperty(value, index);
+	var prop = NameOrIdentifier.primitiveColProperty(value, index, metadata) ||
+		NameOrIdentifier.complexColProperty(value, index, metadata);
 
 	if (!prop) return;
 	index = prop.next;
@@ -104,7 +105,7 @@ export function collectionPropertyInUri(value:number[] | Uint8Array, index:numbe
 
 	var propValue = prop.type == Lexer.TokenType.PrimitiveCollectionProperty
 		? primitiveColInUri(value, index)
-		: complexColInUri(value, index);
+		: complexColInUri(value, index, metadata);
 
 	if (!propValue) return;
 	index = propValue.next;
@@ -147,13 +148,13 @@ export function primitiveColInUri(value:number[] | Uint8Array, index:number):Lex
 	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Array);
 }
 
-export function complexPropertyInUri(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function complexPropertyInUri(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var mark = Lexer.quotationMark(value, index);
 	if (mark == index) return;
 	var start = index;
 	index = mark;
 
-	var prop = NameOrIdentifier.complexProperty(value, index);
+	var prop = NameOrIdentifier.complexProperty(value, index, metadata);
 	if (!prop) return;
 	index = prop.next;
 
@@ -165,14 +166,14 @@ export function complexPropertyInUri(value:number[] | Uint8Array, index:number):
 	if (separator == index) return;
 	index = separator;
 
-	var propValue = complexInUri(value, index);
+	var propValue = complexInUri(value, index, metadata);
 	if (!propValue) return;
 	index = propValue.next;
 
 	return Lexer.tokenize(value, start, index, { key: prop, value: propValue }, Lexer.TokenType.Property);
 }
 
-export function annotationInUri(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function annotationInUri(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var mark = Lexer.quotationMark(value, index);
 	if (mark == index) return;
 	var start = index;
@@ -201,8 +202,8 @@ export function annotationInUri(value:number[] | Uint8Array, index:number):Lexer
 	if (separator == index) return;
 	index = separator;
 
-	var token = complexInUri(value, index) ||
-		complexColInUri(value, index) ||
+	var token = complexInUri(value, index, metadata) ||
+		complexColInUri(value, index, metadata) ||
 		primitiveLiteralInJSON(value, index) ||
 		primitiveColInUri(value, index);
 	if (!token) return;
@@ -256,14 +257,14 @@ export function collectionNavPropInJSON(value:number[] | Uint8Array, index:numbe
 	return keyValuePairInUri(value, index, NameOrIdentifier.entityColNavigationProperty, rootExprCol);
 }
 
-export function rootExprCol(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function rootExprCol(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var begin = Lexer.beginArray(value, index);
 	if (begin == index) return;
 	var start = index;
 	index = begin;
 
 	var items = [];
-	var token = Expressions.rootExpr(value, index);
+	var token = Expressions.rootExpr(value, index, metadata);
 	if (token){
 		while (token){
 			items.push(token);
@@ -278,7 +279,7 @@ export function rootExprCol(value:number[] | Uint8Array, index:number):Lexer.Tok
 				if (separator == index) return;
 				index = separator;
 
-				token = Expressions.rootExpr(value, index);
+				token = Expressions.rootExpr(value, index, metadata);
 				if (!token) return;
 			}
 		}
@@ -357,10 +358,10 @@ export function nullInJSON(value:number[] | Uint8Array, index:number):Lexer.Toke
 	if (Utils.equals(value, index, 'null')) return Lexer.tokenize(value, index, index + 4, 'null', Lexer.TokenType.Literal);
 }
 
-export function arrayOrObject(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = complexColInUri(value, index) ||
-		complexInUri(value, index) ||
-		rootExprCol(value, index) ||
+export function arrayOrObject(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var token = complexColInUri(value, index, metadata) ||
+		complexInUri(value, index, metadata) ||
+		rootExprCol(value, index, metadata) ||
 		primitiveColInUri(value, index);
 
 	if (token) return Lexer.tokenize(value, index, token.next, token, Lexer.TokenType.ArrayOrObject);

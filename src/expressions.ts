@@ -3,26 +3,27 @@ import * as Lexer from './lexer';
 import * as PrimitiveLiteral from './primitiveLiteral';
 import * as NameOrIdentifier from './nameOrIdentifier';
 import * as ArrayOrObject from './json';
+import { Edm } from 'odata-metadata';
 
-export function commonExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function commonExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var token = PrimitiveLiteral.primitiveLiteral(value, index) ||
 		parameterAlias(value, index) ||
-		ArrayOrObject.arrayOrObject(value, index) ||
-		rootExpr(value, index) ||
-		methodCallExpr(value, index) ||
-		firstMemberExpr(value, index) ||
-		functionExpr(value, index) ||
-		negateExpr(value, index) ||
-		parenExpr(value, index) ||
-		castExpr(value, index);
+		ArrayOrObject.arrayOrObject(value, index, metadata) ||
+		rootExpr(value, index, metadata) ||
+		methodCallExpr(value, index, metadata) ||
+		firstMemberExpr(value, index, metadata) ||
+		functionExpr(value, index, metadata) ||
+		negateExpr(value, index, metadata) ||
+		parenExpr(value, index, metadata) ||
+		castExpr(value, index, metadata);
 
 	if (!token) return;
 
-	var expr = addExpr(value, token.next) ||
-		subExpr(value, token.next) ||
-		mulExpr(value, token.next) ||
-		divExpr(value, token.next) ||
-		modExpr(value, token.next);
+	var expr = addExpr(value, token.next, metadata) ||
+		subExpr(value, token.next, metadata) ||
+		mulExpr(value, token.next, metadata) ||
+		divExpr(value, token.next, metadata) ||
+		modExpr(value, token.next, metadata);
 
 	if (expr) {
 		token.value = {
@@ -37,24 +38,24 @@ export function commonExpr(value:number[] | Uint8Array, index:number):Lexer.Toke
 	if (token) return Lexer.tokenize(value, token.position, token.next, token, Lexer.TokenType.CommonExpression);
 };
 
-export function boolCommonExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = isofExpr(value, index) ||
-		boolMethodCallExpr(value, index) ||
-		notExpr(value, index) ||
-		commonExpr(value, index) ||
-		boolParenExpr(value, index);
+export function boolCommonExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var token = isofExpr(value, index, metadata) ||
+		boolMethodCallExpr(value, index, metadata) ||
+		notExpr(value, index, metadata) ||
+		commonExpr(value, index, metadata) ||
+		boolParenExpr(value, index, metadata);
 
 	if (!token) return;
 
 	var commonMoreExpr = undefined;
 	if (token.type == Lexer.TokenType.CommonExpression) {
-		commonMoreExpr = eqExpr(value, token.next) ||
-		neExpr(value, token.next) ||
-		ltExpr(value, token.next) ||
-		leExpr(value, token.next) ||
-		gtExpr(value, token.next) ||
-		geExpr(value, token.next) ||
-		hasExpr(value, token.next);
+		commonMoreExpr = eqExpr(value, token.next, metadata) ||
+		neExpr(value, token.next, metadata) ||
+		ltExpr(value, token.next, metadata) ||
+		leExpr(value, token.next, metadata) ||
+		gtExpr(value, token.next, metadata) ||
+		geExpr(value, token.next, metadata) ||
+		hasExpr(value, token.next, metadata);
 
 		if (commonMoreExpr) {
 			token.value = {
@@ -67,8 +68,8 @@ export function boolCommonExpr(value:number[] | Uint8Array, index:number):Lexer.
 		}
 	}
 
-	var expr = andExpr(value, token.next) ||
-		orExpr(value, token.next);
+	var expr = andExpr(value, token.next, metadata) ||
+		orExpr(value, token.next, metadata);
 
 	if (expr) {
 		token.next = expr.value.next;
@@ -83,7 +84,7 @@ export function boolCommonExpr(value:number[] | Uint8Array, index:number):Lexer.
 	return token;
 };
 
-export function andExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function andExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var rws = Lexer.RWS(value, index);
 	if (rws == index || !Utils.equals(value, rws, 'and')) return;
 	var start = index;
@@ -91,13 +92,13 @@ export function andExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	rws = Lexer.RWS(value, index);
 	if (rws == index) return;
 	index = rws;
-	var token = boolCommonExpr(value, index);
+	var token = boolCommonExpr(value, index, metadata);
 	if (!token) return;
 
 	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.AndExpression);
 };
 
-export function orExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function orExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var rws = Lexer.RWS(value, index);
 	if (rws == index || !Utils.equals(value, rws, 'or')) return;
 	var start = index;
@@ -105,13 +106,13 @@ export function orExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	rws = Lexer.RWS(value, index);
 	if (rws == index) return;
 	index = rws;
-	var token = boolCommonExpr(value, index);
+	var token = boolCommonExpr(value, index, metadata);
 	if (!token) return;
 
 	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.OrExpression);
 };
 
-export function leftRightExpr(value:number[] | Uint8Array, index:number, expr:string, tokenType:Lexer.TokenType):Lexer.Token {
+export function leftRightExpr(value:number[] | Uint8Array, index:number, expr:string, tokenType:Lexer.TokenType, metadata:Edm.Edmx):Lexer.Token {
 	var rws = Lexer.RWS(value, index);
 	if (rws == index) return;
 	var start = index;
@@ -121,44 +122,44 @@ export function leftRightExpr(value:number[] | Uint8Array, index:number, expr:st
 	rws = Lexer.RWS(value, index);
 	if (rws == index) return;
 	index = rws;
-	var token = commonExpr(value, index);
+	var token = commonExpr(value, index, metadata);
 	if (!token) return;
 
 	return Lexer.tokenize(value, start, index, token.value, tokenType);
 };
-export function eqExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'eq', Lexer.TokenType.EqualsExpression); }
-export function neExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'ne', Lexer.TokenType.NotEqualsExpression); }
-export function ltExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'lt', Lexer.TokenType.LesserThanExpression); }
-export function leExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'le', Lexer.TokenType.LesserOrEqualsExpression); }
-export function gtExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'gt', Lexer.TokenType.GreaterThanExpression); }
-export function geExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'ge', Lexer.TokenType.GreaterOrEqualsExpression); }
-export function hasExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'has', Lexer.TokenType.HasExpression); }
+export function eqExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'eq', Lexer.TokenType.EqualsExpression, metadata); }
+export function neExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'ne', Lexer.TokenType.NotEqualsExpression, metadata); }
+export function ltExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'lt', Lexer.TokenType.LesserThanExpression, metadata); }
+export function leExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'le', Lexer.TokenType.LesserOrEqualsExpression, metadata); }
+export function gtExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'gt', Lexer.TokenType.GreaterThanExpression, metadata); }
+export function geExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'ge', Lexer.TokenType.GreaterOrEqualsExpression, metadata); }
+export function hasExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'has', Lexer.TokenType.HasExpression, metadata); }
 
-export function addExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'add', Lexer.TokenType.AddExpression); }
-export function subExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'sub', Lexer.TokenType.SubExpression); }
-export function mulExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'mul', Lexer.TokenType.MulExpression); }
-export function divExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'div', Lexer.TokenType.DivExpression); }
-export function modExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'mod', Lexer.TokenType.ModExpression); }
+export function addExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'add', Lexer.TokenType.AddExpression, metadata); }
+export function subExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'sub', Lexer.TokenType.SubExpression, metadata); }
+export function mulExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'mul', Lexer.TokenType.MulExpression, metadata); }
+export function divExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'div', Lexer.TokenType.DivExpression, metadata); }
+export function modExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return leftRightExpr(value, index, 'mod', Lexer.TokenType.ModExpression, metadata); }
 
-export function notExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function notExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, 'not')) return;
 	var start = index;
 	index += 3;
 	var rws = Lexer.RWS(value, index);
 	if (rws == index) return;
 	index = rws;
-	var token = boolCommonExpr(value, index);
+	var token = boolCommonExpr(value, index, metadata);
 	if (!token) return;
 
 	return Lexer.tokenize(value, start, token.next, token, Lexer.TokenType.NotExpression);
 };
 
-export function boolParenExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function boolParenExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Lexer.OPEN(value[index])) return;
 	var start = index;
 	index++;
 	index = Lexer.BWS(value, index);
-	var token = boolCommonExpr(value, index);
+	var token = boolCommonExpr(value, index, metadata);
 	if (!token) return;
 	index = Lexer.BWS(value, token.next);
 	if (!Lexer.CLOSE(value[index])) return;
@@ -166,12 +167,12 @@ export function boolParenExpr(value:number[] | Uint8Array, index:number):Lexer.T
 
 	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.BoolParenExpression);
 };
-export function parenExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function parenExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Lexer.OPEN(value[index])) return;
 	var start = index;
 	index++;
 	index = Lexer.BWS(value, index);
-	var token = commonExpr(value, index);
+	var token = commonExpr(value, index, metadata);
 	if (!token) return;
 	index = Lexer.BWS(value, token.next);
 	if (!Lexer.CLOSE(value[index])) return;
@@ -180,41 +181,41 @@ export function parenExpr(value:number[] | Uint8Array, index:number):Lexer.Token
 	return Lexer.tokenize(value, start, index, token.value, Lexer.TokenType.ParenExpression);
 };
 
-export function boolMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return endsWithMethodCallExpr(value, index) ||
-		startsWithMethodCallExpr(value, index) ||
-		containsMethodCallExpr(value, index) ||
-		intersectsMethodCallExpr(value, index);
+export function boolMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return endsWithMethodCallExpr(value, index, metadata) ||
+		startsWithMethodCallExpr(value, index, metadata) ||
+		containsMethodCallExpr(value, index, metadata) ||
+		intersectsMethodCallExpr(value, index, metadata);
 };
-export function methodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return indexOfMethodCallExpr(value, index) ||
-		toLowerMethodCallExpr(value, index) ||
-		toUpperMethodCallExpr(value, index) ||
-		trimMethodCallExpr(value, index) ||
-		substringMethodCallExpr(value, index) ||
-		concatMethodCallExpr(value, index) ||
-		lengthMethodCallExpr(value, index) ||
-		yearMethodCallExpr(value, index) ||
-		monthMethodCallExpr(value, index) ||
-		dayMethodCallExpr(value, index) ||
-		hourMethodCallExpr(value, index) ||
-		minuteMethodCallExpr(value, index) ||
-		secondMethodCallExpr(value, index) ||
-		fractionalsecondsMethodCallExpr(value, index) ||
-		totalsecondsMethodCallExpr(value, index) ||
-		dateMethodCallExpr(value, index) ||
-		timeMethodCallExpr(value, index) ||
-		roundMethodCallExpr(value, index) ||
-		floorMethodCallExpr(value, index) ||
-		ceilingMethodCallExpr(value, index) ||
-		distanceMethodCallExpr(value, index) ||
-		geoLengthMethodCallExpr(value, index) ||
-		totalOffsetMinutesMethodCallExpr(value, index) ||
-		minDateTimeMethodCallExpr(value, index) ||
-		maxDateTimeMethodCallExpr(value, index) ||
-		nowMethodCallExpr(value, index);
+export function methodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	return indexOfMethodCallExpr(value, index, metadata) ||
+		toLowerMethodCallExpr(value, index, metadata) ||
+		toUpperMethodCallExpr(value, index, metadata) ||
+		trimMethodCallExpr(value, index, metadata) ||
+		substringMethodCallExpr(value, index, metadata) ||
+		concatMethodCallExpr(value, index, metadata) ||
+		lengthMethodCallExpr(value, index, metadata) ||
+		yearMethodCallExpr(value, index, metadata) ||
+		monthMethodCallExpr(value, index, metadata) ||
+		dayMethodCallExpr(value, index, metadata) ||
+		hourMethodCallExpr(value, index, metadata) ||
+		minuteMethodCallExpr(value, index, metadata) ||
+		secondMethodCallExpr(value, index, metadata) ||
+		fractionalsecondsMethodCallExpr(value, index, metadata) ||
+		totalsecondsMethodCallExpr(value, index, metadata) ||
+		dateMethodCallExpr(value, index, metadata) ||
+		timeMethodCallExpr(value, index, metadata) ||
+		roundMethodCallExpr(value, index, metadata) ||
+		floorMethodCallExpr(value, index, metadata) ||
+		ceilingMethodCallExpr(value, index, metadata) ||
+		distanceMethodCallExpr(value, index, metadata) ||
+		geoLengthMethodCallExpr(value, index, metadata) ||
+		totalOffsetMinutesMethodCallExpr(value, index, metadata) ||
+		minDateTimeMethodCallExpr(value, index, metadata) ||
+		maxDateTimeMethodCallExpr(value, index, metadata) ||
+		nowMethodCallExpr(value, index, metadata);
 };
-export function methodCallExprFactory(value:number[] | Uint8Array, index:number, method:string, min?:number, max?:number):Lexer.Token {
+export function methodCallExprFactory(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx, method:string, min?:number, max?:number):Lexer.Token {
 	if (typeof min == 'undefined') min = 0;
 	if (typeof max == 'undefined') max = min;
 
@@ -228,7 +229,7 @@ export function methodCallExprFactory(value:number[] | Uint8Array, index:number,
 	if (min > 0) {
 		parameters = [];
 		while (parameters.length < max) {
-			var expr = commonExpr(value, index);
+			var expr = commonExpr(value, index, metadata);
 			if (parameters.length < min && !expr) return;
 			else if (expr) {
 				parameters.push(expr.value);
@@ -250,49 +251,49 @@ export function methodCallExprFactory(value:number[] | Uint8Array, index:number,
 		parameters: parameters
 	}, Lexer.TokenType.MethodCallExpression);
 };
-export function containsMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'contains', 2); }
-export function startsWithMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'startswith', 2); }
-export function endsWithMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'endswith', 2); }
-export function lengthMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'length', 1); }
-export function indexOfMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'indexof', 2); }
-export function substringMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'substring', 2, 3); }
-export function toLowerMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'tolower', 1); }
-export function toUpperMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'toupper', 1); }
-export function trimMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'trim', 1); }
-export function concatMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'concat', 2); }
+export function containsMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'contains', 2); }
+export function startsWithMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'startswith', 2); }
+export function endsWithMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'endswith', 2); }
+export function lengthMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'length', 1); }
+export function indexOfMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'indexof', 2); }
+export function substringMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'substring', 2, 3); }
+export function toLowerMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'tolower', 1); }
+export function toUpperMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'toupper', 1); }
+export function trimMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'trim', 1); }
+export function concatMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'concat', 2); }
 
-export function yearMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'year', 1); }
-export function monthMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'month', 1); }
-export function dayMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'day', 1); }
-export function hourMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'hour', 1); }
-export function minuteMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'minute', 1); }
-export function secondMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'second', 1); }
-export function fractionalsecondsMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'fractionalseconds', 1); }
-export function totalsecondsMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'totalseconds', 1); }
-export function dateMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'date', 1); }
-export function timeMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'time', 1); }
-export function totalOffsetMinutesMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'totaloffsetminutes', 1); }
+export function yearMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'year', 1); }
+export function monthMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'month', 1); }
+export function dayMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'day', 1); }
+export function hourMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'hour', 1); }
+export function minuteMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'minute', 1); }
+export function secondMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'second', 1); }
+export function fractionalsecondsMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'fractionalseconds', 1); }
+export function totalsecondsMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'totalseconds', 1); }
+export function dateMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'date', 1); }
+export function timeMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'time', 1); }
+export function totalOffsetMinutesMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'totaloffsetminutes', 1); }
 
-export function minDateTimeMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'mindatetime', 0); }
-export function maxDateTimeMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'maxdatetime', 0); }
-export function nowMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'now', 0); }
+export function minDateTimeMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'mindatetime', 0); }
+export function maxDateTimeMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'maxdatetime', 0); }
+export function nowMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'now', 0); }
 
-export function roundMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'round', 1); }
-export function floorMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'floor', 1); }
-export function ceilingMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'ceiling', 1); }
+export function roundMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'round', 1); }
+export function floorMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'floor', 1); }
+export function ceilingMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'ceiling', 1); }
 
-export function distanceMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'geo.distance', 2); }
-export function geoLengthMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'geo.length', 1); }
-export function intersectsMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'geo.intersects', 2); }
+export function distanceMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'geo.distance', 2); }
+export function geoLengthMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'geo.length', 1); }
+export function intersectsMethodCallExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return methodCallExprFactory(value, index, metadata, 'geo.intersects', 2); }
 
-export function isofExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function isofExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, 'isof')) return;
 	var start = index;
 	index += 4;
 	if (!Lexer.OPEN(value[index])) return;
 	index++;
 	index = Lexer.BWS(value, index);
-	var expr = commonExpr(value, index);
+	var expr = commonExpr(value, index, metadata);
 	if (expr) {
 		index = expr.next;
 		index = Lexer.BWS(value, index);
@@ -300,7 +301,7 @@ export function isofExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 		index++;
 		index = Lexer.BWS(value, index);
 	}
-	var typeName = NameOrIdentifier.qualifiedTypeName(value, index);
+	var typeName = NameOrIdentifier.qualifiedTypeName(value, index, metadata);
 	if (!typeName) return;
 	index = typeName.next;
 	index = Lexer.BWS(value, index);
@@ -312,14 +313,14 @@ export function isofExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 		typename: typeName
 	}, Lexer.TokenType.IsOfExpression);
 }
-export function castExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function castExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, 'cast')) return;
 	var start = index;
 	index += 4;
 	if (!Lexer.OPEN(value[index])) return;
 	index++;
 	index = Lexer.BWS(value, index);
-	var expr = commonExpr(value, index);
+	var expr = commonExpr(value, index, metadata);
 	if (expr) {
 		index = expr.next;
 		index = Lexer.BWS(value, index);
@@ -327,7 +328,7 @@ export function castExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 		index++;
 		index = Lexer.BWS(value, index);
 	}
-	var typeName = NameOrIdentifier.qualifiedTypeName(value, index);
+	var typeName = NameOrIdentifier.qualifiedTypeName(value, index, metadata);
 	if (!typeName) return;
 	index = typeName.next;
 	index = Lexer.BWS(value, index);
@@ -340,18 +341,18 @@ export function castExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 	}, Lexer.TokenType.CastExpression);
 }
 
-export function negateExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function negateExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (value[index] != 0x2d) return;
 	var start = index;
 	index++;
 	index = Lexer.BWS(value, index);
-	var expr = commonExpr(value, index);
+	var expr = commonExpr(value, index, metadata);
 	if (!expr) return;
 
 	return Lexer.tokenize(value, start, expr.next, expr, Lexer.TokenType.NegateExpression);
 }
 
-export function firstMemberExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function firstMemberExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var token = inscopeVariableExpr(value, index);
 	var member;
 	var start = index;
@@ -359,41 +360,48 @@ export function firstMemberExpr(value:number[] | Uint8Array, index:number):Lexer
 	if (token) {
 		if (value[token.next] == 0x2f) {
 			index = token.next + 1;
-			member = memberExpr(value, index);
+			member = memberExpr(value, index, metadata);
 			if (!member) return;
 
 			return Lexer.tokenize(value, start, member.next, [token, member], Lexer.TokenType.FirstMemberExpression);
 		}
-	} else member = memberExpr(value, index);
+	} else member = memberExpr(value, index, metadata);
 
 	token = token || member;
 	if (!token) return;
 
 	return Lexer.tokenize(value, start, token.next, token, Lexer.TokenType.FirstMemberExpression);
 }
-export function memberExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function memberExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var start = index;
-	var token = NameOrIdentifier.qualifiedEntityTypeName(value, index);
+	var token = NameOrIdentifier.qualifiedEntityTypeName(value, index, metadata);
 
 	if (token) {
 		if (value[token.next] != 0x2f) return;
 		index = token.next + 1;
 	}
 
-	var next = propertyPathExpr(value, index) ||
-		boundFunctionExpr(value, index);
+	var next = propertyPathExpr(value, index, metadata) ||
+		boundFunctionExpr(value, index, metadata);
 
 	if (!next) return;
 	return Lexer.tokenize(value, start, next.next, token ? { name: token, value: next } : { value: next }, Lexer.TokenType.MemberExpression);
 }
-export function propertyPathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = NameOrIdentifier.odataIdentifier(value, index);
+export function propertyPathExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	//var token = NameOrIdentifier.odataIdentifier(value, index);
+	var token = NameOrIdentifier.entityColNavigationProperty(value, index, metadata) ||
+		NameOrIdentifier.entityNavigationProperty(value, index, metadata) ||
+		NameOrIdentifier.complexColProperty(value, index, metadata) ||
+		NameOrIdentifier.complexProperty(value, index, metadata) ||
+		NameOrIdentifier.primitiveColProperty(value, index, metadata) ||
+		NameOrIdentifier.primitiveProperty(value, index, metadata);
+
 	if (token){
-		var nav = collectionPathExpr(value, token.next) ||
-			collectionNavigationExpr(value, token.next) ||
-			singleNavigationExpr(value, token.next) ||
-			complexPathExpr(value, token.next) ||
-			singlePathExpr(value, token.next);
+		var nav = collectionPathExpr(value, token.next, metadata) ||
+			collectionNavigationExpr(value, token.next, metadata) ||
+			singleNavigationExpr(value, token.next, metadata) ||
+			complexPathExpr(value, token.next, metadata) ||
+			singlePathExpr(value, token.next, metadata);
 
 		if (nav) {
 			token.value = {
@@ -403,7 +411,7 @@ export function propertyPathExpr(value:number[] | Uint8Array, index:number):Lexe
 			token.next = nav.next;
 			token.raw = Utils.stringify(value, token.position, token.next);
 		}
-	} else token = token || NameOrIdentifier.streamProperty(value, index);
+	} else token = token || NameOrIdentifier.streamProperty(value, index, metadata);
 
 	if (!token) return;
 	return Lexer.tokenize(value, index, token.next, token, Lexer.TokenType.PropertyPathExpression);
@@ -424,16 +432,16 @@ export function lambdaVariableExpr(value:number[] | Uint8Array, index:number):Le
 		return token;
 	}
 }
-export function lambdaPredicateExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function lambdaPredicateExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	isLambdaPredicate = true;
-	var token = boolCommonExpr(value, index);
+	var token = boolCommonExpr(value, index, metadata);
 	isLambdaPredicate = false;
 	if (token && hasLambdaVariableExpr){
 		hasLambdaVariableExpr = false;
 		return Lexer.tokenize(value, token.position, token.next, token, Lexer.TokenType.LambdaPredicateExpression);
 	}
 }
-export function anyExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function anyExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, 'any')) return;
 	var start = index;
 	index += 3;
@@ -448,7 +456,7 @@ export function anyExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 		if (!Lexer.COLON(value[index])) return;
 		index++;
 		index = Lexer.BWS(value, index);
-		predicate = lambdaPredicateExpr(value, index);
+		predicate = lambdaPredicateExpr(value, index, metadata);
 		if (!predicate) return;
 		index = predicate.next;
 	}
@@ -461,7 +469,7 @@ export function anyExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 		predicate: predicate
 	}, Lexer.TokenType.AnyExpression);
 }
-export function allExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function allExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, 'all')) return;
 	var start = index;
 	index += 3;
@@ -475,7 +483,7 @@ export function allExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Lexer.COLON(value[index])) return;
 	index++;
 	index = Lexer.BWS(value, index);
-	var predicate = lambdaPredicateExpr(value, index);
+	var predicate = lambdaPredicateExpr(value, index, metadata);
 	if (!predicate) return;
 	index = predicate.next;
 	index = Lexer.BWS(value, index);
@@ -488,22 +496,22 @@ export function allExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	}, Lexer.TokenType.AllExpression);
 }
 
-export function collectionNavigationExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function collectionNavigationExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var start = index;
 	var entity, predicate, navigation, path;
 	if (value[index] == 0x2f){
 		index++;
-		entity = NameOrIdentifier.qualifiedEntityTypeName(value, index);
+		entity = NameOrIdentifier.qualifiedEntityTypeName(value, index, metadata);
 		if (!entity) return;
 		index = entity.next;
 	}
 
-	predicate = keyPredicate(value, index);
+	predicate = keyPredicate(value, index, metadata);
 
 	if (predicate){
-		navigation = singleNavigationExpr(value, index);
+		navigation = singleNavigationExpr(value, index, metadata);
 	}else{
-		path = collectionPathExpr(value, index);
+		path = collectionPathExpr(value, index, metadata);
 	}
 
 	if (index > start){
@@ -515,9 +523,9 @@ export function collectionNavigationExpr(value:number[] | Uint8Array, index:numb
 		}, Lexer.TokenType.CollectionNavigationExpression);
 	}
 }
-export function keyPredicate(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function keyPredicate(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	return simpleKey(value, index) ||
-		compoundKey(value, index);
+		compoundKey(value, index, metadata);
 }
 export function simpleKey(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Lexer.OPEN(value[index])) return;
@@ -529,18 +537,18 @@ export function simpleKey(value:number[] | Uint8Array, index:number):Lexer.Token
 
 	return Lexer.tokenize(value, start, key.next + 1, key, Lexer.TokenType.SimpleKey);
 }
-export function compoundKey(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function compoundKey(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Lexer.OPEN(value[index])) return;
 	var start = index;
 	index++;
 
-	var pair = keyValuePair(value, index);
+	var pair = keyValuePair(value, index, metadata);
 	if (!pair) return;
 
 	var keys = [];
 	while (pair){
 		keys.push(pair);
-		if (Lexer.COMMA(value[pair.next])) pair = keyValuePair(value, pair.next + 1);
+		if (Lexer.COMMA(value[pair.next])) pair = keyValuePair(value, pair.next + 1, metadata);
 		else pair = null;
 	}
 
@@ -550,8 +558,8 @@ export function compoundKey(value:number[] | Uint8Array, index:number):Lexer.Tok
 
 	return Lexer.tokenize(value, start, index, keys, Lexer.TokenType.CompoundKey);
 }
-export function keyValuePair(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var prop = NameOrIdentifier.primitiveKeyProperty(value, index) ||
+export function keyValuePair(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var prop = NameOrIdentifier.primitiveKeyProperty(value, index, metadata) ||
 		keyPropertyAlias(value, index);
 
 	if (!prop || !Lexer.EQ(value[prop.next])) return;
@@ -571,24 +579,24 @@ export function keyPropertyValue(value:number[] | Uint8Array, index:number):Lexe
 }
 export function keyPropertyAlias(value:number[] | Uint8Array, index:number):Lexer.Token { return NameOrIdentifier.odataIdentifier(value, index, Lexer.TokenType.KeyPropertyAlias); }
 
-export function singleNavigationExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function singleNavigationExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (value[index] != 0x2f) return;
-	var member = memberExpr(value, index + 1);
+	var member = memberExpr(value, index + 1, metadata);
 	if (member) return Lexer.tokenize(value, index, member.next, member, Lexer.TokenType.SingleNavigationExpression);
 }
-export function collectionPathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function collectionPathExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var token = countExpr(value, index);
 	if (!token) {
 		if (value[index] == 0x2f) {
-			token = boundFunctionExpr(value, index + 1) ||
-			anyExpr(value, index + 1) ||
-			allExpr(value, index + 1);
+			token = boundFunctionExpr(value, index + 1, metadata) ||
+			anyExpr(value, index + 1, metadata) ||
+			allExpr(value, index + 1, metadata);
 		}
 	}
 
 	if (token) return Lexer.tokenize(value, index, token.next, token, Lexer.TokenType.CollectionPathExpression);
 }
-export function complexPathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function complexPathExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (value[index] != 0x2f) return;
 	var start = index;
 	index++;
@@ -598,17 +606,17 @@ export function complexPathExpr(value:number[] | Uint8Array, index:number):Lexer
 		index = token.next + 1;
 	}
 
-	var expr = propertyPathExpr(value, index) ||
-		boundFunctionExpr(value, index);
+	var expr = propertyPathExpr(value, index, metadata) ||
+		boundFunctionExpr(value, index, metadata);
 
 	if (expr) return Lexer.tokenize(value, start, expr.next, token ? [token, expr] : [expr], Lexer.TokenType.ComplexPathExpression);
 }
-export function singlePathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function singlePathExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (value[index] != 0x2f) return;
-	var boundFunction = boundFunctionExpr(value, index + 1);
+	var boundFunction = boundFunctionExpr(value, index + 1, metadata);
 	if (boundFunction) return Lexer.tokenize(value, index, boundFunction.next, boundFunction, Lexer.TokenType.SinglePathExpression);
 }
-export function functionExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function functionExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
 	var start = index;
@@ -618,19 +626,19 @@ export function functionExpr(value:number[] | Uint8Array, index:number):Lexer.To
 
 	if (!token) return;
 	token.position = start;
-	token.raw = Utils.stringify(value, start, token.next)
+	token.raw = Utils.stringify(value, start, token.next);
 
 	index = token.next;
-	var params = functionExprParameters(value, index);
+	var params = functionExprParameters(value, index, metadata);
 
 	if (!params) return;
 
 	index = params.next;
-	var expr = collectionPathExpr(value, index) ||
-		collectionNavigationExpr(value, index) ||
-		singleNavigationExpr(value, index) ||
-		complexPathExpr(value, index) ||
-		singlePathExpr(value, index);
+	var expr = collectionPathExpr(value, index, metadata) ||
+		collectionNavigationExpr(value, index, metadata) ||
+		singleNavigationExpr(value, index, metadata) ||
+		complexPathExpr(value, index, metadata) ||
+		singlePathExpr(value, index, metadata);
 
 	if (expr) index = expr.next;
 
@@ -640,20 +648,20 @@ export function functionExpr(value:number[] | Uint8Array, index:number):Lexer.To
 		expression: expr
 	}, Lexer.TokenType.FunctionExpression);
 }
-export function boundFunctionExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return functionExpr(value, index); }
+export function boundFunctionExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token { return functionExpr(value, index, metadata); }
 
-export function functionExprParameters(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function functionExprParameters(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Lexer.OPEN(value[index])) return;
 	var start = index;
 	index++;
 
 	var params = [];
-	var expr = functionExprParameter(value, index);
+	var expr = functionExprParameter(value, index, metadata);
 	while (expr) {
 		params.push(expr);
 		if (Lexer.COMMA(expr.next)) {
 			index = expr.next + 1;
-			expr = functionExprParameter(value, index);
+			expr = functionExprParameter(value, index, metadata);
 			if (!expr) return;
 		} else {
 			index = expr.next;
@@ -666,7 +674,7 @@ export function functionExprParameters(value:number[] | Uint8Array, index:number
 
 	return Lexer.tokenize(value, start, index, params, Lexer.TokenType.FunctionExpressionParameters);
 }
-export function functionExprParameter(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function functionExprParameter(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	var name = parameterName(value, index);
 	if (!name || !Lexer.EQ(value[name.next])) return;
 
@@ -674,7 +682,7 @@ export function functionExprParameter(value:number[] | Uint8Array, index:number)
 	index = name.next + 1;
 
 	var param = parameterAlias(value, index) ||
-		parameterValue(value, index);
+		parameterValue(value, index, metadata);
 
 	if (!param) return;
 	return Lexer.tokenize(value, start, param.next, {
@@ -688,9 +696,9 @@ export function parameterAlias(value:number[] | Uint8Array, index:number):Lexer.
 	var id = NameOrIdentifier.odataIdentifier(value, index + 1);
 	if (id) return Lexer.tokenize(value, index, id.next, id.value, Lexer.TokenType.ParameterAlias);
 }
-export function parameterValue(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = ArrayOrObject.arrayOrObject(value, index) ||
-		commonExpr(value, index);
+export function parameterValue(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
+	var token = ArrayOrObject.arrayOrObject(value, index, metadata) ||
+		commonExpr(value, index, metadata);
 	if (token) return Lexer.tokenize(value, index, token.next, token.value, Lexer.TokenType.ParameterValue);
 }
 
@@ -704,14 +712,14 @@ export function valueExpr(value:number[] | Uint8Array, index:number):Lexer.Token
 	if (Utils.equals(value, index, '/$value')) return Lexer.tokenize(value, index, index + 7, '/$value', Lexer.TokenType.ValueExpression);
 }
 
-export function rootExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function rootExpr(value:number[] | Uint8Array, index:number, metadata:Edm.Edmx):Lexer.Token {
 	if (!Utils.equals(value, index, '$root/')) return;
 	var start = index;
 	index += 6;
 
 	var entitySet = NameOrIdentifier.entitySetName(value, index);
 	var predicate, entity, token;
-	if (entitySet) predicate = keyPredicate(value, entitySet.next);
+	if (entitySet) predicate = keyPredicate(value, entitySet.next, metadata);
 	if (!(entitySet && predicate)){
 		entity = NameOrIdentifier.singletonEntity(value, index);
 		if (!entity) return;
@@ -724,7 +732,7 @@ export function rootExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 	}
 
 	index = (predicate || entity).next;
-	var nav = singleNavigationExpr(value, index);
+	var nav = singleNavigationExpr(value, index, metadata);
 	if (nav) index = nav.next;
 
 	return Lexer.tokenize(value, start, index, {
