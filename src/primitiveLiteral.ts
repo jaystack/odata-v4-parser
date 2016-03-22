@@ -22,7 +22,9 @@ export function guidValue(value, index) {
 }
 export function sbyteValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
-	if (Lexer.SIGN(value[index])) index++;
+	var sign = Lexer.SIGN(value, index);
+	if (sign) index = sign;
+
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 3);
 	if (next) {
 		if (Lexer.DIGIT(value[next])) return;
@@ -40,7 +42,9 @@ export function byteValue(value:number[] | Uint8Array, index:number):Lexer.Token
 }
 export function int16Value(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
-	if (Lexer.SIGN(value[index])) index++;
+	var sign = Lexer.SIGN(value, index);
+	if (sign) index = sign;
+
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 5);
 	if (next) {
 		if (Lexer.DIGIT(value[next])) return;
@@ -50,7 +54,9 @@ export function int16Value(value:number[] | Uint8Array, index:number):Lexer.Toke
 }
 export function int32Value(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
-	if (Lexer.SIGN(value[index])) index++;
+	var sign = Lexer.SIGN(value, index);
+	if (sign) index = sign;
+
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 10);
 	if (next) {
 		if (Lexer.DIGIT(value[next])) return;
@@ -60,7 +66,9 @@ export function int32Value(value:number[] | Uint8Array, index:number):Lexer.Toke
 }
 export function int64Value(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
-	if (Lexer.SIGN(value[index])) index++;
+	var sign = Lexer.SIGN(value, index);
+	if (sign) index = sign;
+
 	var next = Utils.required(value, index, Lexer.DIGIT, 1, 19);
 	if (next) {
 		if (Lexer.DIGIT(value[next])) return;
@@ -70,7 +78,9 @@ export function int64Value(value:number[] | Uint8Array, index:number):Lexer.Toke
 }
 export function decimalValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
-	if (Lexer.SIGN(value[index])) index++;
+	var sign = Lexer.SIGN(value, index);
+	if (sign) index = sign;
+
 	var intNext = Utils.required(value, index, Lexer.DIGIT, 1);
 	if (!intNext) return;
 
@@ -94,7 +104,9 @@ export function doubleValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 	} else {
 		//TODO: use decimalValue function
 		//var token = decimalValue(value, index);
-		if (Lexer.SIGN(value[index])) index++;
+		var sign = Lexer.SIGN(value, index);
+		if (sign) index = sign;
+
 		var intNext = Utils.required(value, index, Lexer.DIGIT, 1);
 		if (!intNext) return;
 
@@ -106,7 +118,9 @@ export function doubleValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 
 		if (value[decimalNext] == 0x65) {
 			var next = decimalNext + 1;
-			if (Lexer.SIGN(value[next])) next++;
+			var sign = Lexer.SIGN(value, next);
+			if (sign) next = sign;
+
 			var digitNext = Utils.required(value, next, Lexer.DIGIT, 1);
 			if (digitNext) {
 				end = digitNext;
@@ -125,32 +139,31 @@ export function singleValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 }
 export function stringValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
-	if (Lexer.SQUOTE(value[start])) {
-		index++;
-		var val = [];
+	var squote = Lexer.SQUOTE(value, start);
+	if (squote) {
+		index = squote;
 		while (index < value.length) {
-			var ch = value[index];
-			var nextIndex = index + 1;
-			var next = value[nextIndex];
-
-			if (Lexer.SQUOTE(ch)) {
-				index++;
-				if (!Lexer.SQUOTE(next)) {
-					if (Lexer.pcharNoSQUOTE(value, next) > index && !Lexer.CLOSE(value[index]) && Lexer.RWS(value, index) == index) return;
+			squote = Lexer.SQUOTE(value, index);
+			if (squote) {
+				index = squote;
+				squote = Lexer.SQUOTE(value, index);
+				if (!squote) {
+					var close = Lexer.CLOSE(value, index);
+					if (Lexer.pcharNoSQUOTE(value, index) > index && !close && Lexer.RWS(value, index) == index) return;
 					break;
 				} else {
-					ch = 0x27;
-					nextIndex++;
+					index = squote;
 				}
 			} else {
-				nextIndex = Math.max(Lexer.RWS(value, index), Lexer.pcharNoSQUOTE(value, index));
+				var nextIndex = Math.max(Lexer.RWS(value, index), Lexer.pcharNoSQUOTE(value, index));
 				if (nextIndex == index) return;
+				index = nextIndex;
 			}
-
-			index = nextIndex;
-			val.push(ch);
 		}
-		if (!Lexer.SQUOTE(value[index - 1])) return;
+
+		squote = Lexer.SQUOTE(value, index - 1) || Lexer.SQUOTE(value, index - 3);
+		if (!squote) return;
+		index = squote;
 
 		return Lexer.tokenize(value, start, index, 'Edm.String', Lexer.TokenType.Literal);
 	}
@@ -159,9 +172,14 @@ export function durationValue(value:number[] | Uint8Array, index:number):Lexer.T
 	if (!Utils.equals(value, index, 'duration')) return;
 	var start = index;
 	index += 8;
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
-	if (Lexer.SIGN(value[index])) index++;
+
+	var squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
+
+	var sign = Lexer.SIGN(value, index);
+	if (sign) index = sign;
+
 	if (value[index] != 0x50) return;
 	index++;
 	var dayNext = Utils.required(value, index, Lexer.DIGIT, 1);
@@ -172,7 +190,8 @@ export function durationValue(value:number[] | Uint8Array, index:number):Lexer.T
 	if (value[index] == 0x54) {
 		index++;
 		var parseTimeFn = function () {
-			if (Lexer.SQUOTE(value[index])) return index;
+			var squote = Lexer.SQUOTE(value, index);
+			if (squote) return index;
 			var digitNext = Utils.required(value, index, Lexer.DIGIT, 1);
 			if (digitNext == index) return;
 			index = digitNext;
@@ -198,8 +217,10 @@ export function durationValue(value:number[] | Uint8Array, index:number):Lexer.T
 		var next = parseTimeFn();
 		if (!next) return;
 	}
-	if (!Lexer.SQUOTE(value[end])) return;
-	end++;
+
+	squote = Lexer.SQUOTE(value, end);
+	if (!squote) return;
+	end = squote;
 
 	return Lexer.tokenize(value, start, end, 'Edm.Duration', Lexer.TokenType.Literal);
 }
@@ -207,11 +228,13 @@ export function binaryValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 	var start = index;
 	if (!Utils.equals(value, index, 'binary')) return;
 	index += 6;
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
+
+	var squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
 
 	var valStart = index;
-	while (index < value.length && !Lexer.SQUOTE(value[index])) {
+	while (index < value.length && !(squote = Lexer.SQUOTE(value, index))) {
 		var end = Math.max(Lexer.base64b16(value, index), Lexer.base64b8(value, index));
 		if (end > index) index = end;
 		else if (Lexer.base64char(value[index]) &&
@@ -220,7 +243,7 @@ export function binaryValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 			Lexer.base64char(value[index + 3])) index += 4;
 		else index++;
 	}
-	index++;
+	index = squote;
 
 	return Lexer.tokenize(value, start, index, 'Edm.Binary' /*new Edm.Binary(stringify(value, valStart, index - 1))*/, Lexer.TokenType.Literal);
 }
@@ -242,14 +265,17 @@ export function dateTimeOffsetValue(value:number[] | Uint8Array, index:number):L
 	var dayNext = Lexer.day(value, monthNext + 1);
 	if (dayNext == monthNext + 1 || value[dayNext] != 0x54) return;
 	var hourNext = Lexer.hour(value, dayNext + 1);
-	if (hourNext == dayNext + 1 || !Lexer.COLON(value[hourNext])) return;
+
+	var colon = Lexer.COLON(value, hourNext);
+	if (hourNext == colon || !colon) return;
 	var minuteNext = Lexer.minute(value, hourNext + 1);
 	if (minuteNext == hourNext + 1) return;
 
 	var end = minuteNext;
-	if (Lexer.COLON(value[minuteNext])) {
-		var secondNext = Lexer.second(value, minuteNext + 1);
-		if (secondNext == minuteNext + 1) return;
+	var colon = Lexer.COLON(value, minuteNext);
+	if (colon) {
+		var secondNext = Lexer.second(value, colon);
+		if (secondNext == colon) return;
 		if (value[secondNext] == 0x2e) {
 			var fractionalSecondsNext = Lexer.fractionalSeconds(value, secondNext + 1);
 			if (fractionalSecondsNext == secondNext + 1) return;
@@ -257,27 +283,32 @@ export function dateTimeOffsetValue(value:number[] | Uint8Array, index:number):L
 		} else end = secondNext;
 	}
 
+	var sign = Lexer.SIGN(value, end);
 	if (value[end] == 0x5a) {
 		end++;
-	} else if (Lexer.SIGN(value[end])) {
-		var zHourNext = Lexer.hour(value, end + 1);
-		if (zHourNext == end + 1 || !Lexer.COLON(zHourNext)) return;
-		var zMinuteNext = Lexer.minute(value, zHourNext + 1);
-		if (zMinuteNext == zHourNext + 1) return;
+	} else if (sign) {
+		var zHourNext = Lexer.hour(value, sign);
+		var colon = Lexer.COLON(value, zHourNext);
+		if (zHourNext == sign || !colon) return;
+		var zMinuteNext = Lexer.minute(value, colon);
+		if (zMinuteNext == colon) return;
+		end = zMinuteNext;
 	} else return;
 
 	return Lexer.tokenize(value, index, end, 'Edm.DateTimeOffset', Lexer.TokenType.Literal);
 }
 export function timeOfDayValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var hourNext = Lexer.hour(value, index);
-	if (hourNext == index || !Lexer.COLON(value[hourNext])) return;
-	var minuteNext = Lexer.minute(value, hourNext + 1);
-	if (minuteNext == hourNext + 1) return;
+	var colon = Lexer.COLON(value, hourNext);
+	if (hourNext == index || !colon) return;
+	var minuteNext = Lexer.minute(value, colon);
+	if (minuteNext == colon) return;
 
 	var end = minuteNext;
-	if (Lexer.COLON(value[minuteNext])) {
-		var secondNext = Lexer.second(value, minuteNext + 1);
-		if (secondNext == minuteNext + 1) return;
+	colon = Lexer.COLON(value, minuteNext);
+	if (colon) {
+		var secondNext = Lexer.second(value, colon);
+		if (secondNext == colon) return;
 		if (value[secondNext] == 0x2e) {
 			var fractionalSecondsNext = Lexer.fractionalSeconds(value, secondNext + 1);
 			if (fractionalSecondsNext == secondNext + 1) return;
@@ -301,16 +332,18 @@ export function positionLiteral(value:number[] | Uint8Array, index:number):Lexer
 	return Lexer.tokenize(value, index, latitude.next, { longitude, latitude }, Lexer.TokenType.Literal);
 }
 export function pointData(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Lexer.OPEN(value[index])) return;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
 	var start = index;
-	index++;
+	index = open;
 
 	var position = positionLiteral(value, index);
 	if (!position) return;
 	index = position.next;
 
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index)
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, position, Lexer.TokenType.Literal);
 }
@@ -331,15 +364,17 @@ export function sridLiteral(value:number[] | Uint8Array, index:number):Lexer.Tok
 	var start = index;
 	index += 4;
 
-	if (!Lexer.EQ(value[index])) return;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
 	index++;
 
 	var digit = Utils.required(value, index, Lexer.DIGIT, 1, 5);
 	if (!digit) return;
 	index = digit;
 
-	if (!Lexer.SEMI(value[index])) return;
-	index++;
+	var semi = Lexer.SEMI(value, index);
+	if (!semi) return;
+	index = semi;
 
 	return Lexer.tokenize(value, start, index, 'SRID', Lexer.TokenType.Literal);
 }
@@ -399,12 +434,15 @@ export function multiGeoLiteralFactory(value:number[] | Uint8Array, index:number
 	while (geo){
 		items.push(geo);
 
-		if (Lexer.CLOSE(value[index])){
-			index++;
+		var close = Lexer.CLOSE(value, index);
+		if (close){
+			index = close;
 			break;
 		}
-		if (!Lexer.COMMA(value[index])) return;
-		index++;
+
+		var comma = Lexer.COMMA(value, index);
+		if (!comma) return;
+		index = comma;
 
 		geo = itemLiteral(value, index);
 		if (!geo) return;
@@ -419,7 +457,8 @@ export function multiGeoLiteralOptionalFactory(value:number[] | Uint8Array, inde
 	index += prefix.length + 1;
 
 	var items = [];
-	if (!Lexer.CLOSE(value[index])){
+	var close = Lexer.CLOSE(value, index);
+	if (!close){
 		var geo = itemLiteral(value, index);
 		if (!geo) return;
 		index = geo.next;
@@ -427,12 +466,15 @@ export function multiGeoLiteralOptionalFactory(value:number[] | Uint8Array, inde
 		while (geo){
 			items.push(geo);
 
-			if (Lexer.CLOSE(value[index])){
-				index++;
+			close = Lexer.CLOSE(value, index);
+			if (close){
+				index = close;
 				break;
 			}
-			if (!Lexer.COMMA(value[index])) return;
-			index++;
+
+			var comma = Lexer.COMMA(value, index);
+			if (!comma) return;
+			index = comma;
 
 			geo = itemLiteral(value, index);
 			if (!geo) return;
@@ -488,15 +530,17 @@ export function geographyCollection(value:number[] | Uint8Array, index:number):L
 	var start = index;
 	index = prefix;
 
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
+	var squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
 
 	var point = fullCollectionLiteral(value, index);
 	if (!point) return;
 	index = point.next;
 
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
+	squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
 
 	return Lexer.tokenize(value, start, index, 'Edm.GeographyCollection', Lexer.TokenType.Literal);
 }
@@ -545,15 +589,17 @@ export function geoLiteralFactory(value:number[] | Uint8Array, index:number, typ
 	var start = index;
 	index = prefixNext;
 
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
+	var squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
 
 	var data = literal(value, index);
 	if (!data) return;
 	index = data.next;
 
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
+	squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
 
 	return Lexer.tokenize(value, start, index, type, Lexer.TokenType.Literal);
 }

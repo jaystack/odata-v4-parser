@@ -50,8 +50,9 @@ export function id(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	index += 3;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	//TODO: navigation
 }
@@ -61,8 +62,9 @@ export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	index += 7;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var expr = Expressions.boolCommonExpr(value, index);
 	if (!expr) return;
@@ -76,8 +78,9 @@ export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	index += 8;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var items = [];
 	var token = orderbyItem(value, index);
@@ -87,8 +90,9 @@ export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
 	while (token){
 		items.push(token);
 
-		if (Lexer.COMMA(value[index])){
-			index++;
+		var comma = Lexer.COMMA(value, index);
+		if (comma){
+			index = comma;
 			var token = orderbyItem(value, index);
 			if (!token) return;
 			index = token.next;
@@ -123,8 +127,9 @@ export function skip(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	index += 5;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var token = PrimitiveLiteral.int32Value(value, index);
 	if (!token) return;
@@ -138,8 +143,9 @@ export function top(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	index += 4;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var token = PrimitiveLiteral.int32Value(value, index);
 	if (!token) return;
@@ -153,8 +159,9 @@ export function format(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	index += 7;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var format;
 	if (Utils.equals(value, index, 'atom')){
@@ -176,8 +183,9 @@ export function inlinecount(value:number[] | Uint8Array, index:number):Lexer.Tok
 	var start = index;
 	index += 6;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var token = PrimitiveLiteral.booleanValue(value, index);
 	if (!token) return;
@@ -193,8 +201,9 @@ export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
 	index += 7;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var items = [];
 	var token = selectItem(value, index);
@@ -203,8 +212,9 @@ export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
 		items.push(token);
 		index = token.next;
 
-		if (Lexer.COMMA(value[index])){
-			index++;
+		var comma = Lexer.COMMA(value, index);
+		if (comma){
+			index = comma;
 			token = selectItem(value, index);
 			if (!token) return;
 		}else break;
@@ -217,12 +227,13 @@ export function selectItem(value:number[] | Uint8Array, index:number):Lexer.Toke
 	var start = index;
 	var item;
 	var op = allOperationsInSchema(value, index);
+	var star = Lexer.STAR(value, index);
 	if (op > index){
 		item = { namespace: Utils.stringify(value, index, op - 2), value: '*' };
 		index = op;
-	}else if (Lexer.STAR(value[index])){
+	}else if (star){
 		item = { value: '*' };
-		index++;
+		index = star;
 	}else{
 		var name = NameOrIdentifier.qualifiedEntityTypeName(value, index) ||
 			NameOrIdentifier.qualifiedComplexTypeName(value, index);
@@ -247,7 +258,8 @@ export function selectItem(value:number[] | Uint8Array, index:number):Lexer.Toke
 
 export function allOperationsInSchema(value:number[] | Uint8Array, index:number):number {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
-	if (namespaceNext > index && value[namespaceNext] == 0x2e && Lexer.STAR(value[namespaceNext + 1])) return namespaceNext + 2;
+	var star = Lexer.STAR(value, namespaceNext + 1);
+	if (namespaceNext > index && value[namespaceNext] == 0x2e && star) return star;
 	return index;
 }
 
@@ -317,8 +329,9 @@ export function qualifiedFunctionName(value:number[] | Uint8Array, index:number)
 	index = fn.next;
 	var tokenValue:any = { name: fn };
 
-	if (Lexer.OPEN(value[index])){
-		index++;
+	var open = Lexer.OPEN(value, index);
+	if (open){
+		index = open;
 		tokenValue.parameters = [];
 		var param = Expressions.parameterName(value, index);
 		if (!param) return;
@@ -327,15 +340,17 @@ export function qualifiedFunctionName(value:number[] | Uint8Array, index:number)
 			index = param.next;
 			tokenValue.parameters.push(param);
 
-			if (Lexer.COMMA(value[index])){
-				index++;
+			var comma = Lexer.COMMA(value, index);
+			if (comma){
+				index = comma;
 				var param = Expressions.parameterName(value, index);
 				if (!param) return;
 			}else break;
 		}
 
-		if (!Lexer.CLOSE(value[index])) return;
-		index++;
+		var close = Lexer.CLOSE(value, index);
+		if (!close) return;
+		index = close;
 	}
 
 	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.Function);
@@ -349,8 +364,9 @@ export function aliasAndValue(value:number[] | Uint8Array, index:number):Lexer.T
 	var start = index;
 	index = alias.next;
 
-	if (!Lexer.EQ(value[index])) return;
-	index++;
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
 
 	var paramValue = Expressions.parameterValue(value, index);
 	if (!paramValue) return;

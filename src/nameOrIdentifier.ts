@@ -8,15 +8,17 @@ export function enumeration(value:number[] | Uint8Array, index:number):Lexer.Tok
 	var start = index;
 	index = type.next;
 
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
+	var squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
 
 	var enumVal = enumValue(value, index);
 	if (!enumVal) return;
 	index = enumVal.next;
 
-	if (!Lexer.SQUOTE(value[index])) return;
-	index++;
+	squote = Lexer.SQUOTE(value, index);
+	if (!squote) return;
+	index = squote;
 
 	return Lexer.tokenize(value, start, index, {
 		name: type,
@@ -32,8 +34,9 @@ export function enumValue(value:number[] | Uint8Array, index:number):Lexer.Token
 	while (val){
 		arr.push(val);
 		index = val.next;
-		if (Lexer.COMMA(value[val.next])){
-			index++;
+		var comma = Lexer.COMMA(value, val.next);
+		if (comma){
+			index = comma;
 			val = singleEnumValue(value, index);
 		}else break;
 	}
@@ -62,15 +65,19 @@ export function qualifiedTypeName(value:number[] | Uint8Array, index:number):Lex
 	if (Utils.equals(value, index, 'Collection')) {
 		var start = index;
 		index += 10;
-		if (!Lexer.SQUOTE(value[index])) return;
-		index++;
+
+		var squote = Lexer.SQUOTE(value, index);
+		if (!squote) return;
+		index = squote;
 
 		var token = singleQualifiedTypeName(value, index);
 		if (!token) return;
 		else index = token.next;
 
-		if (!Lexer.SQUOTE(value[index])) return;
-		index++;
+		squote = Lexer.SQUOTE(value, index);
+		if (!squote) return;
+		index = squote;
+
 		token.position = start;
 		token.next = index;
 		token.raw = Utils.stringify(value, token.position, token.next);

@@ -178,8 +178,9 @@ export function annotationInUri(value:number[] | Uint8Array, index:number):Lexer
 	var start = index;
 	index = mark;
 
-	if (!Lexer.AT(value[index])) return;
-	index++;
+	var at = Lexer.AT(value, index);
+	if (!at) return;
+	index = at;
 
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index) return;

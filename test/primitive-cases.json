@@ -236,7 +236,7 @@
     "-Name": "DateTimeOffset: CEST",
     "-Rule": "dateTimeOffsetValue",
     "Input": "2012-09-03T14:53+02:00",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.DateTimeOffset"
@@ -511,7 +511,7 @@
     "-Name": "String",
     "-Rule": "string",
     "Input": "%27O'%27Neil'",
-    "result_error": {
+    "result": {
       "position": 0,
       "type": "Literal",
       "value": "Edm.String"

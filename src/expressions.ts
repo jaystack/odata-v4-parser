@@ -154,28 +154,32 @@ export function notExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 };
 
 export function boolParenExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Lexer.OPEN(value[index])) return;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
 	var start = index;
-	index++;
+	index = open;
 	index = Lexer.BWS(value, index);
 	var token = boolCommonExpr(value, index);
 	if (!token) return;
 	index = Lexer.BWS(value, token.next);
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.BoolParenExpression);
 };
 export function parenExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Lexer.OPEN(value[index])) return;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
 	var start = index;
-	index++;
+	index = open;
 	index = Lexer.BWS(value, index);
 	var token = commonExpr(value, index);
 	if (!token) return;
 	index = Lexer.BWS(value, token.next);
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, token.value, Lexer.TokenType.ParenExpression);
 };
@@ -221,8 +225,9 @@ export function methodCallExprFactory(value:number[] | Uint8Array, index:number,
 	if (!Utils.equals(value, index, method)) return;
 	var start = index;
 	index += method.length;
-	if (!Lexer.OPEN(value[index])) return;
-	index++;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
+	index = open;
 	index = Lexer.BWS(value, index);
 	var parameters;
 	if (min > 0) {
@@ -234,16 +239,18 @@ export function methodCallExprFactory(value:number[] | Uint8Array, index:number,
 				parameters.push(expr.value);
 				index = expr.next;
 				index = Lexer.BWS(value, index);
-				if (parameters.length < min && !Lexer.COMMA(value[index])) return;
-				if (Lexer.COMMA(value[index])) index++;
+				var comma = Lexer.COMMA(value, index);
+				if (parameters.length < min && !comma) return;
+				if (comma) index = comma;
 				else break;
 				index = Lexer.BWS(value, index);
 			} else break;
 		}
 	}
 	index = Lexer.BWS(value, index);
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, {
 		method: method,
@@ -289,23 +296,26 @@ export function isofExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 	if (!Utils.equals(value, index, 'isof')) return;
 	var start = index;
 	index += 4;
-	if (!Lexer.OPEN(value[index])) return;
-	index++;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
+	index = open;
 	index = Lexer.BWS(value, index);
 	var expr = commonExpr(value, index);
 	if (expr) {
 		index = expr.next;
 		index = Lexer.BWS(value, index);
-		if (!Lexer.COMMA(value[index])) return;
-		index++;
+		var comma = Lexer.COMMA(value, index);
+		if (!comma) return;
+		index = comma;
 		index = Lexer.BWS(value, index);
 	}
 	var typeName = NameOrIdentifier.qualifiedTypeName(value, index);
 	if (!typeName) return;
 	index = typeName.next;
 	index = Lexer.BWS(value, index);
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, {
 		target: expr,
@@ -316,23 +326,26 @@ export function castExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 	if (!Utils.equals(value, index, 'cast')) return;
 	var start = index;
 	index += 4;
-	if (!Lexer.OPEN(value[index])) return;
-	index++;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
+	index = open;
 	index = Lexer.BWS(value, index);
 	var expr = commonExpr(value, index);
 	if (expr) {
 		index = expr.next;
 		index = Lexer.BWS(value, index);
-		if (!Lexer.COMMA(value[index])) return;
-		index++;
+		var comma = Lexer.COMMA(value, index);
+		if (!comma) return;
+		index = comma;
 		index = Lexer.BWS(value, index);
 	}
 	var typeName = NameOrIdentifier.qualifiedTypeName(value, index);
 	if (!typeName) return;
 	index = typeName.next;
 	index = Lexer.BWS(value, index);
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, {
 		target: expr,
@@ -437,24 +450,27 @@ export function anyExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, 'any')) return;
 	var start = index;
 	index += 3;
-	if (!Lexer.OPEN(value[index])) return;
-	index++
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
+	index = open;
 	index = Lexer.BWS(value, index);
 	var variable = lambdaVariableExpr(value, index);
 	var predicate;
 	if (variable){
 		index = variable.next;
 		index = Lexer.BWS(value, index);
-		if (!Lexer.COLON(value[index])) return;
-		index++;
+		var colon = Lexer.COLON(value, index);
+		if (!colon) return;
+		index = colon;
 		index = Lexer.BWS(value, index);
 		predicate = lambdaPredicateExpr(value, index);
 		if (!predicate) return;
 		index = predicate.next;
 	}
 	index = Lexer.BWS(value, index);
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, {
 		variable: variable,
@@ -465,22 +481,33 @@ export function allExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, 'all')) return;
 	var start = index;
 	index += 3;
-	if (!Lexer.OPEN(value[index])) return;
-	index++
+
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
+	index = open;
+
 	index = Lexer.BWS(value, index);
 	var variable = lambdaVariableExpr(value, index);
 	if (!variable) return;
 	index = variable.next;
+
 	index = Lexer.BWS(value, index);
-	if (!Lexer.COLON(value[index])) return;
-	index++;
+
+	var colon = Lexer.COLON(value, index);
+	if (!colon) return;
+	index = colon;
+
 	index = Lexer.BWS(value, index);
+
 	var predicate = lambdaPredicateExpr(value, index);
 	if (!predicate) return;
 	index = predicate.next;
+
 	index = Lexer.BWS(value, index);
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, {
 		variable: variable,
@@ -520,19 +547,24 @@ export function keyPredicate(value:number[] | Uint8Array, index:number):Lexer.To
 		compoundKey(value, index);
 }
 export function simpleKey(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Lexer.OPEN(value[index])) return;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
 	var start = index;
-	index++;
+	index = open;
 
 	var key = keyPropertyValue(value, index);
-	if (!key || !Lexer.CLOSE(value[key.next])) return;
+	if (!key) return;
 
-	return Lexer.tokenize(value, start, key.next + 1, key, Lexer.TokenType.SimpleKey);
+	var close = Lexer.CLOSE(value, key.next);
+	if (!close) return;
+
+	return Lexer.tokenize(value, start, close, key, Lexer.TokenType.SimpleKey);
 }
 export function compoundKey(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Lexer.OPEN(value[index])) return;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
 	var start = index;
-	index++;
+	index = open;
 
 	var pair = keyValuePair(value, index);
 	if (!pair) return;
@@ -540,13 +572,15 @@ export function compoundKey(value:number[] | Uint8Array, index:number):Lexer.Tok
 	var keys = [];
 	while (pair){
 		keys.push(pair);
-		if (Lexer.COMMA(value[pair.next])) pair = keyValuePair(value, pair.next + 1);
+		var comma = Lexer.COMMA(value, pair.next);
+		if (comma) pair = keyValuePair(value, comma);
 		else pair = null;
 	}
 
 	index = keys[keys.length - 1].next;
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, keys, Lexer.TokenType.CompoundKey);
 }
@@ -554,9 +588,10 @@ export function keyValuePair(value:number[] | Uint8Array, index:number):Lexer.To
 	var prop = NameOrIdentifier.primitiveKeyProperty(value, index) ||
 		keyPropertyAlias(value, index);
 
-	if (!prop || !Lexer.EQ(value[prop.next])) return;
+	var eq = Lexer.EQ(value, prop.next);
+	if (!prop || !eq) return;
 
-	var val = keyPropertyValue(value, prop.next + 1);
+	var val = keyPropertyValue(value, eq);
 	if (val) return Lexer.tokenize(value, index, val.next, {
 		key: prop,
 		value: val
@@ -643,16 +678,18 @@ export function functionExpr(value:number[] | Uint8Array, index:number):Lexer.To
 export function boundFunctionExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return functionExpr(value, index); }
 
 export function functionExprParameters(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Lexer.OPEN(value[index])) return;
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
 	var start = index;
-	index++;
+	index = open;
 
 	var params = [];
 	var expr = functionExprParameter(value, index);
 	while (expr) {
 		params.push(expr);
-		if (Lexer.COMMA(expr.next)) {
-			index = expr.next + 1;
+		var comma = Lexer.COMMA(value, expr.next);
+		if (comma) {
+			index = comma;
 			expr = functionExprParameter(value, index);
 			if (!expr) return;
 		} else {
@@ -661,17 +698,19 @@ export function functionExprParameters(value:number[] | Uint8Array, index:number
 		}
 	}
 
-	if (!Lexer.CLOSE(value[index])) return;
-	index++;
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
 
 	return Lexer.tokenize(value, start, index, params, Lexer.TokenType.FunctionExpressionParameters);
 }
 export function functionExprParameter(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var name = parameterName(value, index);
-	if (!name || !Lexer.EQ(value[name.next])) return;
+	var eq = Lexer.EQ(value, name.next);
+	if (!name || !eq) return;
 
 	var start = index;
-	index = name.next + 1;
+	index = eq;
 
 	var param = parameterAlias(value, index) ||
 		parameterValue(value, index);
@@ -684,8 +723,9 @@ export function functionExprParameter(value:number[] | Uint8Array, index:number)
 }
 export function parameterName(value:number[] | Uint8Array, index:number):Lexer.Token { return NameOrIdentifier.odataIdentifier(value, index, Lexer.TokenType.ParameterName); }
 export function parameterAlias(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Lexer.AT(value[index])) return;
-	var id = NameOrIdentifier.odataIdentifier(value, index + 1);
+	var at = Lexer.AT(value, index);
+	if (!at) return;
+	var id = NameOrIdentifier.odataIdentifier(value, at);
 	if (id) return Lexer.tokenize(value, index, id.next, id.value, Lexer.TokenType.ParameterAlias);
 }
 export function parameterValue(value:number[] | Uint8Array, index:number):Lexer.Token {

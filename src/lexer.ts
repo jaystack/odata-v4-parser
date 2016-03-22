@@ -158,10 +158,17 @@ export function HTAB(value:number):boolean { return value == 0x09; }
 export function VCHAR(value:number):boolean { return value >= 0x21 && value <= 0x7e; }
 
 // punctuation
+function whitespaceLength(value, index){
+	if (Utils.equals(value, index, '%20') || Utils.equals(value, index, '%09')) return 3;
+	else if (SP(value[index]) || HTAB(value[index]) || value[index] == 0x20 || value[index] == 0x09) return 1;
+}
+
 export function OWS(value:number[] | Uint8Array, index:number):number {
 	index = index || 0;
-	while (SP(value[index]) || HTAB(value[index]) || value[index] == 0x20 || value[index] == 0x09) {
-		index++;
+	var inc = whitespaceLength(value, index);
+	while (inc) {
+		index += inc;
+		inc = whitespaceLength(value, index);
 	}
 	return index;
 }
@@ -172,22 +179,57 @@ export function BWS(value:number[] | Uint8Array, index:number):number {
 	return OWS(value, index);
 }
 
-export function AT(value:number):boolean { return value == 0x40; }
-export function COLON(value:number):boolean { return value == 0x3a; }
-export function COMMA(value:number):boolean { return value == 0x2c; }
-export function EQ(value:number):boolean { return value == 0x3d; }
-export function SIGN(value:number):boolean { return value == 0x2b || value == 0x2d; }
-export function SEMI(value:number):boolean { return value == 0x3b; }
-export function STAR(value:number):boolean { return value == 0x2a; }
-export function SQUOTE(value:number):boolean { return value == 0x27; }
-export function OPEN(value:number):boolean { return value == 0x28; }
-export function CLOSE(value:number):boolean { return value == 0x29; }
+export function AT(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x40) return index + 1;
+	else if (Utils.equals(value, index, '%40')) return index + 3;
+}
+export function COLON(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x3a) return index + 1;
+	else if (Utils.equals(value, index, '%3A')) return index + 3;
+}
+export function COMMA(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x2c) return index + 1;
+	else if (Utils.equals(value, index, '%2C')) return index + 3;
+}
+export function EQ(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x3d) return index + 1;
+}
+export function SIGN(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x2b || value[index] == 0x2d) return index + 1;
+	else if (Utils.equals(value, index, '%2B')) return index + 3;
+}
+export function SEMI(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x3b) return index + 1;
+	else if (Utils.equals(value, index, '%3B')) return index + 3;
+}
+export function STAR(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x2a) return index + 1;
+	else if (Utils.equals(value, index, '%2A')) return index + 3;
+}
+export function SQUOTE(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x27) return index + 1;
+	else if (Utils.equals(value, index, '%27')) return index + 3;
+}
+export function OPEN(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x28) return index + 1;
+	else if (Utils.equals(value, index, '%28')) return index + 3;
+}
+export function CLOSE(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x29) return index + 1;
+	else if (Utils.equals(value, index, '%29')) return index + 3;
+}
 // unreserved ALPHA / DIGIT / "-" / "." / "_" / "~"
 export function unreserved(value:number):boolean { return ALPHA(value) || DIGIT(value) || value == 0x2d || value == 0x2e || value == 0x5f || value == 0x7e; }
 // other-delims "!" /                   "(" / ")" / "*" / "+" / "," / ";"
-export function otherDelims(value:number):boolean { return value == 0x21 || OPEN(value) || CLOSE(value) || STAR(value) || value == 0x2b || COMMA(value) || SEMI(value); }
+export function otherDelims(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x21 || value[index] == 0x2b) return index + 1;
+	else return OPEN(value, index) || CLOSE(value, index) || STAR(value, index) || COMMA(value, index) || SEMI(value, index);
+}
 // sub-delims     =       "$" / "&" / "'" /                                     "=" / other-delims
-export function subDelims(value:number):boolean { return value == 0x24 || value == 0x26 || SQUOTE(value) || EQ(value) || otherDelims(value); }
+export function subDelims(value:number[] | Uint8Array, index:number):number {
+	if (value[index] == 0x24 || value[index] == 0x26) return index + 1;
+	else return SQUOTE(value, index) || EQ(value, index) || otherDelims(value, index);
+}
 export function pctEncoded(value:number[] | Uint8Array, index:number):number {
 	if (value[index] != 0x25 || !HEXDIG(value[index + 1]) || !HEXDIG(value[index + 2])) return index;
 	return index + 3;
@@ -199,16 +241,12 @@ export function pctEncodedNoSQUOTE(value:number[] | Uint8Array, index:number):nu
 	return pctEncoded(value, index);
 }
 export function pchar(value:number[] | Uint8Array, index:number):number {
-	if (unreserved(value[index]) || subDelims(value[index]) || COLON(value[index]) || AT(value[index])) return index + 1;
-	var encoded = pctEncoded(value, index);
-	if (encoded > index) return encoded;
-	return index;
+	if (unreserved(value[index])) return index + 1;
+	else return subDelims(value, index) || COLON(value, index) || AT(value, index) || pctEncoded(value, index) || index;
 }
 export function pcharNoSQUOTE(value:number[] | Uint8Array, index:number):number {
-	if (unreserved(value[index]) || otherDelims(value[index]) || value[index] == 0x24 || value[index] == 0x26 || EQ(value[index]) || COLON(value[index]) || AT(value[index])) return index + 1;
-	var encoded = pctEncodedNoSQUOTE(value, index);
-	if (encoded > index) return encoded;
-	return index;
+	if (unreserved(value[index]) || value[index] == 0x24 || value[index] == 0x26) return index + 1;
+	else return otherDelims(value, index) || EQ(value, index) || COLON(value, index) || AT(value, index) || pctEncodedNoSQUOTE(value, index) || index;
 }
 //export function pchar(value:number):boolean { return unreserved(value) || otherDelims(value) || value == 0x24 || value == 0x26 || EQ(value) || COLON(value) || AT(value); }
 export function base64char(value:number):boolean { return ALPHA(value) || DIGIT(value) || value == 0x2d || value == 0x5f; }
@@ -340,8 +378,9 @@ export function nameSeparator(value:number[] | Uint8Array, index:number):number 
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
-	if (!COLON(value[index])) return start;
-	index++;
+	var colon = COLON(value, index);
+	if (!colon) return start;
+	index = colon;
 	bws = BWS(value, index);
 	return bws;
 }
@@ -349,8 +388,9 @@ export function valueSeparator(value:number[] | Uint8Array, index:number):number
 	var bws = BWS(value, index);
 	var start = index;
 	index = bws;
-	if (!COMMA(value[index])) return start;
-	index++;
+	var comma = COMMA(value, index);
+	if (!comma) return start;
+	index = comma;
 	bws = BWS(value, index);
 	return bws;
 }
