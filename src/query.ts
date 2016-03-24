@@ -235,6 +235,7 @@ export function selectItem(value:number[] | Uint8Array, index:number):Lexer.Toke
 		item = { value: '*' };
 		index = star;
 	}else{
+		item = {};
 		var name = NameOrIdentifier.qualifiedEntityTypeName(value, index) ||
 			NameOrIdentifier.qualifiedComplexTypeName(value, index);
 
@@ -276,6 +277,7 @@ export function selectProperty(value:number[] | Uint8Array, index:number):Lexer.
 		if (value[index] == 0x2f){
 			index++;
 			var prop = selectProperty(value, index);
+
 			if (!prop) return;
 			var path = Lexer.clone(token);
 			token.next = prop.next;
@@ -290,17 +292,18 @@ export function selectProperty(value:number[] | Uint8Array, index:number):Lexer.
 export function selectPath(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var token = NameOrIdentifier.complexProperty(value, index) ||
 		NameOrIdentifier.complexColProperty(value, index);
+
 	if (!token) return;
 	var start = index;
 	index = token.next;
 
 	var tokenValue:any = token;
 	if (value[index] == 0x2f){
-		index++;
-		var name = NameOrIdentifier.qualifiedComplexTypeName(value, index);
-		if (!name) return;
-		index = name.next;
-		tokenValue = { prop: token, name };
+		var name = NameOrIdentifier.qualifiedComplexTypeName(value, index + 1);
+		if (name){
+			index = name.next;
+			tokenValue = { prop: token, name };
+		}
 	}
 
 	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.SelectPath);
