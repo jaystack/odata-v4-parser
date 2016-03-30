@@ -504,7 +504,7 @@ export function allExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	index = predicate.next;
 
 	index = Lexer.BWS(value, index);
-	
+
 	var close = Lexer.CLOSE(value, index);
 	if (!close) return;
 	index = close;
@@ -528,9 +528,12 @@ export function collectionNavigationExpr(value:number[] | Uint8Array, index:numb
 	predicate = keyPredicate(value, index);
 
 	if (predicate){
+		index = predicate.next;
 		navigation = singleNavigationExpr(value, index);
+		if (navigation) index = navigation.next;
 	}else{
 		path = collectionPathExpr(value, index);
+		if (path) index = path.next;
 	}
 
 	if (index > start){

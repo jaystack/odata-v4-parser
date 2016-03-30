@@ -108,6 +108,26 @@ export declare class TokenType {
     static SelectItem: string;
     static SelectPath: string;
     static AliasAndValue: string;
+    static Crossjoin: string;
+    static AllResource: string;
+    static ActionImportCall: string;
+    static FunctionImportCall: string;
+    static FunctionParameters: string;
+    static FunctionParameter: string;
+    static ResourcePath: string;
+    static CollectionNavigation: string;
+    static CollectionNavigationPath: string;
+    static SingleNavigation: string;
+    static PropertyPath: string;
+    static ComplexPath: string;
+    static BoundOperation: string;
+    static BoundActionCall: string;
+    static BoundEntityFunctionCall: string;
+    static BoundEntityCollectionFunctionCall: string;
+    static BoundComplexFunctionCall: string;
+    static BoundComplexCollectionFunctionCall: string;
+    static BoundPrimitiveFunctionCall: string;
+    static BoundPrimitiveCollectionFunctionCall: string;
 }
 export declare class Token {
     position: number;
