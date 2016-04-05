@@ -128,6 +128,10 @@ export declare class TokenType {
     static BoundComplexCollectionFunctionCall: string;
     static BoundPrimitiveFunctionCall: string;
     static BoundPrimitiveCollectionFunctionCall: string;
+    static ODataUri: string;
+    static Batch: string;
+    static Entity: string;
+    static Metadata: string;
 }
 export declare class Token {
     position: number;

@@ -3,6 +3,8 @@ import * as Lexer from './lexer';
 import * as PrimitiveLiteral from './primitiveLiteral';
 import * as Expressions from './expressions';
 import * as Query from './query';
+import * as ResourcePath from './resourcePath';
+import * as ODataUri from './odataUri';
 
 var parserFactory = function(fn){
 	return function (source, options) {
@@ -27,8 +29,10 @@ var parserFactory = function(fn){
 };
 
 export class Parser{
-	query(source:string, options?:any):Lexer.Token { return parserFactory(Query.queryOptions)(source, options) }
-	filter(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.boolCommonExpr)(source, options) }
-	keys(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.keyPredicate)(source, options) }
-	literal(source:string, options?:any):Lexer.Token { return parserFactory(PrimitiveLiteral.primitiveLiteral)(source, options) }
+	odataUri(source:string, options?:any):Lexer.Token { return parserFactory(ODataUri.odataUri)(source, options); }
+	resourcePath(source:string, options?:any):Lexer.Token { return parserFactory(ResourcePath.resourcePath)(source, options); }
+	query(source:string, options?:any):Lexer.Token { return parserFactory(Query.queryOptions)(source, options); }
+	filter(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.boolCommonExpr)(source, options); }
+	keys(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.keyPredicate)(source, options); }
+	literal(source:string, options?:any):Lexer.Token { return parserFactory(PrimitiveLiteral.primitiveLiteral)(source, options); }
 }

@@ -6,7 +6,12 @@ import * as Expressions from './expressions';
 
 export function resourcePath(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (value[index] == 0x2f) index++;
-	var token = functionImportCall(value, index) ||
+	var token = batch(value, index) ||
+		entity(value, index) ||
+		metadata(value, index);
+	if (token) return token;
+
+	token = functionImportCall(value, index) ||
 		crossjoin(value, index) ||
 		all(value, index) ||
 		NameOrIdentifier.entitySetName(value, index) ||
@@ -24,6 +29,30 @@ export function resourcePath(value:number[] | Uint8Array, index:number):Lexer.To
 	}
 
 	return token;
+}
+
+export function batch(value:number[] | Uint8Array, index:number):Lexer.Token {
+	if (Utils.equals(value, index, '$batch')) return Lexer.tokenize(value, index, index + 6, '$batch', Lexer.TokenType.Batch);
+}
+
+export function entity(value:number[] | Uint8Array, index:number):Lexer.Token {
+	if (Utils.equals(value, index, '$entity')){
+		var start = index;
+		index += 7;
+
+		var name;
+		if (value[index] == 0x2f){
+			name = NameOrIdentifier.qualifiedEntityTypeName(value, index + 1);
+			if (!name) return;
+			index = name.next;
+		}
+
+		return Lexer.tokenize(value, start, index, name || '$entity', Lexer.TokenType.Entity);
+	}
+}
+
+export function metadata(value:number[] | Uint8Array, index:number):Lexer.Token {
+	if (Utils.equals(value, index, '$metadata')) return Lexer.tokenize(value, index, index + 9, '$metadata', Lexer.TokenType.Metadata);
 }
 
 export function collectionNavigation(value:number[] | Uint8Array, index:number):Lexer.Token {

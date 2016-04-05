@@ -130,6 +130,10 @@ export class TokenType{
 	static BoundComplexCollectionFunctionCall = 'BoundComplexCollectionFunctionCall'
 	static BoundPrimitiveFunctionCall = 'BoundPrimitiveFunctionCall'
 	static BoundPrimitiveCollectionFunctionCall = 'BoundPrimitiveCollectionFunctionCall'
+	static ODataUri = 'ODataUri'
+	static Batch = 'Batch'
+	static Entity = 'Entity'
+	static Metadata = 'Metadata'
 }
 
 export class Token{
