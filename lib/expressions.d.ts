@@ -28,6 +28,7 @@ export declare function endsWithMethodCallExpr(value: number[] | Uint8Array, ind
 export declare function lengthMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function indexOfMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function substringMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function substringOfMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function toLowerMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function toUpperMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function trimMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token;

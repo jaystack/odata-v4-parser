@@ -196,6 +196,7 @@ export function methodCallExpr(value:number[] | Uint8Array, index:number):Lexer.
 		toUpperMethodCallExpr(value, index) ||
 		trimMethodCallExpr(value, index) ||
 		substringMethodCallExpr(value, index) ||
+        substringOfMethodCallExpr(value, index) ||
 		concatMethodCallExpr(value, index) ||
 		lengthMethodCallExpr(value, index) ||
 		yearMethodCallExpr(value, index) ||
@@ -263,6 +264,7 @@ export function endsWithMethodCallExpr(value:number[] | Uint8Array, index:number
 export function lengthMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'length', 1); }
 export function indexOfMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'indexof', 2); }
 export function substringMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'substring', 2, 3); }
+export function substringOfMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'substringof', 2); }
 export function toLowerMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'tolower', 1); }
 export function toUpperMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'toupper', 1); }
 export function trimMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'trim', 1); }
