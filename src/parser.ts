@@ -20,8 +20,7 @@ var parserFactory = function(fn){
 				pos = token.next;
 				tokens.push(token);
 			} else {
-				//throw new Error('Fail at ' + pos);
-				pos++;
+				throw new Error('Fail at ' + pos);
 			}
 		}
 		return tokens.length > 1 ? tokens : tokens[0];
