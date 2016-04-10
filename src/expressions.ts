@@ -591,8 +591,9 @@ export function keyValuePair(value:number[] | Uint8Array, index:number):Lexer.To
 	var prop = NameOrIdentifier.primitiveKeyProperty(value, index) ||
 		keyPropertyAlias(value, index);
 
+    if (!prop) return;
 	var eq = Lexer.EQ(value, prop.next);
-	if (!prop || !eq) return;
+	if (!eq) return;
 
 	var val = keyPropertyValue(value, eq);
 	if (val) return Lexer.tokenize(value, index, val.next, {
