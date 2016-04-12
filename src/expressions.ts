@@ -399,11 +399,13 @@ export function memberExpr(value:number[] | Uint8Array, index:number):Lexer.Toke
 		boundFunctionExpr(value, index);
 
 	if (!next) return;
-	return Lexer.tokenize(value, start, next.next, token ? { name: token, value: next } : { value: next }, Lexer.TokenType.MemberExpression);
+	return Lexer.tokenize(value, start, next.next, token ? { name: token, value: next } : next, Lexer.TokenType.MemberExpression);
 }
 export function propertyPathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = NameOrIdentifier.odataIdentifier(value, index);
+	var token:any = NameOrIdentifier.odataIdentifier(value, index);
+    var start = index;
 	if (token){
+        index = token.next;
 		var nav = collectionPathExpr(value, token.next) ||
 			collectionNavigationExpr(value, token.next) ||
 			singleNavigationExpr(value, token.next) ||
@@ -411,17 +413,19 @@ export function propertyPathExpr(value:number[] | Uint8Array, index:number):Lexe
 			singlePathExpr(value, token.next);
 
 		if (nav) {
-			token.value = {
-				current: Lexer.clone(token),
+            index = nav.next;
+			token = {
+                current: Lexer.clone(token),
 				next: nav
-			};
-			token.next = nav.next;
-			token.raw = Utils.stringify(value, token.position, token.next);
+            };
 		}
-	} else token = token || NameOrIdentifier.streamProperty(value, index);
+	}else if (!token){
+        token = NameOrIdentifier.streamProperty(value, index);
+        if (token) index = token.next;
+    }
 
 	if (!token) return;
-	return Lexer.tokenize(value, index, token.next, token, Lexer.TokenType.PropertyPathExpression);
+	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.PropertyPathExpression);
 }
 export function inscopeVariableExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return implicitVariableExpr(value, index) ||

@@ -35,3 +35,10 @@ export class Parser{
 	keys(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.keyPredicate)(source, options); }
 	literal(source:string, options?:any):Lexer.Token { return parserFactory(PrimitiveLiteral.primitiveLiteral)(source, options); }
 }
+
+export function odataUri(source:string, options?:any):Lexer.Token { return parserFactory(ODataUri.odataUri)(source, options); }
+export function resourcePath(source:string, options?:any):Lexer.Token { return parserFactory(ResourcePath.resourcePath)(source, options); }
+export function query(source:string, options?:any):Lexer.Token { return parserFactory(Query.queryOptions)(source, options); }
+export function filter(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.boolCommonExpr)(source, options); }
+export function keys(source:string, options?:any):Lexer.Token { return parserFactory(Expressions.keyPredicate)(source, options); }
+export function literal(source:string, options?:any):Lexer.Token { return parserFactory(PrimitiveLiteral.primitiveLiteral)(source, options); }

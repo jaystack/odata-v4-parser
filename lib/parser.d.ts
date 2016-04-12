@@ -7,3 +7,9 @@ export declare class Parser {
     keys(source: string, options?: any): Lexer.Token;
     literal(source: string, options?: any): Lexer.Token;
 }
+export declare function odataUri(source: string, options?: any): Lexer.Token;
+export declare function resourcePath(source: string, options?: any): Lexer.Token;
+export declare function query(source: string, options?: any): Lexer.Token;
+export declare function filter(source: string, options?: any): Lexer.Token;
+export declare function keys(source: string, options?: any): Lexer.Token;
+export declare function literal(source: string, options?: any): Lexer.Token;
