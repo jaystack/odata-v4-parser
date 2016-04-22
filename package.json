@@ -1,14 +1,18 @@
 {
   "name": "odata-v4-parser",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "OData v4 Parser",
   "main": "lib/parser.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jaystack/odata-parser.git"
+    "url": "git://github.com/jaystack/odata-v4-parser.git"
   },
-  "author": "",
-  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaystack/odata-v4-parser/issues"
+  },
+  "homepage": "https://github.com/jaystack/odata-v4-parser#readme",
+  "author": "JayStack",
+  "license": "MIT",
   "devDependencies": {
     "chai": "^3.4.1",
     "gulp": "^3.9.0",
@@ -16,5 +20,6 @@
     "gulp-typescript": "^2.10.0",
     "merge2": "^1.0.0",
     "mocha": "^2.3.4"
-  }
+  },
+  "typings": "lib/parser.d.ts"
 }

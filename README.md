@@ -26,8 +26,7 @@ require('./lib/expressions').commonExpr(new Uint8Array(new Buffer('Items/all(d:d
 
 ## TODO
 
+* $search
 * unit testing
 * code coverage
-* $expand
-* path
 * use metadata for correct OData identifier type detection (complex types, navigation properties, etc.)

@@ -3,6 +3,14 @@ export declare function queryOptions(value: number[] | Uint8Array, index: number
 export declare function queryOption(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function systemQueryOption(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function id(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function expand(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function expandItem(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function expandCountOption(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function expandRefOption(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function expandOption(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function expandPath(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function search(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function levels(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function filter(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function orderby(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function orderbyItem(value: number[] | Uint8Array, index: number): Lexer.Token;
@@ -17,4 +25,5 @@ export declare function selectProperty(value: number[] | Uint8Array, index: numb
 export declare function selectPath(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function qualifiedActionName(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function qualifiedFunctionName(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function skiptoken(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function aliasAndValue(value: number[] | Uint8Array, index: number): Lexer.Token;

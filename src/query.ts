@@ -32,8 +32,8 @@ export function queryOption(value:number[] | Uint8Array, index:number):Lexer.Tok
 }
 
 export function systemQueryOption(value:number[] | Uint8Array, index:number):Lexer.Token {
-	// return expand(value, index) ||
-	return filter(value, index) ||
+	return expand(value, index) ||
+		filter(value, index) ||
 		format(value, index) ||
 		id(value, index) ||
 		inlinecount(value, index) ||
@@ -41,7 +41,7 @@ export function systemQueryOption(value:number[] | Uint8Array, index:number):Lex
 		// search(value, index) ||
 		select(value, index) ||
 		skip(value, index) ||
-		// skiptoken(value, index) ||
+		skiptoken(value, index) ||
 		top(value, index);
 }
 
@@ -55,6 +55,262 @@ export function id(value:number[] | Uint8Array, index:number):Lexer.Token {
 	index = eq;
 
 	//TODO: navigation
+}
+
+export function expand(value:number[] | Uint8Array, index:number):Lexer.Token {
+	if (!Utils.equals(value, index, '$expand')) return;
+	var start = index;
+	index += 7;
+	
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
+	
+	var items = [];
+	var token = expandItem(value, index);
+	if (!token) return;
+	index = token.next;
+
+	while (token){
+		items.push(token);
+
+		var comma = Lexer.COMMA(value, index);
+		if (comma){
+			index = comma;
+			var token = expandItem(value, index);
+			if (!token) return;
+			index = token.next;
+		}else break;
+	}
+	
+	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Expand);
+}
+
+export function expandItem(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var start = index;
+	var star = Lexer.STAR(value, index);
+	if (star){
+		index = star;
+		let ref = Expressions.refExpr(value, index);
+		if (ref){
+			index = ref.next;
+			return Lexer.tokenize(value, start, index, { path: '*', ref }, Lexer.TokenType.ExpandItem);
+		}else{
+			var open = Lexer.OPEN(value, index);
+			if (open){
+				index = open;
+				var token = levels(value, index);
+				if (!token) return;
+				index = token.next;
+				
+				var close = Lexer.CLOSE(value, index);
+				if (!close) return;
+				index = close;
+				
+				return Lexer.tokenize(value, start, index, { path: '*', levels: token }, Lexer.TokenType.ExpandItem);
+			}
+		}
+	}
+	
+	var path = expandPath(value, index);
+	if (!path) return;
+	index = path.next;
+	
+	var tokenValue:any = { path };
+	
+	var ref = Expressions.refExpr(value, index);
+	if (ref){
+		index = ref.next;
+		tokenValue.ref = ref;
+		
+		let open = Lexer.OPEN(value, index);
+		if (open){
+			index = open;
+			
+			let option = expandRefOption(value, index);
+			if (!option) return;
+			
+			let refOptions = [];
+			while (option){
+				refOptions.push(option);
+				index = option.next;
+				
+				let semi = Lexer.SEMI(value, index);
+				if (semi){
+					index = semi;
+					
+					option = expandRefOption(value, index);
+					if (!option) return;
+				}else break;
+			}
+			
+			let close = Lexer.CLOSE(value, index);
+			if (!close) return;
+			index = close;
+			
+			tokenValue.options = refOptions;
+		}
+	}else{
+		var count = Expressions.countExpr(value, index);
+		if (count){
+			index = count.next;
+			tokenValue.count = count;
+			
+			let open = Lexer.OPEN(value, index);
+			if (open){
+				index = open;
+				
+				let option = expandCountOption(value, index);
+				if (!option) return;
+				
+				let countOptions = [];
+				while (option){
+					countOptions.push(option);
+					index = option.next;
+					
+					let semi = Lexer.SEMI(value, index);
+					if (semi){
+						index = semi;
+						
+						option = expandCountOption(value, index);
+						if (!option) return;
+					}else break;
+				}
+				
+				let close = Lexer.CLOSE(value, index);
+				if (!close) return;
+				index = close;
+				tokenValue.options = countOptions;
+			}
+		}else{
+			var open = Lexer.OPEN(value, index);
+			if (open){
+				index = open;
+				
+				let option = expandOption(value, index);
+				if (!option) return;
+				
+				let options = [];
+				while (option){
+					options.push(option);
+					index = option.next;
+					
+					let semi = Lexer.SEMI(value, index);
+					if (semi){
+						index = semi;
+						
+						option = expandOption(value, index);
+						if (!option) return;
+					}else break;
+				}
+				
+				let close = Lexer.CLOSE(value, index);
+				if (!close) return;
+				index = close;
+				tokenValue.options = options;
+			}
+		}
+	}
+	
+	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.ExpandItem);
+}
+
+export function expandCountOption(value:number[] | Uint8Array, index:number):Lexer.Token {
+	return filter(value, index) ||
+		search(value, index);
+}
+
+export function expandRefOption(value:number[] | Uint8Array, index:number):Lexer.Token {
+	return expandCountOption(value, index) ||
+		orderby(value, index) ||
+		skip(value, index) ||
+		top(value, index) ||
+		inlinecount(value, index);
+}
+
+export function expandOption(value:number[] | Uint8Array, index:number):Lexer.Token {
+	return expandRefOption(value, index) ||
+		select(value, index) ||
+		expand(value, index) ||
+		levels(value, index);
+}
+
+export function expandPath(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var start = index;
+	var path = [];
+	
+	var token = NameOrIdentifier.qualifiedEntityTypeName(value, index) ||
+		NameOrIdentifier.qualifiedComplexTypeName(value, index);
+		
+	if (token){
+		index = token.next;
+		path.push(token);
+		if (value[index] != 0x2f) return;
+		index++;
+	}
+	
+	var complex = NameOrIdentifier.complexProperty(value, index) ||
+		NameOrIdentifier.complexColProperty(value, index);
+	while (complex){
+		if (value[complex.next] == 0x2f){
+			index = complex.next + 1;
+			path.push(complex);
+			
+			var complexTypeName = NameOrIdentifier.qualifiedComplexTypeName(value, index);
+			if (complexTypeName){
+				if (value[complexTypeName.next] == 0x2f){
+					index = complexTypeName.next + 1;
+					path.push(complexTypeName);
+				}
+			}
+			
+			complex = NameOrIdentifier.complexProperty(value, index) ||
+				NameOrIdentifier.complexColProperty(value, index);
+		}else break;
+	}
+	
+	var nav = NameOrIdentifier.navigationProperty(value, index);
+
+	if (!nav) return;
+	index = nav.next;
+	path.push(nav);
+	
+	if (value[index] == 0x2f){
+		var typeName = NameOrIdentifier.qualifiedEntityTypeName(value, index + 1);
+		if (typeName){;
+			index = typeName.next;
+			path.push(typeName);
+		}
+	}
+	
+	return Lexer.tokenize(value, start, index, path, Lexer.TokenType.ExpandPath);
+}
+
+export function search(value:number[] | Uint8Array, index:number):Lexer.Token {
+	return;
+}
+
+export function levels(value:number[] | Uint8Array, index:number):Lexer.Token {
+	if (!Utils.equals(value, index, '$levels')) return;
+	var start = index;
+	index += 7;
+	
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
+	
+	var level;
+	if (Utils.equals(value, index, 'max')){
+		level = 'max';
+		index += 3;
+	}else{
+		var token = PrimitiveLiteral.int32Value(value, index);
+		if (!token) return;
+		level = token.raw;
+		index = token.next;
+	}
+	
+	return Lexer.tokenize(value, start, index, level, Lexer.TokenType.Levels);
 }
 
 export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
@@ -359,7 +615,26 @@ export function qualifiedFunctionName(value:number[] | Uint8Array, index:number)
 	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.Function);
 }
 
-//TODO: skiptoken
+export function skiptoken(value:number[] | Uint8Array, index:number):Lexer.Token {
+	if (!Utils.equals(value, index, '$skiptoken')) return;
+	var start = index;
+	index += 10;
+	
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
+	
+	var ch = Lexer.qcharNoAMP(value, index);
+	if (!ch) return;
+	var valueStart = index;
+	
+	while (ch > index){
+		index = ch;
+		ch = Lexer.qcharNoAMP(value, index);
+	}
+	
+	return Lexer.tokenize(value, start, index, Utils.stringify(value, valueStart, index), Lexer.TokenType.SkipToken);
+}
 
 export function aliasAndValue(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var alias = Expressions.parameterAlias(value, index);

@@ -97,6 +97,13 @@ export declare class TokenType {
     static ValueExpression: string;
     static RootExpression: string;
     static QueryOptions: string;
+    static Expand: string;
+    static ExpandItem: string;
+    static ExpandPath: string;
+    static ExpandCountOption: string;
+    static ExpandRefOption: string;
+    static ExpandOption: string;
+    static Levels: string;
     static Filter: string;
     static OrderBy: string;
     static OrderByItem: string;
@@ -108,6 +115,7 @@ export declare class TokenType {
     static SelectItem: string;
     static SelectPath: string;
     static AliasAndValue: string;
+    static SkipToken: string;
     static Crossjoin: string;
     static AllResource: string;
     static ActionImportCall: string;
@@ -171,6 +179,7 @@ export declare function pctEncoded(value: number[] | Uint8Array, index: number):
 export declare function pctEncodedNoSQUOTE(value: number[] | Uint8Array, index: number): number;
 export declare function pchar(value: number[] | Uint8Array, index: number): number;
 export declare function pcharNoSQUOTE(value: number[] | Uint8Array, index: number): number;
+export declare function qcharNoAMP(value: number[] | Uint8Array, index: number): number;
 export declare function base64char(value: number): boolean;
 export declare function base64b16(value: number[] | Uint8Array, index: number): number;
 export declare function base64b8(value: number[] | Uint8Array, index: number): number;

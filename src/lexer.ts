@@ -99,6 +99,13 @@ export class TokenType{
 	static ValueExpression = 'ValueExpression'
 	static RootExpression = 'RootExpression'
 	static QueryOptions = 'QueryOptions'
+	static Expand = 'Expand'
+	static ExpandItem = 'ExpandItem'
+	static ExpandPath = 'ExpandPath'
+	static ExpandCountOption = 'ExpandCountOption'
+	static ExpandRefOption = 'ExpandRefOption'
+	static ExpandOption = 'ExpandOption'
+	static Levels = 'Levels'
 	static Filter = 'Filter'
 	static OrderBy = 'OrderBy'
 	static OrderByItem = 'OrderByItem'
@@ -110,6 +117,7 @@ export class TokenType{
 	static SelectItem = 'SelectItem'
 	static SelectPath = 'SelectPath'
 	static AliasAndValue = 'AliasAndValue'
+	static SkipToken = 'SkipToken'
 	static Crossjoin = 'Crossjoin'
 	static AllResource = 'AllResource'
 	static ActionImportCall = 'ActionImportCall'
@@ -271,6 +279,10 @@ export function pchar(value:number[] | Uint8Array, index:number):number {
 export function pcharNoSQUOTE(value:number[] | Uint8Array, index:number):number {
 	if (unreserved(value[index]) || value[index] == 0x24 || value[index] == 0x26) return index + 1;
 	else return otherDelims(value, index) || EQ(value, index) || COLON(value, index) || AT(value, index) || pctEncodedNoSQUOTE(value, index) || index;
+}
+export function qcharNoAMP(value:number[] | Uint8Array, index:number):number {
+	if (unreserved(value[index]) || value[index] == 0x3a || value[index] == 0x40 || value[index] == 0x2f || value[index] == 0x3f || value[index] == 0x24 || value[index] == 0x27 || value[index] == 0x3d) return index + 1;
+	else return pctEncoded(value, index) || otherDelims(value, index) || index;
 }
 //export function pchar(value:number):boolean { return unreserved(value) || otherDelims(value) || value == 0x24 || value == 0x26 || EQ(value) || COLON(value) || AT(value); }
 export function base64char(value:number):boolean { return ALPHA(value) || DIGIT(value) || value == 0x2d || value == 0x5f; }
