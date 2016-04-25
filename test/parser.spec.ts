@@ -11,7 +11,7 @@ describe('Parser', () => {
 	it('should instantiate odata parser', () => {
 		var parser = new Parser();
 		var ast = parser.filter("Categories/all(d:d/Title eq 'alma')");
-		expect(ast.value.value.value.value.value.value.next.value.value.predicate.value.value.right.value).to.equal('Edm.String');
+		expect(ast.value.value.value.value.next.value.value.predicate.value.value.right.value).to.equal('Edm.String');
 	});
 
 	it('should parse query string', () => {
