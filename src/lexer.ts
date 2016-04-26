@@ -106,6 +106,15 @@ export class TokenType{
 	static ExpandRefOption = 'ExpandRefOption'
 	static ExpandOption = 'ExpandOption'
 	static Levels = 'Levels'
+	static Search = 'Search'
+	static SearchExpression = 'SearchExpression'
+	static SearchParenExpression = 'SearchParenExpression'
+	static SearchNotExpression = 'SearchNotExpression'
+	static SearchOrExpression = 'SearchOrExpression'
+	static SearchAndExpression = 'SearchAndExpression'
+	static SearchTerm = 'SearchTerm'
+	static SearchPhrase = 'SearchPhrase'
+	static SearchWord = 'SearchWord'
 	static Filter = 'Filter'
 	static OrderBy = 'OrderBy'
 	static OrderByItem = 'OrderByItem'
@@ -272,6 +281,13 @@ export function pctEncodedNoSQUOTE(value:number[] | Uint8Array, index:number):nu
 	if (Utils.equals(value, index, '%27')) return index;
 	return pctEncoded(value, index);
 }
+export function pctEncodedUnescaped(value:number[] | Uint8Array, index:number):number {
+	if (Utils.equals(value, index, '%22') ||
+		Utils.equals(value, index, '%3') ||
+		Utils.equals(value, index, '%4') ||
+		Utils.equals(value, index, '%5C')) return index;
+	return pctEncoded(value, index);
+}
 export function pchar(value:number[] | Uint8Array, index:number):number {
 	if (unreserved(value[index])) return index + 1;
 	else return subDelims(value, index) || COLON(value, index) || AT(value, index) || pctEncoded(value, index) || index;
@@ -283,6 +299,10 @@ export function pcharNoSQUOTE(value:number[] | Uint8Array, index:number):number 
 export function qcharNoAMP(value:number[] | Uint8Array, index:number):number {
 	if (unreserved(value[index]) || value[index] == 0x3a || value[index] == 0x40 || value[index] == 0x2f || value[index] == 0x3f || value[index] == 0x24 || value[index] == 0x27 || value[index] == 0x3d) return index + 1;
 	else return pctEncoded(value, index) || otherDelims(value, index) || index;
+}
+export function qcharNoAMPDQUOTE(value:number[] | Uint8Array, index:number):number {
+	if (unreserved(value[index]) || value[index] == 0x3a || value[index] == 0x40 || value[index] == 0x2f || value[index] == 0x3f || value[index] == 0x24 || value[index] == 0x27 || value[index] == 0x3d) return index + 1;
+	else return otherDelims(value, index) || pctEncodedUnescaped(value, index);
 }
 //export function pchar(value:number):boolean { return unreserved(value) || otherDelims(value) || value == 0x24 || value == 0x26 || EQ(value) || COLON(value) || AT(value); }
 export function base64char(value:number):boolean { return ALPHA(value) || DIGIT(value) || value == 0x2d || value == 0x5f; }

@@ -10,6 +10,14 @@ export declare function expandRefOption(value: number[] | Uint8Array, index: num
 export declare function expandOption(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function expandPath(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function search(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchTerm(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchNotExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchOrExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchAndExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchPhrase(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchWord(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function searchParenExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function levels(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function filter(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function orderby(value: number[] | Uint8Array, index: number): Lexer.Token;

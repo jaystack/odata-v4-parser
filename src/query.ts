@@ -38,7 +38,7 @@ export function systemQueryOption(value:number[] | Uint8Array, index:number):Lex
 		id(value, index) ||
 		inlinecount(value, index) ||
 		orderby(value, index) ||
-		// search(value, index) ||
+		search(value, index) ||
 		select(value, index) ||
 		skip(value, index) ||
 		skiptoken(value, index) ||
@@ -287,7 +287,141 @@ export function expandPath(value:number[] | Uint8Array, index:number):Lexer.Toke
 }
 
 export function search(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return;
+	if (!Utils.equals(value, index, '$search')) return;
+	var start = index;
+	index += 7;
+	
+	var eq = Lexer.EQ(value, index);
+	if (!eq) return;
+	index = eq;
+	
+	var expr = searchExpr(value, index);
+	if (!expr) return;
+	index = expr.next;
+	
+	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.Search);
+}
+
+export function searchExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var token = searchParenExpr(value, index) ||
+		searchTerm(value, index);
+		
+	if (!token) return;
+	var start = index;
+	index = token.next;
+	
+	var expr = searchAndExpr(value, index) ||
+		searchOrExpr(value, index);
+		
+	if (expr){
+		token.next = expr.value.next;
+		token.value = {
+			left: Lexer.clone(token),
+			right: expr.value
+		};
+		token.type = expr.type;
+		token.raw = Utils.stringify(value, token.position, token.next);
+	}
+	
+	return token;
+}
+
+export function searchTerm(value:number[] | Uint8Array, index:number):Lexer.Token {
+	return searchNotExpr(value, index) ||
+		searchPhrase(value, index) ||
+		searchWord(value, index);
+}
+
+export function searchNotExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+	if (!Utils.equals(value, index, 'NOT')) return;
+	var start = index;
+	index += 3;
+	
+	var expr = searchPhrase(value, index) ||
+		searchWord(value, index);
+	if (!expr) return;
+	index = expr.next;
+	
+	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.SearchNotExpression);
+}
+
+export function searchOrExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var rws = Lexer.RWS(value, index);
+	if (rws == index || !Utils.equals(value, rws, 'OR')) return;
+	var start = index;
+	index = rws + 2;
+	rws = Lexer.RWS(value, index);
+	if (rws == index) return;
+	index = rws;
+	var token = searchExpr(value, index);
+	if (!token) return;
+
+	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.SearchOrExpression);
+}
+
+export function searchAndExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var rws = Lexer.RWS(value, index);
+	if (rws == index || !Utils.equals(value, rws, 'AND')) return;
+	var start = index;
+	index = rws + 3;
+	rws = Lexer.RWS(value, index);
+	if (rws == index) return;
+	index = rws;
+	var token = searchExpr(value, index);
+	if (!token) return;
+
+	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.SearchAndExpression);
+}
+
+export function searchPhrase(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var mark = Lexer.quotationMark(value, index);
+	if (!mark) return;
+	var start = index;
+	index = mark;
+	
+	var valueStart = index;
+	var ch = Lexer.qcharNoAMPDQUOTE(value, index);
+	while (ch > index && !Lexer.OPEN(value, index) && !Lexer.CLOSE(value, index)){
+		index = ch;
+		ch = Lexer.qcharNoAMPDQUOTE(value, index);
+	}
+	var valueEnd = index;
+	
+	mark = Lexer.quotationMark(value, index);
+	if (!mark) return;
+	index = mark;
+	
+	return Lexer.tokenize(value, start, index, Utils.stringify(value, valueStart, valueEnd), Lexer.TokenType.SearchPhrase);
+}
+
+export function searchWord(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var next = Utils.required(value, index, Lexer.ALPHA, 1);
+	if (!next) return;
+	var start = index;
+	index = next;
+	
+	var token = Lexer.tokenize(value, start, index, null, Lexer.TokenType.SearchWord);
+	token.value = token.raw;
+	return token;
+}
+	
+export function searchParenExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var open = Lexer.OPEN(value, index);
+	if (!open) return;
+	var start = index;
+	index = open;
+	index = Lexer.BWS(value, index);
+	
+	var expr = searchExpr(value, index);
+	if (!expr) return;
+	index = expr.next;
+	
+	index = Lexer.BWS(value, index);
+	var close = Lexer.CLOSE(value, index);
+	if (!close) return;
+	index = close;
+	
+	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.SearchParenExpression);
 }
 
 export function levels(value:number[] | Uint8Array, index:number):Lexer.Token {

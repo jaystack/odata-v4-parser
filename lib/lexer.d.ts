@@ -104,6 +104,15 @@ export declare class TokenType {
     static ExpandRefOption: string;
     static ExpandOption: string;
     static Levels: string;
+    static Search: string;
+    static SearchExpression: string;
+    static SearchParenExpression: string;
+    static SearchNotExpression: string;
+    static SearchOrExpression: string;
+    static SearchAndExpression: string;
+    static SearchTerm: string;
+    static SearchPhrase: string;
+    static SearchWord: string;
     static Filter: string;
     static OrderBy: string;
     static OrderByItem: string;
@@ -177,9 +186,11 @@ export declare function otherDelims(value: number[] | Uint8Array, index: number)
 export declare function subDelims(value: number[] | Uint8Array, index: number): number;
 export declare function pctEncoded(value: number[] | Uint8Array, index: number): number;
 export declare function pctEncodedNoSQUOTE(value: number[] | Uint8Array, index: number): number;
+export declare function pctEncodedUnescaped(value: number[] | Uint8Array, index: number): number;
 export declare function pchar(value: number[] | Uint8Array, index: number): number;
 export declare function pcharNoSQUOTE(value: number[] | Uint8Array, index: number): number;
 export declare function qcharNoAMP(value: number[] | Uint8Array, index: number): number;
+export declare function qcharNoAMPDQUOTE(value: number[] | Uint8Array, index: number): number;
 export declare function base64char(value: number): boolean;
 export declare function base64b16(value: number[] | Uint8Array, index: number): number;
 export declare function base64b8(value: number[] | Uint8Array, index: number): number;
