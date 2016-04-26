@@ -1,0 +1,2444 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src\query.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> query.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">15.68% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>101/644</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">2.81% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>9/320</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">13.89% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>5/36</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">12.14% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>63/519</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732
+733
+734
+735
+736
+737
+738
+739
+740
+741
+742
+743
+744
+745
+746
+747
+748
+749
+750
+751
+752
+753
+754
+755
+756
+757
+758
+759
+760
+761
+762
+763
+764
+765
+766
+767
+768
+769
+770
+771
+772
+773
+774
+775
+776
+777
+778
+779
+780
+781
+782
+783
+784
+785
+786
+787
+788
+789
+790
+791
+792
+793
+794</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as Utils from './utils';
+import * as Lexer from './lexer';
+import * as PrimitiveLiteral from './primitiveLiteral';
+import * as NameOrIdentifier from './nameOrIdentifier';
+import * as Expressions from './expressions';
+&nbsp;
+export function queryOptions(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var token = queryOption(value, index);
+	<span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
+	var start = index;
+	index = token.next;
+&nbsp;
+	var options = [];
+	while (token){
+		options.push(token);
+		// &amp;
+		<span class="missing-if-branch" title="else path not taken" >E</span>if (value[index] != 0x26) break;
+<span class="cstat-no" title="statement not covered" >		index++;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		token = queryOption(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >		index = token.next;</span>
+	}
+&nbsp;
+	return Lexer.tokenize(value, start, index, { options }, Lexer.TokenType.QueryOptions);
+}
+&nbsp;
+export function queryOption(value:number[] | Uint8Array, index:number):Lexer.Token {
+	return systemQueryOption(value, index) ||
+<span class="branch-1 cbranch-no" title="branch not covered" >		aliasAndValue(value, index);</span>// ||
+		// customQueryOption(value, index);
+}
+&nbsp;
+export function systemQueryOption(value:number[] | Uint8Array, index:number):Lexer.Token {
+	return expand(value, index) ||
+		filter(value, index) ||
+<span class="branch-2 cbranch-no" title="branch not covered" >		format(value, index) </span>||
+<span class="branch-3 cbranch-no" title="branch not covered" >		id(value, index) </span>||
+<span class="branch-4 cbranch-no" title="branch not covered" >		inlinecount(value, index) </span>||
+<span class="branch-5 cbranch-no" title="branch not covered" >		orderby(value, index) </span>||
+<span class="branch-6 cbranch-no" title="branch not covered" >		search(value, index) </span>||
+<span class="branch-7 cbranch-no" title="branch not covered" >		select(value, index) </span>||
+<span class="branch-8 cbranch-no" title="branch not covered" >		skip(value, index) </span>||
+<span class="branch-9 cbranch-no" title="branch not covered" >		skiptoken(value, index) </span>||
+<span class="branch-10 cbranch-no" title="branch not covered" >		top(value, index);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function id(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$id')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 3;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+	//TODO: navigation
+}
+&nbsp;
+export function expand(value:number[] | Uint8Array, index:number):Lexer.Token {
+	<span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, '$expand')) return;
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 7;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var items = [];</span>
+<span class="cstat-no" title="statement not covered" >	var token = expandItem(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	while (token){</span>
+<span class="cstat-no" title="statement not covered" >		items.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (comma){</span>
+<span class="cstat-no" title="statement not covered" >			index = comma;</span>
+<span class="cstat-no" title="statement not covered" >			var token = expandItem(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >			index = token.next;</span>
+		}else <span class="cstat-no" title="statement not covered" >break;</span>
+	}
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Expand);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function expandItem(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	var star = Lexer.STAR(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (star){</span>
+<span class="cstat-no" title="statement not covered" >		index = star;</span>
+<span class="cstat-no" title="statement not covered" >		let ref = Expressions.refExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (ref){</span>
+<span class="cstat-no" title="statement not covered" >			index = ref.next;</span>
+<span class="cstat-no" title="statement not covered" >			return Lexer.tokenize(value, start, index, { path: '*', ref }, Lexer.TokenType.ExpandItem);</span>
+		}else{
+<span class="cstat-no" title="statement not covered" >			var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (open){</span>
+<span class="cstat-no" title="statement not covered" >				index = open;</span>
+<span class="cstat-no" title="statement not covered" >				var token = levels(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >				index = token.next;</span>
+				
+<span class="cstat-no" title="statement not covered" >				var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >				index = close;</span>
+				
+<span class="cstat-no" title="statement not covered" >				return Lexer.tokenize(value, start, index, { path: '*', levels: token }, Lexer.TokenType.ExpandItem);</span>
+			}
+		}
+	}
+	
+<span class="cstat-no" title="statement not covered" >	var path = expandPath(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!path) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = path.next;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var tokenValue:any = { path };</span>
+	
+<span class="cstat-no" title="statement not covered" >	var ref = Expressions.refExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (ref){</span>
+<span class="cstat-no" title="statement not covered" >		index = ref.next;</span>
+<span class="cstat-no" title="statement not covered" >		tokenValue.ref = ref;</span>
+		
+<span class="cstat-no" title="statement not covered" >		let open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (open){</span>
+<span class="cstat-no" title="statement not covered" >			index = open;</span>
+			
+<span class="cstat-no" title="statement not covered" >			let option = expandRefOption(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (!option) <span class="cstat-no" title="statement not covered" >return;</span></span>
+			
+<span class="cstat-no" title="statement not covered" >			let refOptions = [];</span>
+<span class="cstat-no" title="statement not covered" >			while (option){</span>
+<span class="cstat-no" title="statement not covered" >				refOptions.push(option);</span>
+<span class="cstat-no" title="statement not covered" >				index = option.next;</span>
+				
+<span class="cstat-no" title="statement not covered" >				let semi = Lexer.SEMI(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (semi){</span>
+<span class="cstat-no" title="statement not covered" >					index = semi;</span>
+					
+<span class="cstat-no" title="statement not covered" >					option = expandRefOption(value, index);</span>
+<span class="cstat-no" title="statement not covered" >					if (!option) <span class="cstat-no" title="statement not covered" >return;</span></span>
+				}else <span class="cstat-no" title="statement not covered" >break;</span>
+			}
+			
+<span class="cstat-no" title="statement not covered" >			let close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >			index = close;</span>
+			
+<span class="cstat-no" title="statement not covered" >			tokenValue.options = refOptions;</span>
+		}
+	}else{
+<span class="cstat-no" title="statement not covered" >		var count = Expressions.countExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (count){</span>
+<span class="cstat-no" title="statement not covered" >			index = count.next;</span>
+<span class="cstat-no" title="statement not covered" >			tokenValue.count = count;</span>
+			
+<span class="cstat-no" title="statement not covered" >			let open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (open){</span>
+<span class="cstat-no" title="statement not covered" >				index = open;</span>
+				
+<span class="cstat-no" title="statement not covered" >				let option = expandCountOption(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (!option) <span class="cstat-no" title="statement not covered" >return;</span></span>
+				
+<span class="cstat-no" title="statement not covered" >				let countOptions = [];</span>
+<span class="cstat-no" title="statement not covered" >				while (option){</span>
+<span class="cstat-no" title="statement not covered" >					countOptions.push(option);</span>
+<span class="cstat-no" title="statement not covered" >					index = option.next;</span>
+					
+<span class="cstat-no" title="statement not covered" >					let semi = Lexer.SEMI(value, index);</span>
+<span class="cstat-no" title="statement not covered" >					if (semi){</span>
+<span class="cstat-no" title="statement not covered" >						index = semi;</span>
+						
+<span class="cstat-no" title="statement not covered" >						option = expandCountOption(value, index);</span>
+<span class="cstat-no" title="statement not covered" >						if (!option) <span class="cstat-no" title="statement not covered" >return;</span></span>
+					}else <span class="cstat-no" title="statement not covered" >break;</span>
+				}
+				
+<span class="cstat-no" title="statement not covered" >				let close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >				index = close;</span>
+<span class="cstat-no" title="statement not covered" >				tokenValue.options = countOptions;</span>
+			}
+		}else{
+<span class="cstat-no" title="statement not covered" >			var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (open){</span>
+<span class="cstat-no" title="statement not covered" >				index = open;</span>
+				
+<span class="cstat-no" title="statement not covered" >				let option = expandOption(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (!option) <span class="cstat-no" title="statement not covered" >return;</span></span>
+				
+<span class="cstat-no" title="statement not covered" >				let options = [];</span>
+<span class="cstat-no" title="statement not covered" >				while (option){</span>
+<span class="cstat-no" title="statement not covered" >					options.push(option);</span>
+<span class="cstat-no" title="statement not covered" >					index = option.next;</span>
+					
+<span class="cstat-no" title="statement not covered" >					let semi = Lexer.SEMI(value, index);</span>
+<span class="cstat-no" title="statement not covered" >					if (semi){</span>
+<span class="cstat-no" title="statement not covered" >						index = semi;</span>
+						
+<span class="cstat-no" title="statement not covered" >						option = expandOption(value, index);</span>
+<span class="cstat-no" title="statement not covered" >						if (!option) <span class="cstat-no" title="statement not covered" >return;</span></span>
+					}else <span class="cstat-no" title="statement not covered" >break;</span>
+				}
+				
+<span class="cstat-no" title="statement not covered" >				let close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >				index = close;</span>
+<span class="cstat-no" title="statement not covered" >				tokenValue.options = options;</span>
+			}
+		}
+	}
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.ExpandItem);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function expandCountOption(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	return filter(value, index) ||</span>
+		search(value, index);
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function expandRefOption(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	return expandCountOption(value, index) ||</span>
+		orderby(value, index) ||
+		skip(value, index) ||
+		top(value, index) ||
+		inlinecount(value, index);
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function expandOption(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	return expandRefOption(value, index) ||</span>
+		select(value, index) ||
+		expand(value, index) ||
+		levels(value, index);
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function expandPath(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	var path = [];</span>
+	
+<span class="cstat-no" title="statement not covered" >	var token = NameOrIdentifier.qualifiedEntityTypeName(value, index) ||</span>
+		NameOrIdentifier.qualifiedComplexTypeName(value, index);
+		
+<span class="cstat-no" title="statement not covered" >	if (token){</span>
+<span class="cstat-no" title="statement not covered" >		index = token.next;</span>
+<span class="cstat-no" title="statement not covered" >		path.push(token);</span>
+<span class="cstat-no" title="statement not covered" >		if (value[index] != 0x2f) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >		index++;</span>
+	}
+	
+<span class="cstat-no" title="statement not covered" >	var complex = NameOrIdentifier.complexProperty(value, index) ||</span>
+		NameOrIdentifier.complexColProperty(value, index);
+<span class="cstat-no" title="statement not covered" >	while (complex){</span>
+<span class="cstat-no" title="statement not covered" >		if (value[complex.next] == 0x2f){</span>
+<span class="cstat-no" title="statement not covered" >			index = complex.next + 1;</span>
+<span class="cstat-no" title="statement not covered" >			path.push(complex);</span>
+			
+<span class="cstat-no" title="statement not covered" >			var complexTypeName = NameOrIdentifier.qualifiedComplexTypeName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (complexTypeName){</span>
+<span class="cstat-no" title="statement not covered" >				if (value[complexTypeName.next] == 0x2f){</span>
+<span class="cstat-no" title="statement not covered" >					index = complexTypeName.next + 1;</span>
+<span class="cstat-no" title="statement not covered" >					path.push(complexTypeName);</span>
+				}
+			}
+			
+<span class="cstat-no" title="statement not covered" >			complex = NameOrIdentifier.complexProperty(value, index) ||</span>
+				NameOrIdentifier.complexColProperty(value, index);
+		}else <span class="cstat-no" title="statement not covered" >break;</span>
+	}
+	
+<span class="cstat-no" title="statement not covered" >	var nav = NameOrIdentifier.navigationProperty(value, index);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	if (!nav) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = nav.next;</span>
+<span class="cstat-no" title="statement not covered" >	path.push(nav);</span>
+	
+<span class="cstat-no" title="statement not covered" >	if (value[index] == 0x2f){</span>
+<span class="cstat-no" title="statement not covered" >		var typeName = NameOrIdentifier.qualifiedEntityTypeName(value, index + 1);</span>
+<span class="cstat-no" title="statement not covered" >		if (typeName){;</span>
+<span class="cstat-no" title="statement not covered" >			index = typeName.next;</span>
+<span class="cstat-no" title="statement not covered" >			path.push(typeName);</span>
+		}
+	}
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, path, Lexer.TokenType.ExpandPath);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function search(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$search')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 7;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var expr = searchExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = expr.next;</span>
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.Search);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function searchExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var token = searchParenExpr(value, index) ||</span>
+		searchTerm(value, index);
+		
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var expr = searchAndExpr(value, index) ||</span>
+		searchOrExpr(value, index);
+		
+<span class="cstat-no" title="statement not covered" >	if (expr){</span>
+<span class="cstat-no" title="statement not covered" >		token.next = expr.value.next;</span>
+<span class="cstat-no" title="statement not covered" >		token.value = {</span>
+			left: Lexer.clone(token),
+			right: expr.value
+		};
+<span class="cstat-no" title="statement not covered" >		token.type = expr.type;</span>
+<span class="cstat-no" title="statement not covered" >		token.raw = Utils.stringify(value, token.position, token.next);</span>
+	}
+	
+<span class="cstat-no" title="statement not covered" >	return token;</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function searchTerm(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	return searchNotExpr(value, index) ||</span>
+		searchPhrase(value, index) ||
+		searchWord(value, index);
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function searchNotExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, 'NOT')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 3;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var expr = searchPhrase(value, index) ||</span>
+		searchWord(value, index);
+<span class="cstat-no" title="statement not covered" >	if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = expr.next;</span>
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.SearchNotExpression);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function searchOrExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (rws == index || !Utils.equals(value, rws, 'OR')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = rws + 2;</span>
+<span class="cstat-no" title="statement not covered" >	rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = rws;</span>
+<span class="cstat-no" title="statement not covered" >	var token = searchExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.SearchOrExpression);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function searchAndExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (rws == index || !Utils.equals(value, rws, 'AND')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = rws + 3;</span>
+<span class="cstat-no" title="statement not covered" >	rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = rws;</span>
+<span class="cstat-no" title="statement not covered" >	var token = searchExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.SearchAndExpression);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function searchPhrase(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var mark = Lexer.quotationMark(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!mark) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = mark;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var valueStart = index;</span>
+<span class="cstat-no" title="statement not covered" >	var ch = Lexer.qcharNoAMPDQUOTE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	while (ch &gt; index &amp;&amp; !Lexer.OPEN(value, index) &amp;&amp; !Lexer.CLOSE(value, index)){</span>
+<span class="cstat-no" title="statement not covered" >		index = ch;</span>
+<span class="cstat-no" title="statement not covered" >		ch = Lexer.qcharNoAMPDQUOTE(value, index);</span>
+	}
+<span class="cstat-no" title="statement not covered" >	var valueEnd = index;</span>
+	
+<span class="cstat-no" title="statement not covered" >	mark = Lexer.quotationMark(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!mark) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = mark;</span>
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, Utils.stringify(value, valueStart, valueEnd), Lexer.TokenType.SearchPhrase);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function searchWord(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var next = Utils.required(value, index, Lexer.ALPHA, 1);</span>
+<span class="cstat-no" title="statement not covered" >	if (!next) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = next;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var token = Lexer.tokenize(value, start, index, null, Lexer.TokenType.SearchWord);</span>
+<span class="cstat-no" title="statement not covered" >	token.value = token.raw;</span>
+<span class="cstat-no" title="statement not covered" >	return token;</span>
+}
+	
+<span class="fstat-no" title="function not covered" >export function searchParenExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = open;</span>
+<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
+	
+<span class="cstat-no" title="statement not covered" >	var expr = searchExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = expr.next;</span>
+	
+<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = close;</span>
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.SearchParenExpression);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function levels(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$levels')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 7;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var level;</span>
+<span class="cstat-no" title="statement not covered" >	if (Utils.equals(value, index, 'max')){</span>
+<span class="cstat-no" title="statement not covered" >		level = 'max';</span>
+<span class="cstat-no" title="statement not covered" >		index += 3;</span>
+	}else{
+<span class="cstat-no" title="statement not covered" >		var token = PrimitiveLiteral.int32Value(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >		level = token.raw;</span>
+<span class="cstat-no" title="statement not covered" >		index = token.next;</span>
+	}
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, level, Lexer.TokenType.Levels);</span>
+}
+&nbsp;
+export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
+	<span class="missing-if-branch" title="if path not taken" >I</span>if (!Utils.equals(value, index, '$filter')) <span class="cstat-no" title="statement not covered" >return;</span>
+	var start = index;
+	index += 7;
+&nbsp;
+	var eq = Lexer.EQ(value, index);
+	<span class="missing-if-branch" title="if path not taken" >I</span>if (!eq) <span class="cstat-no" title="statement not covered" >return;</span>
+	index = eq;
+&nbsp;
+	var expr = Expressions.boolCommonExpr(value, index);
+	<span class="missing-if-branch" title="if path not taken" >I</span>if (!expr) <span class="cstat-no" title="statement not covered" >return;</span>
+	index = expr.next;
+&nbsp;
+	return Lexer.tokenize(value, start, index, expr, Lexer.TokenType.Filter);
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function orderby(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$orderby')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 8;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var items = [];</span>
+<span class="cstat-no" title="statement not covered" >	var token = orderbyItem(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	while (token){</span>
+<span class="cstat-no" title="statement not covered" >		items.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (comma){</span>
+<span class="cstat-no" title="statement not covered" >			index = comma;</span>
+<span class="cstat-no" title="statement not covered" >			var token = orderbyItem(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >			index = token.next;</span>
+		}else <span class="cstat-no" title="statement not covered" >break;</span>
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.OrderBy);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function orderbyItem(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var expr = Expressions.commonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = expr.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var direction = 1;</span>
+<span class="cstat-no" title="statement not covered" >	var rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (rws &gt; index){</span>
+<span class="cstat-no" title="statement not covered" >		index = rws;</span>
+<span class="cstat-no" title="statement not covered" >		if (Utils.equals(value, index, 'asc')) <span class="cstat-no" title="statement not covered" >index += 3;</span></span>
+		else <span class="cstat-no" title="statement not covered" >if (Utils.equals(value, index, 'desc')){</span>
+<span class="cstat-no" title="statement not covered" >			index += 4;</span>
+<span class="cstat-no" title="statement not covered" >			direction = -1;</span>
+		}else <span class="cstat-no" title="statement not covered" >return;</span>
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, { expr, direction }, Lexer.TokenType.OrderByItem);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function skip(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$skip')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 5;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var token = PrimitiveLiteral.int32Value(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.Skip);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function top(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$top')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 4;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var token = PrimitiveLiteral.int32Value(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.Top);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function format(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$format')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 7;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var format;</span>
+<span class="cstat-no" title="statement not covered" >	if (Utils.equals(value, index, 'atom')){</span>
+<span class="cstat-no" title="statement not covered" >		format = 'atom';</span>
+<span class="cstat-no" title="statement not covered" >		index += 4;</span>
+	}else <span class="cstat-no" title="statement not covered" >if (Utils.equals(value, index, 'json')){</span>
+<span class="cstat-no" title="statement not covered" >		format = 'json';</span>
+<span class="cstat-no" title="statement not covered" >		index += 4;</span>
+	}else <span class="cstat-no" title="statement not covered" >if (Utils.equals(value, index, 'xml')){</span>
+<span class="cstat-no" title="statement not covered" >		format = 'xml';</span>
+<span class="cstat-no" title="statement not covered" >		index += 3;</span>
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	if (format) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, start, index, { format }, Lexer.TokenType.Format);</span></span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function inlinecount(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$count')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 6;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var token = PrimitiveLiteral.booleanValue(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.InlineCount);</span>
+}
+&nbsp;
+//TODO: search
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function select(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$select')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 7;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var items = [];</span>
+<span class="cstat-no" title="statement not covered" >	var token = selectItem(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	while (token){</span>
+<span class="cstat-no" title="statement not covered" >		items.push(token);</span>
+<span class="cstat-no" title="statement not covered" >		index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (comma){</span>
+<span class="cstat-no" title="statement not covered" >			index = comma;</span>
+<span class="cstat-no" title="statement not covered" >			token = selectItem(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+		}else <span class="cstat-no" title="statement not covered" >break;</span>
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Select);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function selectItem(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	var item;</span>
+<span class="cstat-no" title="statement not covered" >	var op = allOperationsInSchema(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	var star = Lexer.STAR(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (op &gt; index){</span>
+<span class="cstat-no" title="statement not covered" >		item = { namespace: Utils.stringify(value, index, op - 2), value: '*' };</span>
+<span class="cstat-no" title="statement not covered" >		index = op;</span>
+	}else <span class="cstat-no" title="statement not covered" >if (star){</span>
+<span class="cstat-no" title="statement not covered" >		item = { value: '*' };</span>
+<span class="cstat-no" title="statement not covered" >		index = star;</span>
+	}else{
+<span class="cstat-no" title="statement not covered" >		item = {};</span>
+<span class="cstat-no" title="statement not covered" >		var name = NameOrIdentifier.qualifiedEntityTypeName(value, index) ||</span>
+			NameOrIdentifier.qualifiedComplexTypeName(value, index);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		if (name &amp;&amp; value[name.next] != 0x2f) <span class="cstat-no" title="statement not covered" >return;</span></span>
+		else <span class="cstat-no" title="statement not covered" >if (name &amp;&amp; value[name.next] == 0x2f){</span>
+<span class="cstat-no" title="statement not covered" >			index++;</span>
+<span class="cstat-no" title="statement not covered" >			item.name = name;</span>
+		}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		var select = selectProperty(value, index) ||</span>
+			qualifiedActionName(value, index) ||
+			qualifiedFunctionName(value, index);
+<span class="cstat-no" title="statement not covered" >		if (!select) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >		index = select.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		item = name ? { name, select } : select;</span>
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	if (index &gt; start) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, start, index, item, Lexer.TokenType.SelectItem);</span></span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function allOperationsInSchema(value:number[] | Uint8Array, index:number)</span>:number {
+<span class="cstat-no" title="statement not covered" >	var namespaceNext = NameOrIdentifier.namespace(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	var star = Lexer.STAR(value, namespaceNext + 1);</span>
+<span class="cstat-no" title="statement not covered" >	if (namespaceNext &gt; index &amp;&amp; value[namespaceNext] == 0x2e &amp;&amp; star) <span class="cstat-no" title="statement not covered" >return star;</span></span>
+<span class="cstat-no" title="statement not covered" >	return index;</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function selectProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var token = selectPath(value, index) ||</span>
+		NameOrIdentifier.primitiveProperty(value, index) ||
+		NameOrIdentifier.primitiveColProperty(value, index) ||
+		NameOrIdentifier.navigationProperty(value, index);
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	if (token.type == Lexer.TokenType.SelectPath){</span>
+<span class="cstat-no" title="statement not covered" >		if (value[index] == 0x2f){</span>
+<span class="cstat-no" title="statement not covered" >			index++;</span>
+<span class="cstat-no" title="statement not covered" >			var prop = selectProperty(value, index);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >			if (!prop) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >			var path = Lexer.clone(token);</span>
+<span class="cstat-no" title="statement not covered" >			token.next = prop.next;</span>
+<span class="cstat-no" title="statement not covered" >			token.raw = Utils.stringify(value, start, token.next);</span>
+<span class="cstat-no" title="statement not covered" >			token.value = { path, next: prop };</span>
+		}
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return token;</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function selectPath(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var token = NameOrIdentifier.complexProperty(value, index) ||</span>
+		NameOrIdentifier.complexColProperty(value, index);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var tokenValue:any = token;</span>
+<span class="cstat-no" title="statement not covered" >	if (value[index] == 0x2f){</span>
+<span class="cstat-no" title="statement not covered" >		var name = NameOrIdentifier.qualifiedComplexTypeName(value, index + 1);</span>
+<span class="cstat-no" title="statement not covered" >		if (name){</span>
+<span class="cstat-no" title="statement not covered" >			index = name.next;</span>
+<span class="cstat-no" title="statement not covered" >			tokenValue = { prop: token, name };</span>
+		}
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.SelectPath);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function qualifiedActionName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var namespaceNext = NameOrIdentifier.namespace(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (namespaceNext == index || value[namespaceNext] != 0x2e) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = namespaceNext + 1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var action = NameOrIdentifier.action(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!action) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.Action);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function qualifiedFunctionName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var namespaceNext = NameOrIdentifier.namespace(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (namespaceNext == index || value[namespaceNext] != 0x2e) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = namespaceNext + 1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var fn = NameOrIdentifier.odataFunction(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!fn) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = fn.next;</span>
+<span class="cstat-no" title="statement not covered" >	var tokenValue:any = { name: fn };</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (open){</span>
+<span class="cstat-no" title="statement not covered" >		index = open;</span>
+<span class="cstat-no" title="statement not covered" >		tokenValue.parameters = [];</span>
+<span class="cstat-no" title="statement not covered" >		var param = Expressions.parameterName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (!param) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		while (param){</span>
+<span class="cstat-no" title="statement not covered" >			index = param.next;</span>
+<span class="cstat-no" title="statement not covered" >			tokenValue.parameters.push(param);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >			var comma = Lexer.COMMA(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (comma){</span>
+<span class="cstat-no" title="statement not covered" >				index = comma;</span>
+<span class="cstat-no" title="statement not covered" >				var param = Expressions.parameterName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >				if (!param) <span class="cstat-no" title="statement not covered" >return;</span></span>
+			}else <span class="cstat-no" title="statement not covered" >break;</span>
+		}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >		index = close;</span>
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.Function);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function skiptoken(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, '$skiptoken')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 10;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+	
+<span class="cstat-no" title="statement not covered" >	var ch = Lexer.qcharNoAMP(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!ch) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var valueStart = index;</span>
+	
+<span class="cstat-no" title="statement not covered" >	while (ch &gt; index){</span>
+<span class="cstat-no" title="statement not covered" >		index = ch;</span>
+<span class="cstat-no" title="statement not covered" >		ch = Lexer.qcharNoAMP(value, index);</span>
+	}
+	
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, Utils.stringify(value, valueStart, index), Lexer.TokenType.SkipToken);</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function aliasAndValue(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var alias = Expressions.parameterAlias(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!alias) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = alias.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var paramValue = Expressions.parameterValue(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!paramValue) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = paramValue.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
+		alias,
+		value: paramValue
+	}, Lexer.TokenType.AliasAndValue);
+}
+&nbsp;
+//TODO: customQueryOption
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Apr 26 2016 13:48:33 GMT+0200 (Central Europe Daylight Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

@@ -5,28 +5,27 @@ OData v4 parser based on OASIS Standard OData v4 ABNF grammar
 ## How to build
 
 Simply just use ```$ gulp build```
-Run TDD tests use ```$ gulp tdd```
+
+Run TDD tests using ```$ gulp tdd```
 
 ## How to use
 
-Parser class instance:
+Parser functions:
 
 ```javascript
-var parser = new (require('./lib/parser')).Parser)();
+var parser = require('odata-v4-parser');
 parser.filter("Title eq 'Article1'");
 ```
 
 Low-level functional:
 
 ```javascript
-require('./lib/expressions').boolCommonExpr(new Uint8Array(new Buffer("contains(@word,Title)")), 0);
-require('./lib/json').arrayOrObject(new Uint8Array(new Buffer('{"a":1}')), 0);
-require('./lib/expressions').commonExpr(new Uint8Array(new Buffer('Items/all(d:d/Quantity gt 100)')), 0);
+require('odata-v4-parser/lib/expressions').boolCommonExpr(new Uint8Array(new Buffer("contains(@word,Title)")), 0);
+require('odata-v4-parser/lib/json').arrayOrObject(new Uint8Array(new Buffer('{"a":1}')), 0);
+require('odata-v4-parser/lib/expressions').commonExpr(new Uint8Array(new Buffer('Items/all(d:d/Quantity gt 100)')), 0);
 ```
 
 ## TODO
 
-* $search
-* unit testing
-* code coverage
+* more unit testing
 * use metadata for correct OData identifier type detection (complex types, navigation properties, etc.)

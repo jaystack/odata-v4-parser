@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src\nameOrIdentifier.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> nameOrIdentifier.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">49.59% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>121/244</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">15.04% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>17/113</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">12.77% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>6/47</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">47.92% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>69/144</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">82×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as Utils from './utils';
+import * as Lexer from './lexer';
+import * as PrimitiveLiteral from './primitiveLiteral';
+&nbsp;
+export function enumeration(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var type = qualifiedEnumTypeName(value, index);
+	<span class="missing-if-branch" title="else path not taken" >E</span>if (!type) return;
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index = type.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var squote = Lexer.SQUOTE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!squote) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = squote;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var enumVal = enumValue(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!enumVal) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = enumVal.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	squote = Lexer.SQUOTE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!squote) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	index = squote;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
+		name: type,
+		value: enumVal
+	}, Lexer.TokenType.Enum);
+}
+<span class="fstat-no" title="function not covered" >export function enumValue(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var val = singleEnumValue(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (!val) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	var arr = [];</span>
+<span class="cstat-no" title="statement not covered" >	while (val){</span>
+<span class="cstat-no" title="statement not covered" >		arr.push(val);</span>
+<span class="cstat-no" title="statement not covered" >		index = val.next;</span>
+<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, val.next);</span>
+<span class="cstat-no" title="statement not covered" >		if (comma){</span>
+<span class="cstat-no" title="statement not covered" >			index = comma;</span>
+<span class="cstat-no" title="statement not covered" >			val = singleEnumValue(value, index);</span>
+		}else <span class="cstat-no" title="statement not covered" >break;</span>
+	}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, { values: arr }, Lexer.TokenType.EnumValue);</span>
+}
+<span class="fstat-no" title="function not covered" >export function singleEnumValue(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	return enumerationMember(value, index) ||</span>
+		enumMemberValue(value, index);
+}
+<span class="fstat-no" title="function not covered" >export function enumMemberValue(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var token = PrimitiveLiteral.int64Value(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (token){</span>
+<span class="cstat-no" title="statement not covered" >		token.type = Lexer.TokenType.EnumMemberValue;</span>
+<span class="cstat-no" title="statement not covered" >		return token;</span>
+	}
+}
+<span class="fstat-no" title="function not covered" >export function singleQualifiedTypeName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	return qualifiedEntityTypeName(value, index) ||</span>
+		qualifiedComplexTypeName(value, index) ||
+		qualifiedTypeDefinitionName(value, index) ||
+		qualifiedEnumTypeName(value, index) ||
+		primitiveTypeName(value, index);
+}
+<span class="fstat-no" title="function not covered" >export function qualifiedTypeName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (Utils.equals(value, index, 'Collection')) {</span>
+<span class="cstat-no" title="statement not covered" >		var start = index;</span>
+<span class="cstat-no" title="statement not covered" >		index += 10;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		var squote = Lexer.SQUOTE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (!squote) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >		index = squote;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		var token = singleQualifiedTypeName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+		else <span class="cstat-no" title="statement not covered" >index = token.next;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		squote = Lexer.SQUOTE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >		if (!squote) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >		index = squote;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		token.position = start;</span>
+<span class="cstat-no" title="statement not covered" >		token.next = index;</span>
+<span class="cstat-no" title="statement not covered" >		token.raw = Utils.stringify(value, token.position, token.next);</span>
+<span class="cstat-no" title="statement not covered" >		token.type = Lexer.TokenType.Collection;</span>
+	} else <span class="cstat-no" title="statement not covered" >return singleQualifiedTypeName(value, index);</span>
+};
+export function qualifiedEntityTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var start = index;
+	var namespaceNext = namespace(value, index);
+&nbsp;
+	<span class="missing-if-branch" title="else path not taken" >E</span>if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
+<span class="cstat-no" title="statement not covered" >	var nameNext = entityTypeName(value, namespaceNext + 1);</span>
+<span class="cstat-no" title="statement not covered" >	if (nameNext &amp;&amp; nameNext.next == namespaceNext + 1) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, nameNext.next, 'EntityTypeName', Lexer.TokenType.Identifier);</span>
+};
+<span class="fstat-no" title="function not covered" >export function qualifiedComplexTypeName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	var namespaceNext = namespace(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (namespaceNext == index || value[namespaceNext] != 0x2e) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var nameNext = complexTypeName(value, namespaceNext + 1);</span>
+<span class="cstat-no" title="statement not covered" >	if (nameNext &amp;&amp; nameNext.next == namespaceNext + 1) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, nameNext.next, 'ComplexTypeName', Lexer.TokenType.Identifier);</span>
+};
+<span class="fstat-no" title="function not covered" >export function qualifiedTypeDefinitionName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	var namespaceNext = namespace(value, index);</span>
+<span class="cstat-no" title="statement not covered" >	if (namespaceNext == index || value[namespaceNext] != 0x2e) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var nameNext = typeDefinitionName(value, namespaceNext + 1);</span>
+<span class="cstat-no" title="statement not covered" >	if (nameNext &amp;&amp; nameNext.next == namespaceNext + 1) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, nameNext.next, 'TypeDefinitionName', Lexer.TokenType.Identifier);</span>
+};
+export function qualifiedEnumTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
+	var start = index;
+	var namespaceNext = namespace(value, index);
+	<span class="missing-if-branch" title="else path not taken" >E</span>if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
+<span class="cstat-no" title="statement not covered" >	var nameNext = enumerationTypeName(value, namespaceNext + 1);</span>
+<span class="cstat-no" title="statement not covered" >	if (nameNext &amp;&amp; nameNext.next == namespaceNext + 1) <span class="cstat-no" title="statement not covered" >return;</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, nameNext.next, 'EnumTypeName', Lexer.TokenType.Identifier);</span>
+};
+export function namespace(value:number[] | Uint8Array, index:number):number {
+	var part = namespacePart(value, index);
+	while (part &amp;&amp; part.next &gt; index) {
+		index = part.next;
+		<span class="missing-if-branch" title="if path not taken" >I</span>if (value[part.next] == 0x2e) {
+<span class="cstat-no" title="statement not covered" >			index++;</span>
+<span class="cstat-no" title="statement not covered" >			part = namespacePart(value, index);</span>
+<span class="cstat-no" title="statement not covered" >			if (part &amp;&amp; value[part.next] != 0x2e) {</span>
+				//part.next = index - 1;
+<span class="cstat-no" title="statement not covered" >				return index - 1;</span>
+			}
+		}
+	}
+&nbsp;
+	return index - 1;
+};
+export function odataIdentifier(value:number[] | Uint8Array, index:number, tokenType?:Lexer.TokenType):Lexer.Token {
+	var start = index;
+	<span class="missing-if-branch" title="else path not taken" >E</span>if (Lexer.identifierLeadingCharacter(value[index])) {
+		index++;
+		while (index &lt; value.length &amp;&amp; (index - start &lt; 128) &amp;&amp; Lexer.identifierCharacter(value[index])) {
+			index++;
+		}
+	}
+&nbsp;
+	<span class="missing-if-branch" title="else path not taken" >E</span>if (index &gt; start) return Lexer.tokenize(value, start, index, { name: Utils.stringify(value, start, index) }, tokenType || Lexer.TokenType.ODataIdentifier);
+}
+export function namespacePart(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.NamespacePart); }
+<span class="fstat-no" title="function not covered" >export function entitySetName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntitySetName); </span>}
+<span class="fstat-no" title="function not covered" >export function singletonEntity(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.SingletonEntity); </span>}
+<span class="fstat-no" title="function not covered" >export function entityTypeName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntityTypeName); </span>}
+<span class="fstat-no" title="function not covered" >export function complexTypeName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ComplexTypeName); </span>}
+<span class="fstat-no" title="function not covered" >export function typeDefinitionName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.TypeDefinitionName); </span>}
+<span class="fstat-no" title="function not covered" >export function enumerationTypeName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EnumerationTypeName); </span>}
+<span class="fstat-no" title="function not covered" >export function enumerationMember(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EnumerationMember); </span>}
+<span class="fstat-no" title="function not covered" >export function termName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.TermName); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveTypeName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
+<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, 'Edm.')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >	var start = index;</span>
+<span class="cstat-no" title="statement not covered" >	index += 4;</span>
+<span class="cstat-no" title="statement not covered" >	var end = index + (Utils.equals(value, index, 'Binary') ||</span>
+		Utils.equals(value, index, 'Boolean') ||
+		Utils.equals(value, index, 'Byte') ||
+		Utils.equals(value, index, 'Date') ||
+		Utils.equals(value, index, 'DateTimeOffset') ||
+		Utils.equals(value, index, 'Decimal') ||
+		Utils.equals(value, index, 'Double') ||
+		Utils.equals(value, index, 'Duration') ||
+		Utils.equals(value, index, 'Guid') ||
+		Utils.equals(value, index, 'Int16') ||
+		Utils.equals(value, index, 'Int32') ||
+		Utils.equals(value, index, 'Int64') ||
+		Utils.equals(value, index, 'SByte') ||
+		Utils.equals(value, index, 'Single') ||
+		Utils.equals(value, index, 'Stream') ||
+		Utils.equals(value, index, 'String') ||
+		Utils.equals(value, index, 'TimeOfDay') ||
+		Utils.equals(value, index, 'GeographyCollection') ||
+		Utils.equals(value, index, 'GeographyLineString') ||
+		Utils.equals(value, index, 'GeographyMultiLineString') ||
+		Utils.equals(value, index, 'GeographyMultiPoint') ||
+		Utils.equals(value, index, 'GeographyMultiPolygon') ||
+		Utils.equals(value, index, 'GeographyPoint') ||
+		Utils.equals(value, index, 'GeographyPolygon') ||
+		Utils.equals(value, index, 'GeometryCollection') ||
+		Utils.equals(value, index, 'GeometryLineString') ||
+		Utils.equals(value, index, 'GeometryMultiLineString') ||
+		Utils.equals(value, index, 'GeometryMultiPoint') ||
+		Utils.equals(value, index, 'GeometryMultiPolygon') ||
+		Utils.equals(value, index, 'GeometryPoint') ||
+		Utils.equals(value, index, 'GeometryPolygon')
+		);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >	if (end &gt; index) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, start, end, 'PrimitiveTypeName', Lexer.TokenType.Identifier);</span></span>
+};
+<span class="fstat-no" title="function not covered" >export function primitiveProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveKeyProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveKeyProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveNonKeyProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveNonKeyProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveColProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function complexProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ComplexProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function complexColProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ComplexColProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function streamProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.StreamProperty); </span>}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function navigationProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.NavigationProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function entityNavigationProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntityNavigationProperty); </span>}
+<span class="fstat-no" title="function not covered" >export function entityColNavigationProperty(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionNavigationProperty); </span>}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function action(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.Action); </span>}
+<span class="fstat-no" title="function not covered" >export function actionImport(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ActionImport); </span>}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function odataFunction(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.Function); </span>}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function entityFunction(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntityFunction); </span>}
+<span class="fstat-no" title="function not covered" >export function entityColFunction(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunction); </span>}
+<span class="fstat-no" title="function not covered" >export function complexFunction(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ComplexFunction); </span>}
+<span class="fstat-no" title="function not covered" >export function complexColFunction(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunction); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveFunction(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunction); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveColFunction(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunction); </span>}
+&nbsp;
+<span class="fstat-no" title="function not covered" >export function entityFunctionImport(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntityFunctionImport); </span>}
+<span class="fstat-no" title="function not covered" >export function entityColFunctionImport(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunctionImport); </span>}
+<span class="fstat-no" title="function not covered" >export function complexFunctionImport(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ComplexFunctionImport); </span>}
+<span class="fstat-no" title="function not covered" >export function complexColFunctionImport(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunctionImport); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveFunctionImport(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunctionImport); </span>}
+<span class="fstat-no" title="function not covered" >export function primitiveColFunctionImport(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunctionImport); </span>}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Apr 26 2016 13:48:33 GMT+0200 (Central Europe Daylight Time)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
