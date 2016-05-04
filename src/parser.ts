@@ -8,14 +8,15 @@ import * as ODataUri from './odataUri';
 
 var parserFactory = function(fn){
 	return function (source, options) {
+		options = options || {};
 		var raw = new Uint8Array(source.length);
 		var pos = 0;
-		var tokens = [];
 		for (var i = 0; i < source.length; i++) {
 			raw[i] = source.charCodeAt(i);
 		}
-		while (pos < raw.length) {
-			var token = fn(raw, pos);
+		return fn(raw, pos, options.metadata);
+		/*while (pos < raw.length) {
+			var token = fn(raw, pos, options.metadata);
 			if (token) {
 				pos = token.next;
 				tokens.push(token);
@@ -23,7 +24,7 @@ var parserFactory = function(fn){
 				throw new Error('Fail at ' + pos);
 			}
 		}
-		return tokens.length > 1 ? tokens : tokens[0];
+		return tokens.length > 1 ? tokens : tokens[0];*/
 	};
 };
 

@@ -156,6 +156,7 @@ export declare class Token {
     value: any;
     type: TokenType;
     raw: string;
+    metadata: any;
     constructor(token: any);
 }
 export declare function tokenize(value: number[] | Uint8Array, index: number, next: number, tokenValue: any, tokenType: TokenType): Token;

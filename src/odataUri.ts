@@ -7,6 +7,10 @@ import * as ResourcePath from './resourcePath';
 
 export function odataUri(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var resource = ResourcePath.resourcePath(value, index);
+	while (!resource && index < value.length){
+		while (value[++index] != 0x2f && index < value.length);
+		resource = ResourcePath.resourcePath(value, index);
+	}
 	if (!resource) return;
 	var start = index;
 	index = resource.next;

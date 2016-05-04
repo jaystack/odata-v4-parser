@@ -159,6 +159,7 @@ export class Token{
 	value:any
 	type:TokenType
 	raw:string
+	metadata:any
 	constructor(token){
 		this.position = token.position;
 		this.next = token.next;
