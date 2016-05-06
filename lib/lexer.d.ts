@@ -9,6 +9,8 @@ export declare class TokenType {
     static EnumValue: string;
     static EnumMemberValue: string;
     static Identifier: string;
+    static QualifiedEntityTypeName: string;
+    static QualifiedComplexTypeName: string;
     static ODataIdentifier: string;
     static Collection: string;
     static NamespacePart: string;
@@ -129,6 +131,12 @@ export declare class TokenType {
     static AllResource: string;
     static ActionImportCall: string;
     static FunctionImportCall: string;
+    static EntityCollectionFunctionImportCall: string;
+    static EntityFunctionImportCall: string;
+    static ComplexCollectionFunctionImportCall: string;
+    static ComplexFunctionImportCall: string;
+    static PrimitiveCollectionFunctionImportCall: string;
+    static PrimitiveFunctionImportCall: string;
     static FunctionParameters: string;
     static FunctionParameter: string;
     static ResourcePath: string;

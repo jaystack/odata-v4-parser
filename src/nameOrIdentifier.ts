@@ -84,24 +84,32 @@ export function qualifiedTypeName(value:number[] | Uint8Array, index:number):Lex
 		token.type = Lexer.TokenType.Collection;
 	} else return singleQualifiedTypeName(value, index);
 };
-export function qualifiedEntityTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function qualifiedEntityTypeName(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
 	var start = index;
 	var namespaceNext = namespace(value, index);
 
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
-	var nameNext = entityTypeName(value, namespaceNext + 1);
-	if (nameNext && nameNext.next == namespaceNext + 1) return;
+	var schema;
+	if (typeof metadataContext == 'object'){
+		schema = getMetadataRoot(metadataContext).schemas.filter(it => it.namespace == Utils.stringify(value, start, namespaceNext))[0];
+	}
+	var name = entityTypeName(value, namespaceNext + 1, schema);
+	if (!name) return;
 
-	return Lexer.tokenize(value, start, nameNext.next, 'EntityTypeName', Lexer.TokenType.Identifier);
+	return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedEntityTypeName);
 };
-export function qualifiedComplexTypeName(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function qualifiedComplexTypeName(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
 	var start = index;
 	var namespaceNext = namespace(value, index);
 	if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
-	var nameNext = complexTypeName(value, namespaceNext + 1);
-	if (nameNext && nameNext.next == namespaceNext + 1) return;
+	var schema;
+	if (typeof metadataContext == 'object'){
+		schema = getMetadataRoot(metadataContext).schemas.filter(it => it.namespace == Utils.stringify(value, start, namespaceNext))[0];
+	}
+	var name = complexTypeName(value, namespaceNext + 1, schema);
+	if (!name) return;
 
-	return Lexer.tokenize(value, start, nameNext.next, 'ComplexTypeName', Lexer.TokenType.Identifier);
+	return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedComplexTypeName);
 };
 export function qualifiedTypeDefinitionName(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var start = index;
@@ -128,10 +136,7 @@ export function namespace(value:number[] | Uint8Array, index:number):number {
 		if (value[part.next] == 0x2e) {
 			index++;
 			part = namespacePart(value, index);
-			if (part && value[part.next] != 0x2e) {
-				//part.next = index - 1;
-				return index - 1;
-			}
+			if (part && value[part.next] != 0x2e) return index - 1;
 		}
 	}
 
@@ -168,6 +173,7 @@ export function entitySetName(value:number[] | Uint8Array, index:number, metadat
 			if (eq) entityType = type;
 			return eq;
 		}));
+		if (!entityType) return;
 		
 		token.metadata = entityType;
 	}
@@ -175,8 +181,30 @@ export function entitySetName(value:number[] | Uint8Array, index:number, metadat
 	return token;
 }
 export function singletonEntity(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.SingletonEntity); }
-export function entityTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityTypeName); }
-export function complexTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexTypeName); }
+export function entityTypeName(value:number[] | Uint8Array, index:number, schema?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.EntityTypeName);
+	if (!token) return;
+	
+	if (typeof schema == 'object'){
+		var type = schema.entityTypes.filter(it => it.name == token.raw)[0];
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}
+export function complexTypeName(value:number[] | Uint8Array, index:number, schema?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.ComplexTypeName);
+	if (!token) return;
+	
+	if (typeof schema == 'object'){
+		var type = schema.complexTypes.filter(it => it.name == token.raw)[0];
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}
 export function typeDefinitionName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.TypeDefinitionName); }
 export function enumerationTypeName(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EnumerationTypeName); }
 export function enumerationMember(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EnumerationMember); }
@@ -397,16 +425,143 @@ export function odataFunction(value:number[] | Uint8Array, index:number):Lexer.T
 		primitiveColFunction(value, index);
 }
 
-export function entityFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunction); }
-export function entityColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunction); }
-export function complexFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunction); }
-export function complexColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunction); }
-export function primitiveFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunction); }
-export function primitiveColFunction(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunction); }
+export function entityFunction(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunction); }
+export function entityColFunction(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunction); }
+export function complexFunction(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunction); }
+export function complexColFunction(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunction); }
+export function primitiveFunction(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunction); }
+export function primitiveColFunction(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunction); }
 
-export function entityFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityFunctionImport); }
-export function entityColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunctionImport); }
-export function complexFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexFunctionImport); }
-export function complexColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunctionImport); }
-export function primitiveFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunctionImport); }
-export function primitiveColFunctionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunctionImport); }
+function getFunctionImportType(metadataContext:any, token:Lexer.Token, isCollection:boolean, isPrimitive:boolean, types?:string){
+	var fnImport;
+		
+	for (var i = 0; i < metadataContext.dataServices.schemas.length; i++){
+		var schema = metadataContext.dataServices.schemas[i];
+		for (var j = 0; j < schema.entityContainer.length; j++){
+			var container = schema.entityContainer[j];
+			for (var k = 0; k < container.functionImports.length; k++){
+				var it = container.functionImports[k];
+				if (it.name == token.raw){
+					fnImport = it;
+					break;
+				}
+			}
+			if (fnImport) break;
+		}
+		if (fnImport) break;
+	}
+	if (!fnImport) return;
+	
+	var fn;
+	for (var i = 0; i < metadataContext.dataServices.schemas.length; i++){
+		var schema = metadataContext.dataServices.schemas[i];
+		if (fnImport.function.indexOf(schema.namespace) == 0){
+			for (var j = 0; j < schema.functions.length; j++){
+				var it = schema.functions[j];
+				if (it.name == fnImport.name){
+					fn = it;
+					break;
+				}
+			}
+		}
+		if (fn) break;
+	}
+	if (!fn) return;
+	if (fn.returnType.type.indexOf('Collection') == isCollection ? -1 : 0) return;
+	var elementType = isCollection ? fn.returnType.type.slice(11, -1) : fn.returnType.type;
+	if (isPrimitiveTypeName(elementType) && !isPrimitive) return;
+	if (!isPrimitiveTypeName(elementType) && isPrimitive) return;
+	if (isPrimitive) return elementType;
+	
+	var type;
+	for (var i = 0; i < metadataContext.dataServices.schemas.length; i++){
+		var schema = metadataContext.dataServices.schemas[i];
+		if (elementType.indexOf(schema.namespace) == 0){
+			for (var j = 0; j < schema[types].length; j++){
+				var it = schema[types][j];
+				if (schema.namespace + '.' + it.name == elementType){
+					type = it;
+					break;
+				}
+			}
+		}
+		if (type) break;
+	}
+	
+	return type;
+}
+export function entityFunctionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.EntityFunctionImport);
+	if (!token) return;
+	
+	if (typeof metadataContext == 'object'){
+		var type = getFunctionImportType(metadataContext, token, false, false, "entityTypes");
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}
+export function entityColFunctionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.EntityCollectionFunctionImport);
+	if (!token) return;
+	
+	if (typeof metadataContext == 'object'){
+		var type = getFunctionImportType(metadataContext, token, true, false, "entityTypes");
+		console.log('entity col function import', token, type);
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}
+export function complexFunctionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.ComplexFunctionImport);
+	if (!token) return;
+	
+	if (typeof metadataContext == 'object'){
+		var type = getFunctionImportType(metadataContext, token, false, false, "complexTypes");
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}
+export function complexColFunctionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.ComplexCollectionFunctionImport);
+	if (!token) return;
+	
+	if (typeof metadataContext == 'object'){
+		var type = getFunctionImportType(metadataContext, token, true, false, "complexTypes");
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}
+export function primitiveFunctionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.PrimitiveFunctionImport);
+	if (!token) return;
+	
+	if (typeof metadataContext == 'object'){
+		var type = getFunctionImportType(metadataContext, token, false, true);
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}
+export function primitiveColFunctionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.PrimitiveCollectionFunctionImport);
+	console.log(token);
+	if (!token) return;
+	
+	if (typeof metadataContext == 'object'){
+		var type = getFunctionImportType(metadataContext, token, true, true);
+		console.log('type', type);
+		if (!type) return;
+		token.metadata = type;
+	}
+	
+	return token;
+}

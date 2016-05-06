@@ -1,7 +1,7 @@
 import * as Lexer from './lexer';
 export declare function resourcePath(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function batch(value: number[] | Uint8Array, index: number): Lexer.Token;
-export declare function entity(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function entity(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function metadata(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function collectionNavigation(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function collectionNavigationPath(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
