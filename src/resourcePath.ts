@@ -34,13 +34,13 @@ export function resourcePath(value:number[] | Uint8Array, index:number, metadata
 			break;
 		case Lexer.TokenType.ComplexCollectionFunctionImportCall:
 		case Lexer.TokenType.PrimitiveCollectionFunctionImportCall:
-			navigation = collectionPath(value, resource.next);
+			navigation = collectionPath(value, resource.next, resource.metadata);
 			break;
 		case Lexer.TokenType.ComplexFunctionImportCall:
 			navigation = complexPath(value, resource.next, resource.metadata);
 			break;
 		case Lexer.TokenType.PrimitiveFunctionImportCall:
-			navigation = singlePath(value, resource.next);
+			navigation = singlePath(value, resource.next, resource.metadata);
 			break;
 	}
 	
@@ -90,7 +90,7 @@ export function collectionNavigation(value:number[] | Uint8Array, index:number, 
 
 export function collectionNavigationPath(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
 	var start = index;
-	var token = collectionPath(value, index) ||
+	var token = collectionPath(value, index, metadataContext) ||
 		Expressions.refExpr(value, index);
 	if (token) return token;
 
@@ -110,7 +110,7 @@ export function collectionNavigationPath(value:number[] | Uint8Array, index:numb
 }
 
 export function singleNavigation(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
-	var token = boundOperation(value, index) ||
+	var token = boundOperation(value, index, false, metadataContext) ||
 		Expressions.refExpr(value, index) ||
 		Expressions.valueExpr(value, index);
 	if (token) return token;
@@ -157,20 +157,20 @@ export function propertyPath(value:number[] | Uint8Array, index:number, metadata
 			navigation = singleNavigation(value, index, token.metadata);
 			break;
 		case Lexer.TokenType.ComplexColProperty:
-			navigation = collectionPath(value, index);
+			navigation = collectionPath(value, index, token.metadata);
 			break;
 		case Lexer.TokenType.ComplexProperty:
 			navigation = complexPath(value, index, token.metadata);
 			break;
 		case Lexer.TokenType.PrimitiveCollectionProperty:
-			navigation = collectionPath(value, index);
+			navigation = collectionPath(value, index, token.metadata);
 			break;
 		case Lexer.TokenType.PrimitiveKeyProperty:
 		case Lexer.TokenType.PrimitiveProperty:
-			navigation = singlePath(value, index);
+			navigation = singlePath(value, index, token.metadata);
 			break;
 		case Lexer.TokenType.StreamProperty:
-			navigation = boundOperation(value, index);
+			navigation = boundOperation(value, index, false);
 			break;
 	}
 	
@@ -179,14 +179,14 @@ export function propertyPath(value:number[] | Uint8Array, index:number, metadata
 	return Lexer.tokenize(value, start, index, { path: token, navigation }, Lexer.TokenType.PropertyPath);
 }
 
-export function collectionPath(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function collectionPath(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
 	return Expressions.countExpr(value, index) ||
-		boundOperation(value, index);
+		boundOperation(value, index, true, metadataContext);
 }
 
-export function singlePath(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function singlePath(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
 	return Expressions.valueExpr(value, index) ||
-		boundOperation(value, index);
+		boundOperation(value, index, false, metadataContext);
 }
 
 export function complexPath(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
@@ -201,25 +201,25 @@ export function complexPath(value:number[] | Uint8Array, index:number, metadataC
 		token = propertyPath(value, index + 1, metadataContext);
 		if (!token) return;
 		index = token.next;
-	}else token = boundOperation(value, index);
+	}else token = boundOperation(value, index, false, metadataContext);
 
 	if (!name && !token) return;
 
 	return Lexer.tokenize(value, start, index, { name: name, path: token }, Lexer.TokenType.ComplexPath);
 }
 
-export function boundOperation(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+export function boundOperation(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
 	if (value[index] != 0x2f) return;
 	var start = index;
 	index++;
 
-	var operation = boundEntityColFuncCall(value, index, metadataContext) ||
-		boundEntityFuncCall(value, index, metadataContext) ||
-		boundComplexColFuncCall(value, index, metadataContext) ||
-		boundComplexFuncCall(value, index, metadataContext) ||
-		boundPrimitiveColFuncCall(value, index, metadataContext) ||
-		boundPrimitiveFuncCall(value, index, metadataContext) ||
-		boundActionCall(value, index, metadataContext);
+	var operation = boundEntityColFuncCall(value, index, isCollection, metadataContext) ||
+		boundEntityFuncCall(value, index, isCollection, metadataContext) ||
+		boundComplexColFuncCall(value, index, isCollection, metadataContext) ||
+		boundComplexFuncCall(value, index, isCollection, metadataContext) ||
+		boundPrimitiveColFuncCall(value, index, isCollection, metadataContext) ||
+		boundPrimitiveFuncCall(value, index, isCollection, metadataContext) ||
+		boundActionCall(value, index, isCollection, metadataContext);
 	if (!operation) return;
 	index = operation.next;
 
@@ -238,16 +238,16 @@ export function boundOperation(value:number[] | Uint8Array, index:number, metada
 				name = NameOrIdentifier.qualifiedComplexTypeName(value, index + 1, operation.metadata);
 				if (name) index = name.next;
 			}
-			navigation = collectionPath(value, index);
+			navigation = collectionPath(value, index, operation.metadata);
 			break;
 		case Lexer.TokenType.BoundComplexFunctionCall:
 			navigation = complexPath(value, index, operation.metadata);
 			break;
 		case Lexer.TokenType.BoundPrimitiveCollectionFunctionCall:
-			navigation = collectionPath(value, index);
+			navigation = collectionPath(value, index, operation.metadata);
 			break;
 		case Lexer.TokenType.BoundPrimitiveFunctionCall:
-			navigation = singlePath(value, index);
+			navigation = singlePath(value, index, operation.metadata);
 			break;
 	}
 
@@ -256,7 +256,7 @@ export function boundOperation(value:number[] | Uint8Array, index:number, metada
 	return Lexer.tokenize(value, start, index, { operation, name, navigation }, Lexer.TokenType.BoundOperation);
 }
 
-export function boundActionCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+export function boundActionCall(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index) return;
 	var start = index;
@@ -271,7 +271,7 @@ export function boundActionCall(value:number[] | Uint8Array, index:number, metad
 	return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.BoundActionCall);
 }
 
-function boundFunctionCall(value:number[] | Uint8Array, index:number, odataFunction:Function, tokenType:Lexer.TokenType, metadataContext?:any):Lexer.Token {
+function boundFunctionCall(value:number[] | Uint8Array, index:number, odataFunction:Function, tokenType:Lexer.TokenType, isCollection:boolean, metadataContext?:any):Lexer.Token {
 	var namespaceNext = NameOrIdentifier.namespace(value, index);
 	if (namespaceNext == index) return;
 	var start = index;
@@ -280,7 +280,7 @@ function boundFunctionCall(value:number[] | Uint8Array, index:number, odataFunct
 	if (value[index] != 0x2e) return;
 	index++;
 
-	var call = odataFunction(value, index, metadataContext);
+	var call = odataFunction(value, index, isCollection, metadataContext);
 	if (!call) return;
 	index = call.next;
 
@@ -291,12 +291,24 @@ function boundFunctionCall(value:number[] | Uint8Array, index:number, odataFunct
 	return Lexer.tokenize(value, start, index, { call, params }, tokenType);
 }
 
-export function boundEntityFuncCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return boundFunctionCall(value, index, NameOrIdentifier.entityFunction, Lexer.TokenType.BoundEntityFunctionCall, metadataContext); }
-export function boundEntityColFuncCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return boundFunctionCall(value, index, NameOrIdentifier.entityColFunction, Lexer.TokenType.BoundEntityCollectionFunctionCall, metadataContext); }
-export function boundComplexFuncCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return boundFunctionCall(value, index, NameOrIdentifier.complexFunction, Lexer.TokenType.BoundComplexFunctionCall, metadataContext); }
-export function boundComplexColFuncCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return boundFunctionCall(value, index, NameOrIdentifier.complexColFunction, Lexer.TokenType.BoundComplexCollectionFunctionCall, metadataContext); }
-export function boundPrimitiveFuncCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return boundFunctionCall(value, index, NameOrIdentifier.primitiveFunction, Lexer.TokenType.BoundPrimitiveFunctionCall, metadataContext); }
-export function boundPrimitiveColFuncCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token { return boundFunctionCall(value, index, NameOrIdentifier.primitiveColFunction, Lexer.TokenType.BoundPrimitiveCollectionFunctionCall, metadataContext); }
+export function boundEntityFuncCall(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
+	return boundFunctionCall(value, index, NameOrIdentifier.entityFunction, Lexer.TokenType.BoundEntityFunctionCall, isCollection, metadataContext);
+}
+export function boundEntityColFuncCall(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
+	return boundFunctionCall(value, index, NameOrIdentifier.entityColFunction, Lexer.TokenType.BoundEntityCollectionFunctionCall, isCollection, metadataContext);
+}
+export function boundComplexFuncCall(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
+	return boundFunctionCall(value, index, NameOrIdentifier.complexFunction, Lexer.TokenType.BoundComplexFunctionCall, isCollection, metadataContext);
+}
+export function boundComplexColFuncCall(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
+	return boundFunctionCall(value, index, NameOrIdentifier.complexColFunction, Lexer.TokenType.BoundComplexCollectionFunctionCall, isCollection, metadataContext);
+}
+export function boundPrimitiveFuncCall(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
+	return boundFunctionCall(value, index, NameOrIdentifier.primitiveFunction, Lexer.TokenType.BoundPrimitiveFunctionCall, isCollection, metadataContext);
+}
+export function boundPrimitiveColFuncCall(value:number[] | Uint8Array, index:number, isCollection:boolean, metadataContext?:any):Lexer.Token {
+	return boundFunctionCall(value, index, NameOrIdentifier.primitiveColFunction, Lexer.TokenType.BoundPrimitiveCollectionFunctionCall, isCollection, metadataContext);
+}
 
 export function actionImportCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
 	var action = NameOrIdentifier.actionImport(value, index);

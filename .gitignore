@@ -1,2 +1,4 @@
 node_modules
 src/*.js
+index.js
+schema2.json

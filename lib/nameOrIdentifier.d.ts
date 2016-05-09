@@ -34,12 +34,12 @@ export declare function entityColNavigationProperty(value: number[] | Uint8Array
 export declare function action(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function actionImport(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function odataFunction(value: number[] | Uint8Array, index: number): Lexer.Token;
-export declare function entityFunction(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
-export declare function entityColFunction(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
-export declare function complexFunction(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
-export declare function complexColFunction(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
-export declare function primitiveFunction(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
-export declare function primitiveColFunction(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
+export declare function entityFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
+export declare function entityColFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
+export declare function complexFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
+export declare function complexColFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
+export declare function primitiveFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
+export declare function primitiveColFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
 export declare function entityFunctionImport(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function entityColFunctionImport(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function complexFunctionImport(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
