@@ -15,7 +15,7 @@ export function resourcePath(value:number[] | Uint8Array, index:number, metadata
 		functionImportCall(value, index, metadataContext) ||
 		crossjoin(value, index) ||
 		all(value, index) ||
-		actionImportCall(value, index) ||
+		actionImportCall(value, index, metadataContext) ||
 		NameOrIdentifier.singletonEntity(value, index);
 		
 	if (!resource) return;
@@ -101,7 +101,7 @@ export function collectionNavigationPath(value:number[] | Uint8Array, index:numb
 
 	var predicate = Expressions.keyPredicate(value, index, metadataContext);
 	if (predicate){
-		var tokenValue:any = predicate;
+		var tokenValue:any = { predicate };
 		index = predicate.next;
 
 		var navigation = singleNavigation(value, index, metadataContext);
@@ -331,7 +331,7 @@ export function boundPrimitiveColFuncCall(value:number[] | Uint8Array, index:num
 }
 
 export function actionImportCall(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
-	var action = NameOrIdentifier.actionImport(value, index);
+	var action = NameOrIdentifier.actionImport(value, index, metadataContext);
 	if (action) return Lexer.tokenize(value, index, action.next, action, Lexer.TokenType.ActionImportCall);
 }
 

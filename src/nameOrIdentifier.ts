@@ -455,7 +455,15 @@ export function action(value:number[] | Uint8Array, index:number, isCollection?:
 	return token;
 }
 export function actionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
-	return odataIdentifier(value, index, Lexer.TokenType.ActionImport);
+	var token = odataIdentifier(value, index, Lexer.TokenType.ActionImport);
+	if (!token) return;
+
+	if (typeof metadataContext == 'object'){
+		var type = getOperationImportType('action', metadataContext, token);
+		if (!type) return;
+	}
+
+	return token;
 }
 
 export function odataFunction(value:number[] | Uint8Array, index:number):Lexer.Token {
@@ -590,15 +598,15 @@ export function primitiveColFunction(value:number[] | Uint8Array, index:number, 
 	return token;
 }
 
-function getFunctionImportType(metadataContext:any, token:Lexer.Token, isCollection:boolean, isPrimitive:boolean, types?:string){
+function getOperationImportType(operation:string, metadataContext:any, token:Lexer.Token, isCollection?:boolean, isPrimitive?:boolean, types?:string){
 	var fnImport;
 		
 	for (var i = 0; i < metadataContext.dataServices.schemas.length; i++){
 		var schema = metadataContext.dataServices.schemas[i];
 		for (var j = 0; j < schema.entityContainer.length; j++){
 			var container = schema.entityContainer[j];
-			for (var k = 0; k < container.functionImports.length; k++){
-				var it = container.functionImports[k];
+			for (var k = 0; k < container[operation + 'Imports'].length; k++){
+				var it = container[operation + 'Imports'][k];
 				if (it.name == token.raw){
 					fnImport = it;
 					break;
@@ -614,8 +622,8 @@ function getFunctionImportType(metadataContext:any, token:Lexer.Token, isCollect
 	for (var i = 0; i < metadataContext.dataServices.schemas.length; i++){
 		var schema = metadataContext.dataServices.schemas[i];
 		if (fnImport.function.indexOf(schema.namespace) == 0){
-			for (var j = 0; j < schema.functions.length; j++){
-				var it = schema.functions[j];
+			for (var j = 0; j < schema[operation + 's'].length; j++){
+				var it = schema[operation + 's'][j];
 				if (it.name == fnImport.name){
 					fn = it;
 					break;
@@ -625,6 +633,8 @@ function getFunctionImportType(metadataContext:any, token:Lexer.Token, isCollect
 		if (fn) break;
 	}
 	if (!fn) return;
+
+	if (operation == 'action') return fn;
 	if (fn.returnType.type.indexOf('Collection') == isCollection ? -1 : 0) return;
 	var elementType = isCollection ? fn.returnType.type.slice(11, -1) : fn.returnType.type;
 	if (isPrimitiveTypeName(elementType) && !isPrimitive) return;
@@ -653,7 +663,7 @@ export function entityFunctionImport(value:number[] | Uint8Array, index:number, 
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionImportType(metadataContext, token, false, false, "entityTypes");
+		var type = getOperationImportType('function', metadataContext, token, false, false, "entityTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -665,7 +675,7 @@ export function entityColFunctionImport(value:number[] | Uint8Array, index:numbe
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionImportType(metadataContext, token, true, false, "entityTypes");
+		var type = getOperationImportType('function', metadataContext, token, true, false, "entityTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -677,7 +687,7 @@ export function complexFunctionImport(value:number[] | Uint8Array, index:number,
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionImportType(metadataContext, token, false, false, "complexTypes");
+		var type = getOperationImportType('function', metadataContext, token, false, false, "complexTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -689,7 +699,7 @@ export function complexColFunctionImport(value:number[] | Uint8Array, index:numb
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionImportType(metadataContext, token, true, false, "complexTypes");
+		var type = getOperationImportType('function', metadataContext, token, true, false, "complexTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -701,7 +711,7 @@ export function primitiveFunctionImport(value:number[] | Uint8Array, index:numbe
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionImportType(metadataContext, token, false, true);
+		var type = getOperationImportType('function', metadataContext, token, false, true);
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -713,7 +723,7 @@ export function primitiveColFunctionImport(value:number[] | Uint8Array, index:nu
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionImportType(metadataContext, token, true, true);
+		var type = getOperationImportType('function', metadataContext, token, true, true);
 		if (!type) return;
 		token.metadata = type;
 	}
