@@ -5,11 +5,11 @@ import * as Expressions from './expressions';
 import * as Query from './query';
 import * as ResourcePath from './resourcePath';
 
-export function odataUri(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var resource = ResourcePath.resourcePath(value, index);
+export function odataUri(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	var resource = ResourcePath.resourcePath(value, index, metadataContext);
 	while (!resource && index < value.length){
 		while (value[++index] != 0x2f && index < value.length);
-		resource = ResourcePath.resourcePath(value, index);
+		resource = ResourcePath.resourcePath(value, index, metadataContext);
 	}
 	if (!resource) return;
 	var start = index;

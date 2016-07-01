@@ -551,23 +551,28 @@ export function collectionNavigationExpr(value:number[] | Uint8Array, index:numb
 		}, Lexer.TokenType.CollectionNavigationExpression);
 	}
 }
-export function keyPredicate(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return simpleKey(value, index) ||
+export function keyPredicate(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	return simpleKey(value, index, metadataContext) ||
 		compoundKey(value, index);
 }
-export function simpleKey(value:number[] | Uint8Array, index:number):Lexer.Token {
+export function simpleKey(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
 	var open = Lexer.OPEN(value, index);
 	if (!open) return;
 	var start = index;
 	index = open;
 
-	var key = keyPropertyValue(value, index);
-	if (!key) return;
+	var token = keyPropertyValue(value, index);
+	if (!token) return;
 
-	var close = Lexer.CLOSE(value, key.next);
+	var close = Lexer.CLOSE(value, token.next);
 	if (!close) return;
 
-	return Lexer.tokenize(value, start, close, key, Lexer.TokenType.SimpleKey);
+	var key;
+	if (typeof metadataContext == 'object'){
+		key = metadataContext.key.propertyRefs[0].name;
+	}
+
+	return Lexer.tokenize(value, start, close, { key: key, value: token }, Lexer.TokenType.SimpleKey);
 }
 export function compoundKey(value:number[] | Uint8Array, index:number):Lexer.Token {
 	var open = Lexer.OPEN(value, index);

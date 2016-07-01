@@ -354,7 +354,7 @@ export function complexColProperty(value:number[] | Uint8Array, index:number, me
 		for (var i = 0; i < metadataContext.properties.length; i++){
 			var prop = metadataContext.properties[i];
 			if (prop.name == token.raw){
-				if (prop.type.indexOf('Collection') == -1 || isPrimitiveTypeName(prop.types.slice(11, -1))) return;
+				if (prop.type.indexOf('Collection') == -1 || isPrimitiveTypeName(prop.type.slice(11, -1))) return;
 				var root = getMetadataRoot(metadataContext);
 				var schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace) == 0)[0];
 				if (!schema) return;
@@ -373,7 +373,23 @@ export function complexColProperty(value:number[] | Uint8Array, index:number, me
 	return token;
 }
 export function streamProperty(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
-	return odataIdentifier(value, index, Lexer.TokenType.StreamProperty);
+	var token = odataIdentifier(value, index, Lexer.TokenType.StreamProperty);
+	if (!token) return;
+	
+	if (typeof metadataContext == 'object'){
+		for (var i = 0; i < metadataContext.properties.length; i++){
+			var prop = metadataContext.properties[i];
+			if (prop.name == token.raw){
+				if (prop.type != 'Edm.Stream') return;
+				token.metadata = prop;
+				break;
+			}
+		}
+		
+		if (!token.metadata) return;
+	}
+	
+	return token;
 }
 
 export function navigationProperty(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
@@ -388,7 +404,14 @@ export function entityNavigationProperty(value:number[] | Uint8Array, index:numb
 		for (var i = 0; i < metadataContext.navigationProperties.length; i++){
 			var prop = metadataContext.navigationProperties[i];
 			if (prop.name == token.raw && prop.type.indexOf('Collection') == -1 && !isPrimitiveTypeName(prop.type.slice(11, -1))){
-				token.metadata = prop;
+				var root = getMetadataRoot(metadataContext);
+				var schema = root.schemas.filter(it => prop.type.indexOf(it.namespace) == 0)[0];
+				if (!schema) return;
+				
+				var entityType = schema.entityTypes.filter(it => it.name == prop.type.split('.').pop())[0];
+				if (!entityType) return;
+				
+				token.metadata = entityType;
 			}
 		}
 		if (!token.metadata) return;
@@ -404,7 +427,14 @@ export function entityColNavigationProperty(value:number[] | Uint8Array, index:n
 		for (var i = 0; i < metadataContext.navigationProperties.length; i++){
 			var prop = metadataContext.navigationProperties[i];
 			if (prop.name == token.raw && prop.type.indexOf('Collection') == 0 && !isPrimitiveTypeName(prop.type.slice(11, -1))){
-				token.metadata = prop;
+				var root = getMetadataRoot(metadataContext);
+				var schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace) == 0)[0];
+				if (!schema) return;
+				
+				var entityType = schema.entityTypes.filter(it => it.name == prop.type.slice(11, -1).split('.').pop())[0];
+				if (!entityType) return;
+				
+				token.metadata = entityType;
 			}
 		}
 		if (!token.metadata) return;
@@ -413,8 +443,20 @@ export function entityColNavigationProperty(value:number[] | Uint8Array, index:n
 	return token;
 }
 
-export function action(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.Action); }
-export function actionImport(value:number[] | Uint8Array, index:number):Lexer.Token { return odataIdentifier(value, index, Lexer.TokenType.ActionImport); }
+export function action(value:number[] | Uint8Array, index:number, isCollection?:boolean, metadataContext?:any):Lexer.Token {
+	var token = odataIdentifier(value, index, Lexer.TokenType.Action);
+	if (!token) return;
+
+	if (typeof metadataContext == 'object'){
+		var type = getOperationType('action', metadataContext, token, isCollection, false, false, "entityTypes");
+		if (!type) return;
+	}
+
+	return token;
+}
+export function actionImport(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
+	return odataIdentifier(value, index, Lexer.TokenType.ActionImport);
+}
 
 export function odataFunction(value:number[] | Uint8Array, index:number):Lexer.Token {
 	return entityFunction(value, index) ||
@@ -425,7 +467,7 @@ export function odataFunction(value:number[] | Uint8Array, index:number):Lexer.T
 		primitiveColFunction(value, index);
 }
 
-function getFunctionType(metadataContext:any, token:Lexer.Token, isBoundCollection:boolean, isCollection:boolean, isPrimitive:boolean, types?:string){
+function getOperationType(operation:string, metadataContext:any, token:Lexer.Token, isBoundCollection:boolean, isCollection:boolean, isPrimitive:boolean, types?:string){
 	var bindingParameterType = metadataContext.parent.namespace + "." + metadataContext.name;
 	if (isBoundCollection) bindingParameterType = "Collection(" + bindingParameterType + ")";
 	
@@ -433,8 +475,8 @@ function getFunctionType(metadataContext:any, token:Lexer.Token, isBoundCollecti
 	var root = getMetadataRoot(metadataContext);
 	for (var i = 0; i < root.schemas.length; i++){
 		var schema = root.schemas[i];
-		for (var j = 0; j < schema.functions.length; j++){
-			var fn = schema.functions[j];
+		for (var j = 0; j < schema[operation + 's'].length; j++){
+			var fn = schema[operation + 's'][j];
 			if (fn.name == token.raw && fn.isBound){
 				for (var k = 0; k < fn.parameters.length; k++){
 					var param = fn.parameters[k];
@@ -449,16 +491,18 @@ function getFunctionType(metadataContext:any, token:Lexer.Token, isBoundCollecti
 		if (fnDef) break;
 	}
 	if (!fnDef) return;
+
+	if (operation == 'action') return fnDef;
 	
-	if (fn.returnType.type.indexOf('Collection') == isCollection ? -1 : 0) return;
-	var elementType = isCollection ? fn.returnType.type.slice(11, -1) : fn.returnType.type;
+	if (fnDef.returnType.type.indexOf('Collection') == isCollection ? -1 : 0) return;
+	var elementType = isCollection ? fnDef.returnType.type.slice(11, -1) : fnDef.returnType.type;
 	if (isPrimitiveTypeName(elementType) && !isPrimitive) return;
 	if (!isPrimitiveTypeName(elementType) && isPrimitive) return;
 	if (isPrimitive) return elementType;
 	
 	var type;
-	for (var i = 0; i < metadataContext.dataServices.schemas.length; i++){
-		var schema = metadataContext.dataServices.schemas[i];
+	for (var i = 0; i < root.schemas.length; i++){
+		var schema = root.schemas[i];
 		if (elementType.indexOf(schema.namespace) == 0){
 			for (var j = 0; j < schema[types].length; j++){
 				var it = schema[types][j];
@@ -478,7 +522,7 @@ export function entityFunction(value:number[] | Uint8Array, index:number, isColl
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionType(metadataContext, token, isCollection, false, false, "entityTypes");
+		var type = getOperationType('function', metadataContext, token, isCollection, false, false, "entityTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -490,7 +534,7 @@ export function entityColFunction(value:number[] | Uint8Array, index:number, isC
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionType(metadataContext, token, isCollection, true, false, "entityTypes");
+		var type = getOperationType('function', metadataContext, token, isCollection, true, false, "entityTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -502,7 +546,7 @@ export function complexFunction(value:number[] | Uint8Array, index:number, isCol
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionType(metadataContext, token, isCollection, false, false, "complexTypes");
+		var type = getOperationType('function', metadataContext, token, isCollection, false, false, "complexTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -514,7 +558,7 @@ export function complexColFunction(value:number[] | Uint8Array, index:number, is
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionType(metadataContext, token, isCollection, true, false, "complexTypes");
+		var type = getOperationType('function', metadataContext, token, isCollection, true, false, "complexTypes");
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -526,7 +570,7 @@ export function primitiveFunction(value:number[] | Uint8Array, index:number, isC
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionType(metadataContext, token, isCollection, false, true);
+		var type = getOperationType('function', metadataContext, token, isCollection, false, true);
 		if (!type) return;
 		token.metadata = type;
 	}
@@ -538,7 +582,7 @@ export function primitiveColFunction(value:number[] | Uint8Array, index:number, 
 	if (!token) return;
 	
 	if (typeof metadataContext == 'object'){
-		var type = getFunctionType(metadataContext, token, isCollection, true, true);
+		var type = getOperationType('function', metadataContext, token, isCollection, true, true);
 		if (!type) return;
 		token.metadata = type;
 	}

@@ -1,0 +1,161 @@
+;------------------------------------------------------------------------------
+; odata-aggregation-abnf
+;------------------------------------------------------------------------------
+;
+;   OData Extension for Data Aggregation Version 4.0
+;   Committee Specification 01
+;   26 February 2014
+;   Copyright (c) OASIS Open 2014. All Rights Reserved.
+;   Source: http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs01/abnf/
+;
+; Technical Committee:
+;   OASIS Open Data Protocol (OData) TC
+;   https://www.oasis-open.org/committees/odata
+;
+; Chairs:
+;   - Barbara Hartel (barbara.hartel@sap.com), SAP AG
+;   - Ram Jeyaraman (Ram.Jeyaraman@microsoft.com), Microsoft
+;
+; Editors:
+;   - Ralf Handl (ralf.handl@sap.com), SAP AG
+;   - Hubert Heijkers (hubert.heijkers@nl.ibm.com), IBM
+;   - Gerald Krause (gerald.krause@sap.com), SAP AG
+;   - Michael Pizzo (mikep@microsoft.com), Microsoft
+;   - Martin Zurmuehl (martin.zurmuehl@sap.com), SAP AG
+;
+; Additional artifacts: 
+;   This grammar is one component of a Work Product which consists of:
+;   - OData Extension for Data Aggregation Version 4.0
+;   - OData Aggregation ABNF Construction Rules Version 4.0
+;   - OData Aggregation ABNF Test Cases
+;   - OData Aggregation Vocabulary
+;
+; Related work:
+;   This specification is related to:
+;   - OData Version 4.0 Part 1: Protocol
+;   - OData Version 4.0 Part 2: URL Conventions
+;   - OData Version 4.0 Part 3: CSDL
+;   - OData ABNF Construction Rules Version 4.0
+;   - OData Core Vocabulary
+;   - OData Measures Vocabulary
+;   - OData JSON Format Version 4.0
+;   This specification replaces or supersedes:
+;   - None
+;
+; Declared XML namespaces:
+;   - None
+;
+; Abstract:
+;   This specification adds basic grouping and aggregation functionality (e.g.
+;   sum, min, and max) to the Open Data Protocol (OData) without changing any
+;   of the base principles of OData.
+;
+; Overview:
+;   This grammar uses the ABNF defined in RFC5234 with one extension: literals 
+;   enclosed in single quotes (e.g. '$metadata') are treated case-sensitive. 
+;
+;   It extends the OData ABNF Construction Rules Version 4.0
+;
+; Contents:
+;   1. New alternatives for OData ABNF Construction Rules
+;   2. System Query Option $apply
+;   3. Extensions to $filter 
+;
+;------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------
+; 1. New alternatives for OData ABNF Construction Rules
+;------------------------------------------------------------------------------
+
+systemQueryOption =/ apply
+
+boolMethodCallExpr =/ isdefinedExpr
+
+primitiveProperty =/ aggregateAlias / customAggregate
+
+
+;------------------------------------------------------------------------------
+; 2. System Query Option $apply
+;------------------------------------------------------------------------------
+
+apply      = '$apply' EQ applyExpr
+applyExpr  = applyTrafo *( "/" applyTrafo )
+applyTrafo = aggregateTrafo
+           / bottomcountTrafo
+           / bottompercentTrafo
+           / bottomsumTrafo
+           / concatTrafo
+           / expandTrafo
+           / filterTrafo
+           / groupbyTrafo
+           / identityTrafo
+           / searchTrafo
+           / topcountTrafo
+           / toppercentTrafo
+           / topsumTrafo
+           / customFunction
+           
+aggregateTrafo  = 'aggregate' OPEN BWS aggregateExpr *( BWS COMMA BWS aggregateExpr ) BWS CLOSE
+aggregateExpr   = customAggregate [ aggregateAs aggregateFrom ]
+                / commonExpr aggregateWith aggregateAs [ aggregateFrom ]
+                / pathPrefix '$count' aggregateAs 
+                / pathPrefix customAggregate
+                / pathPrefix pathSegment OPEN aggregateExpr CLOSE 
+aggregateAs     = RWS 'as'   RWS aggregateAlias
+aggregateWith   = RWS 'with' RWS aggregateMethod        
+aggregateFrom   = RWS 'from' RWS groupingProperty [ aggregateWith ] [ aggregateFrom ]
+aggregateMethod = 'sum' 
+                / 'min' 
+                / 'max' 
+                / 'average' 
+                / 'countdistinct' 
+                / namespace "." odataIdentifier
+                
+customAggregate = odataIdentifier
+aggregateAlias  = odataIdentifier
+                
+groupingProperty   = pathPrefix
+                     ( entityNavigationProperty [ "/" qualifiedEntityTypeName ] 
+                     / primitiveProperty 
+                     / complexProperty
+                     )
+pathPrefix         = [ qualifiedEntityTypeName "/" ] *( pathSegment "/" ) 
+pathSegment        = ( complexProperty / complexColProperty ) [ "/" qualifiedComplexTypeName ]
+                   / navigationProperty [ "/" qualifiedEntityTypeName  ] 
+                           
+bottomcountTrafo   = 'bottomcount'   OPEN BWS commonExpr BWS COMMA BWS commonExpr BWS CLOSE
+bottompercentTrafo = 'bottompercent' OPEN BWS commonExpr BWS COMMA BWS commonExpr BWS CLOSE
+bottomsumTrafo     = 'bottomsum'     OPEN BWS commonExpr BWS COMMA BWS commonExpr BWS CLOSE
+
+concatTrafo = 'concat' OPEN BWS applyExpr 1*( BWS COMMA BWS applyExpr ) BWS CLOSE
+expandTrafo = 'expand' OPEN BWS expandPath [ BWS COMMA BWS filterTrafo ] *( BWS COMMA BWS expandTrafo ) BWS CLOSE
+filterTrafo = 'filter' OPEN BWS boolCommonExpr BWS CLOSE
+searchTrafo = 'search' OPEN BWS searchExpr BWS CLOSE
+
+groupbyTrafo   = 'groupby' OPEN BWS groupbyList *( BWS COMMA BWS applyExpr)  BWS CLOSE
+groupbyList    = OPEN BWS groupbyElement *( BWS COMMA BWS groupbyElement ) BWS CLOSE
+groupbyElement = groupingProperty / rollupSpec
+rollupSpec     = 'rollup' OPEN BWS 
+                  ( '$all' / groupingProperty )
+                  1*( BWS COMMA BWS groupingProperty ) 
+                  BWS CLOSE
+
+identityTrafo = 'identity'
+
+topcountTrafo   = 'topcount'   OPEN BWS commonExpr BWS COMMA BWS commonExpr BWS CLOSE
+toppercentTrafo = 'toppercent' OPEN BWS commonExpr BWS COMMA BWS commonExpr BWS CLOSE
+topsumTrafo     = 'topsum'     OPEN BWS commonExpr BWS COMMA BWS commonExpr BWS CLOSE
+
+customFunction = namespace "." entityColFunction functionExprParameters
+
+
+;------------------------------------------------------------------------------
+; 3. Extensions to $filter
+;------------------------------------------------------------------------------
+
+isdefinedExpr = 'isdefined' OPEN BWS ( firstMemberExpr ) BWS CLOSE
+
+
+;------------------------------------------------------------------------------
+; End of odata-aggregation-abnf
+;------------------------------------------------------------------------------

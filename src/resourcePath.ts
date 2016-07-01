@@ -27,20 +27,25 @@ export function resourcePath(value:number[] | Uint8Array, index:number, metadata
 		case Lexer.TokenType.EntitySetName:
 		case Lexer.TokenType.EntityFunctionImportCall:
 			navigation = collectionNavigation(value, resource.next, resource.metadata);
+			delete resource.metadata;
 			break;
 		case Lexer.TokenType.SingletonEntity:
 		case Lexer.TokenType.EntityFunctionImportCall:
 			navigation = singleNavigation(value, resource.next, resource.metadata);
+			delete resource.metadata;
 			break;
 		case Lexer.TokenType.ComplexCollectionFunctionImportCall:
 		case Lexer.TokenType.PrimitiveCollectionFunctionImportCall:
 			navigation = collectionPath(value, resource.next, resource.metadata);
+			delete resource.metadata;
 			break;
 		case Lexer.TokenType.ComplexFunctionImportCall:
 			navigation = complexPath(value, resource.next, resource.metadata);
+			delete resource.metadata;
 			break;
 		case Lexer.TokenType.PrimitiveFunctionImportCall:
 			navigation = singlePath(value, resource.next, resource.metadata);
+			delete resource.metadata;
 			break;
 	}
 	
@@ -94,7 +99,7 @@ export function collectionNavigationPath(value:number[] | Uint8Array, index:numb
 		Expressions.refExpr(value, index);
 	if (token) return token;
 
-	var predicate = Expressions.keyPredicate(value, index);
+	var predicate = Expressions.keyPredicate(value, index, metadataContext);
 	if (predicate){
 		var tokenValue:any = predicate;
 		index = predicate.next;
@@ -142,7 +147,7 @@ export function propertyPath(value:number[] | Uint8Array, index:number, metadata
 		NameOrIdentifier.complexProperty(value, index, metadataContext) ||
 		NameOrIdentifier.primitiveColProperty(value, index, metadataContext) ||
 		NameOrIdentifier.primitiveProperty(value, index, metadataContext) ||
-		NameOrIdentifier.streamProperty(value, index);
+		NameOrIdentifier.streamProperty(value, index, metadataContext);
 
 	if (!token) return;
 	var start = index;
@@ -152,25 +157,32 @@ export function propertyPath(value:number[] | Uint8Array, index:number, metadata
 	switch (token.type){
 		case Lexer.TokenType.EntityCollectionNavigationProperty:
 			navigation = collectionNavigation(value, index, token.metadata);
+			delete token.metadata;
 			break;
 		case Lexer.TokenType.EntityNavigationProperty:
 			navigation = singleNavigation(value, index, token.metadata);
+			delete token.metadata;
 			break;
 		case Lexer.TokenType.ComplexColProperty:
 			navigation = collectionPath(value, index, token.metadata);
+			delete token.metadata;
 			break;
 		case Lexer.TokenType.ComplexProperty:
 			navigation = complexPath(value, index, token.metadata);
+			delete token.metadata;
 			break;
 		case Lexer.TokenType.PrimitiveCollectionProperty:
 			navigation = collectionPath(value, index, token.metadata);
+			delete token.metadata;
 			break;
 		case Lexer.TokenType.PrimitiveKeyProperty:
 		case Lexer.TokenType.PrimitiveProperty:
 			navigation = singlePath(value, index, token.metadata);
+			delete token.metadata;
 			break;
 		case Lexer.TokenType.StreamProperty:
-			navigation = boundOperation(value, index, false);
+			navigation = boundOperation(value, index, token.metadata);
+			delete token.metadata;
 			break;
 	}
 	
@@ -229,9 +241,11 @@ export function boundOperation(value:number[] | Uint8Array, index:number, isColl
 			break;
 		case Lexer.TokenType.BoundEntityCollectionFunctionCall:
 			navigation = collectionNavigation(value, index, operation.metadata);
+			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundEntityFunctionCall:
 			navigation = singleNavigation(value, index, operation.metadata);
+			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundComplexCollectionFunctionCall:
 			if (value[index] == 0x2f){
@@ -239,15 +253,19 @@ export function boundOperation(value:number[] | Uint8Array, index:number, isColl
 				if (name) index = name.next;
 			}
 			navigation = collectionPath(value, index, operation.metadata);
+			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundComplexFunctionCall:
 			navigation = complexPath(value, index, operation.metadata);
+			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundPrimitiveCollectionFunctionCall:
 			navigation = collectionPath(value, index, operation.metadata);
+			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundPrimitiveFunctionCall:
 			navigation = singlePath(value, index, operation.metadata);
+			delete operation.metadata;
 			break;
 	}
 
@@ -265,8 +283,9 @@ export function boundActionCall(value:number[] | Uint8Array, index:number, isCol
 	if (value[index] != 0x2e) return;
 	index++;
 
-	var action = NameOrIdentifier.action(value, index);
+	var action = NameOrIdentifier.action(value, index, isCollection, metadataContext);
 	if (!action) return;
+	action.value.namespace = Utils.stringify(value, start, namespaceNext);
 
 	return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.BoundActionCall);
 }
@@ -282,6 +301,7 @@ function boundFunctionCall(value:number[] | Uint8Array, index:number, odataFunct
 
 	var call = odataFunction(value, index, isCollection, metadataContext);
 	if (!call) return;
+	call.value.namespace = Utils.stringify(value, start, namespaceNext);
 	index = call.next;
 
 	var params = functionParameters(value, index);

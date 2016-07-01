@@ -66,8 +66,8 @@ export declare function lambdaPredicateExpr(value: number[] | Uint8Array, index:
 export declare function anyExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function allExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function collectionNavigationExpr(value: number[] | Uint8Array, index: number): Lexer.Token;
-export declare function keyPredicate(value: number[] | Uint8Array, index: number): Lexer.Token;
-export declare function simpleKey(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function keyPredicate(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
+export declare function simpleKey(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function compoundKey(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function keyValuePair(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function keyPropertyValue(value: number[] | Uint8Array, index: number): Lexer.Token;

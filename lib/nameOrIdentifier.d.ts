@@ -31,8 +31,8 @@ export declare function streamProperty(value: number[] | Uint8Array, index: numb
 export declare function navigationProperty(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function entityNavigationProperty(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function entityColNavigationProperty(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
-export declare function action(value: number[] | Uint8Array, index: number): Lexer.Token;
-export declare function actionImport(value: number[] | Uint8Array, index: number): Lexer.Token;
+export declare function action(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
+export declare function actionImport(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token;
 export declare function odataFunction(value: number[] | Uint8Array, index: number): Lexer.Token;
 export declare function entityFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;
 export declare function entityColFunction(value: number[] | Uint8Array, index: number, isCollection?: boolean, metadataContext?: any): Lexer.Token;

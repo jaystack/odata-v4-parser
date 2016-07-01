@@ -14,7 +14,10 @@ var parserFactory = function(fn){
 		for (var i = 0; i < source.length; i++) {
 			raw[i] = source.charCodeAt(i);
 		}
-		return fn(raw, pos, options.metadata);
+		var result = fn(raw, pos, options.metadata);
+		if (!result) throw new Error('Fail at ' + pos);
+		if (result.next < raw.length) throw new Error('Unexpected character at ' + result.next);
+		return result;
 		/*while (pos < raw.length) {
 			var token = fn(raw, pos, options.metadata);
 			if (token) {
