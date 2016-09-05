@@ -621,7 +621,7 @@ function getOperationImportType(operation:string, metadataContext:any, token:Lex
 	var fn;
 	for (var i = 0; i < metadataContext.dataServices.schemas.length; i++){
 		var schema = metadataContext.dataServices.schemas[i];
-		if (fnImport.function.indexOf(schema.namespace) == 0){
+		if (fnImport[operation].indexOf(schema.namespace) == 0){
 			for (var j = 0; j < schema[operation + 's'].length; j++){
 				var it = schema[operation + 's'][j];
 				if (it.name == fnImport.name){
