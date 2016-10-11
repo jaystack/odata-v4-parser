@@ -25,9 +25,9 @@
         <span class='fraction'>379/740</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">38.15% </span>
+        <span class="strong">37.63% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>140/367</span>
+        <span class='fraction'>140/372</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">85.23% </span>
@@ -832,7 +832,11 @@
 787
 788
 789
-790</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+790
+791
+792
+793
+794</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -1403,6 +1407,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1628,126 +1636,126 @@ import * as NameOrIdentifier from './nameOrIdentifier';
 import * as ArrayOrObject from './json';
 &nbsp;
 export function commonExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = PrimitiveLiteral.primitiveLiteral(value, index) ||
-		parameterAlias(value, index) ||
-		ArrayOrObject.arrayOrObject(value, index) ||
-		rootExpr(value, index) ||
-		methodCallExpr(value, index) ||
-		firstMemberExpr(value, index) ||
-<span class="branch-6 cbranch-no" title="branch not covered" >		functionExpr(value, index) </span>||
-<span class="branch-7 cbranch-no" title="branch not covered" >		negateExpr(value, index) </span>||
-<span class="branch-8 cbranch-no" title="branch not covered" >		parenExpr(value, index) </span>||
-<span class="branch-9 cbranch-no" title="branch not covered" >		castExpr(value, index);</span>
+    var token = PrimitiveLiteral.primitiveLiteral(value, index) ||
+        parameterAlias(value, index) ||
+        ArrayOrObject.arrayOrObject(value, index) ||
+        rootExpr(value, index) ||
+        methodCallExpr(value, index) ||
+        firstMemberExpr(value, index) ||
+<span class="branch-6 cbranch-no" title="branch not covered" >        functionExpr(value, index) </span>||
+<span class="branch-7 cbranch-no" title="branch not covered" >        negateExpr(value, index) </span>||
+<span class="branch-8 cbranch-no" title="branch not covered" >        parenExpr(value, index) </span>||
+<span class="branch-9 cbranch-no" title="branch not covered" >        castExpr(value, index);</span>
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
 &nbsp;
-	var expr = addExpr(value, token.next) ||
-		subExpr(value, token.next) ||
-		mulExpr(value, token.next) ||
-		divExpr(value, token.next) ||
-		modExpr(value, token.next);
+    var expr = addExpr(value, token.next) ||
+        subExpr(value, token.next) ||
+        mulExpr(value, token.next) ||
+        divExpr(value, token.next) ||
+        modExpr(value, token.next);
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (expr) {
-<span class="cstat-no" title="statement not covered" >		token.value = {</span>
-			left: Lexer.clone(token),
-			right: expr.value
-		};
-<span class="cstat-no" title="statement not covered" >		token.next = expr.value.next;</span>
-<span class="cstat-no" title="statement not covered" >		token.type = expr.type;</span>
-<span class="cstat-no" title="statement not covered" >		token.raw = Utils.stringify(value, token.position, token.next);</span>
-	}
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (expr) {
+<span class="cstat-no" title="statement not covered" >        token.value = {</span>
+            left: Lexer.clone(token),
+            right: expr.value
+        };
+<span class="cstat-no" title="statement not covered" >        token.next = expr.value.next;</span>
+<span class="cstat-no" title="statement not covered" >        token.type = expr.type;</span>
+<span class="cstat-no" title="statement not covered" >        token.raw = Utils.stringify(value, token.position, token.next);</span>
+    }
 &nbsp;
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (token) return Lexer.tokenize(value, token.position, token.next, token, Lexer.TokenType.CommonExpression);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (token) return Lexer.tokenize(value, token.position, token.next, token, Lexer.TokenType.CommonExpression);
 };
 &nbsp;
 export function boolCommonExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = isofExpr(value, index) ||
-		boolMethodCallExpr(value, index) ||
-		notExpr(value, index) ||
-		commonExpr(value, index) ||
-<span class="branch-4 cbranch-no" title="branch not covered" >		boolParenExpr(value, index);</span>
+    var token = isofExpr(value, index) ||
+        boolMethodCallExpr(value, index) ||
+        notExpr(value, index) ||
+        commonExpr(value, index) ||
+<span class="branch-4 cbranch-no" title="branch not covered" >        boolParenExpr(value, index);</span>
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
 &nbsp;
-	var commonMoreExpr = undefined;
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (token.type == Lexer.TokenType.CommonExpression) {
-		commonMoreExpr = eqExpr(value, token.next) ||
-		neExpr(value, token.next) ||
-		ltExpr(value, token.next) ||
-		leExpr(value, token.next) ||
-		gtExpr(value, token.next) ||
-		geExpr(value, token.next) ||
-		hasExpr(value, token.next);
+    var commonMoreExpr = undefined;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (token.type == Lexer.TokenType.CommonExpression) {
+        commonMoreExpr = eqExpr(value, token.next) ||
+        neExpr(value, token.next) ||
+        ltExpr(value, token.next) ||
+        leExpr(value, token.next) ||
+        gtExpr(value, token.next) ||
+        geExpr(value, token.next) ||
+        hasExpr(value, token.next);
 &nbsp;
-		if (commonMoreExpr) {
-			token.value = {
-				left: token.value,
-				right: commonMoreExpr.value
-			};
-			token.next = commonMoreExpr.value.next;
-			token.type = commonMoreExpr.type;
-			token.raw = Utils.stringify(value, token.position, token.next);
-		}
-	}
+        if (commonMoreExpr) {
+            token.value = {
+                left: token.value,
+                right: commonMoreExpr.value
+            };
+            token.next = commonMoreExpr.value.next;
+            token.type = commonMoreExpr.type;
+            token.raw = Utils.stringify(value, token.position, token.next);
+        }
+    }
 &nbsp;
-	var expr = andExpr(value, token.next) ||
-		orExpr(value, token.next);
+    var expr = andExpr(value, token.next) ||
+        orExpr(value, token.next);
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (expr) {
-<span class="cstat-no" title="statement not covered" >		token.next = expr.value.next;</span>
-<span class="cstat-no" title="statement not covered" >		token.value = {</span>
-			left: Lexer.clone(token),
-			right: expr.value
-		};
-<span class="cstat-no" title="statement not covered" >		token.type = expr.type;</span>
-<span class="cstat-no" title="statement not covered" >		token.raw = Utils.stringify(value, token.position, token.next);</span>
-	}
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (expr) {
+<span class="cstat-no" title="statement not covered" >        token.next = expr.value.next;</span>
+<span class="cstat-no" title="statement not covered" >        token.value = {</span>
+            left: Lexer.clone(token),
+            right: expr.value
+        };
+<span class="cstat-no" title="statement not covered" >        token.type = expr.type;</span>
+<span class="cstat-no" title="statement not covered" >        token.raw = Utils.stringify(value, token.position, token.next);</span>
+    }
 &nbsp;
-	return token;
+    return token;
 };
 &nbsp;
 export function andExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var rws = Lexer.RWS(value, index);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (rws == index || <span class="branch-1 cbranch-no" title="branch not covered" >!Utils.equals(value, rws, 'and'))</span> return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = rws + 3;</span>
-<span class="cstat-no" title="statement not covered" >	rws = Lexer.RWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = rws;</span>
-<span class="cstat-no" title="statement not covered" >	var token = boolCommonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    var rws = Lexer.RWS(value, index);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (rws == index || <span class="branch-1 cbranch-no" title="branch not covered" >!Utils.equals(value, rws, 'and'))</span> return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = rws + 3;</span>
+<span class="cstat-no" title="statement not covered" >    rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = rws;</span>
+<span class="cstat-no" title="statement not covered" >    var token = boolCommonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.AndExpression);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, token, Lexer.TokenType.AndExpression);</span>
 };
 &nbsp;
 export function orExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var rws = Lexer.RWS(value, index);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (rws == index || <span class="branch-1 cbranch-no" title="branch not covered" >!Utils.equals(value, rws, 'or'))</span> return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = rws + 2;</span>
-<span class="cstat-no" title="statement not covered" >	rws = Lexer.RWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = rws;</span>
-<span class="cstat-no" title="statement not covered" >	var token = boolCommonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    var rws = Lexer.RWS(value, index);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (rws == index || <span class="branch-1 cbranch-no" title="branch not covered" >!Utils.equals(value, rws, 'or'))</span> return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = rws + 2;</span>
+<span class="cstat-no" title="statement not covered" >    rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = rws;</span>
+<span class="cstat-no" title="statement not covered" >    var token = boolCommonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.OrExpression);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, token, Lexer.TokenType.OrExpression);</span>
 };
 &nbsp;
 export function leftRightExpr(value:number[] | Uint8Array, index:number, expr:string, tokenType:Lexer.TokenType):Lexer.Token {
-	var rws = Lexer.RWS(value, index);
-	if (rws == index) return;
-	var start = index;
-	index = rws;
-	if (!Utils.equals(value, index, expr)) return;
-	index += expr.length;
-	rws = Lexer.RWS(value, index);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span>
-	index = rws;
-	var token = commonExpr(value, index);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
+    var rws = Lexer.RWS(value, index);
+    if (rws == index) return;
+    var start = index;
+    index = rws;
+    if (!Utils.equals(value, index, expr)) return;
+    index += expr.length;
+    rws = Lexer.RWS(value, index);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span>
+    index = rws;
+    var token = commonExpr(value, index);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
 &nbsp;
-	return Lexer.tokenize(value, start, index, token.value, tokenType);
+    return Lexer.tokenize(value, start, index, token.value, tokenType);
 };
 export function eqExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'eq', Lexer.TokenType.EqualsExpression); }
 export function neExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'ne', Lexer.TokenType.NotEqualsExpression); }
@@ -1764,122 +1772,122 @@ export function divExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
 export function modExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return leftRightExpr(value, index, 'mod', Lexer.TokenType.ModExpression); }
 &nbsp;
 export function notExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, 'not')) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index += 3;</span>
-<span class="cstat-no" title="statement not covered" >	var rws = Lexer.RWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = rws;</span>
-<span class="cstat-no" title="statement not covered" >	var token = boolCommonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, 'not')) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index += 3;</span>
+<span class="cstat-no" title="statement not covered" >    var rws = Lexer.RWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (rws == index) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = rws;</span>
+<span class="cstat-no" title="statement not covered" >    var token = boolCommonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, token.next, token, Lexer.TokenType.NotExpression);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, token.next, token, Lexer.TokenType.NotExpression);</span>
 };
 &nbsp;
 <span class="fstat-no" title="function not covered" >export function boolParenExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var token = boolCommonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, token.next);</span>
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+<span class="cstat-no" title="statement not covered" >    var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var token = boolCommonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, token.next);</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.BoolParenExpression);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, token, Lexer.TokenType.BoolParenExpression);</span>
 };
 <span class="fstat-no" title="function not covered" >export function parenExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var token = commonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, token.next);</span>
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+<span class="cstat-no" title="statement not covered" >    var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var token = commonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, token.next);</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, token.value, Lexer.TokenType.ParenExpression);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, token.value, Lexer.TokenType.ParenExpression);</span>
 };
 &nbsp;
 export function boolMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return endsWithMethodCallExpr(value, index) ||
-		startsWithMethodCallExpr(value, index) ||
-		containsMethodCallExpr(value, index) ||
-		intersectsMethodCallExpr(value, index);
+    return endsWithMethodCallExpr(value, index) ||
+        startsWithMethodCallExpr(value, index) ||
+        containsMethodCallExpr(value, index) ||
+        intersectsMethodCallExpr(value, index);
 };
 export function methodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return indexOfMethodCallExpr(value, index) ||
-		toLowerMethodCallExpr(value, index) ||
-		toUpperMethodCallExpr(value, index) ||
-		trimMethodCallExpr(value, index) ||
-		substringMethodCallExpr(value, index) ||
+    return indexOfMethodCallExpr(value, index) ||
+        toLowerMethodCallExpr(value, index) ||
+        toUpperMethodCallExpr(value, index) ||
+        trimMethodCallExpr(value, index) ||
+        substringMethodCallExpr(value, index) ||
         substringOfMethodCallExpr(value, index) ||
-		concatMethodCallExpr(value, index) ||
-		lengthMethodCallExpr(value, index) ||
-		yearMethodCallExpr(value, index) ||
-		monthMethodCallExpr(value, index) ||
-		dayMethodCallExpr(value, index) ||
-		hourMethodCallExpr(value, index) ||
-		minuteMethodCallExpr(value, index) ||
-		secondMethodCallExpr(value, index) ||
-		fractionalsecondsMethodCallExpr(value, index) ||
-		totalsecondsMethodCallExpr(value, index) ||
-		dateMethodCallExpr(value, index) ||
-		timeMethodCallExpr(value, index) ||
-		roundMethodCallExpr(value, index) ||
-		floorMethodCallExpr(value, index) ||
-		ceilingMethodCallExpr(value, index) ||
-		distanceMethodCallExpr(value, index) ||
-		geoLengthMethodCallExpr(value, index) ||
-		totalOffsetMinutesMethodCallExpr(value, index) ||
-		minDateTimeMethodCallExpr(value, index) ||
-		maxDateTimeMethodCallExpr(value, index) ||
-		nowMethodCallExpr(value, index);
+        concatMethodCallExpr(value, index) ||
+        lengthMethodCallExpr(value, index) ||
+        yearMethodCallExpr(value, index) ||
+        monthMethodCallExpr(value, index) ||
+        dayMethodCallExpr(value, index) ||
+        hourMethodCallExpr(value, index) ||
+        minuteMethodCallExpr(value, index) ||
+        secondMethodCallExpr(value, index) ||
+        fractionalsecondsMethodCallExpr(value, index) ||
+        totalsecondsMethodCallExpr(value, index) ||
+        dateMethodCallExpr(value, index) ||
+        timeMethodCallExpr(value, index) ||
+        roundMethodCallExpr(value, index) ||
+        floorMethodCallExpr(value, index) ||
+        ceilingMethodCallExpr(value, index) ||
+        distanceMethodCallExpr(value, index) ||
+        geoLengthMethodCallExpr(value, index) ||
+        totalOffsetMinutesMethodCallExpr(value, index) ||
+        minDateTimeMethodCallExpr(value, index) ||
+        maxDateTimeMethodCallExpr(value, index) ||
+        nowMethodCallExpr(value, index);
 };
 export function methodCallExprFactory(value:number[] | Uint8Array, index:number, method:string, min?:number, max?:number):Lexer.Token {
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (typeof min == 'undefined') <span class="cstat-no" title="statement not covered" >min = 0;</span>
-	if (typeof max == 'undefined') max = min;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof min == 'undefined') <span class="cstat-no" title="statement not covered" >min = 0;</span>
+    if (typeof max == 'undefined') max = min;
 &nbsp;
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, method)) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index += method.length;</span>
-<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var parameters;</span>
-<span class="cstat-no" title="statement not covered" >	if (min &gt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >		parameters = [];</span>
-<span class="cstat-no" title="statement not covered" >		while (parameters.length &lt; max) {</span>
-<span class="cstat-no" title="statement not covered" >			var expr = commonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >			if (parameters.length &lt; min &amp;&amp; !expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
-			else <span class="cstat-no" title="statement not covered" >if (expr) {</span>
-<span class="cstat-no" title="statement not covered" >				parameters.push(expr.value);</span>
-<span class="cstat-no" title="statement not covered" >				index = expr.next;</span>
-<span class="cstat-no" title="statement not covered" >				index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >				var comma = Lexer.COMMA(value, index);</span>
-<span class="cstat-no" title="statement not covered" >				if (parameters.length &lt; min &amp;&amp; !comma) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >				if (comma) <span class="cstat-no" title="statement not covered" >index = comma;</span></span>
-				else <span class="cstat-no" title="statement not covered" >break;</span>
-<span class="cstat-no" title="statement not covered" >				index = Lexer.BWS(value, index);</span>
-			} else <span class="cstat-no" title="statement not covered" >break;</span>
-		}
-	}
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, method)) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index += method.length;</span>
+<span class="cstat-no" title="statement not covered" >    var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var parameters;</span>
+<span class="cstat-no" title="statement not covered" >    if (min &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >        parameters = [];</span>
+<span class="cstat-no" title="statement not covered" >        while (parameters.length &lt; max) {</span>
+<span class="cstat-no" title="statement not covered" >            var expr = commonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >            if (parameters.length &lt; min &amp;&amp; !expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
+            else <span class="cstat-no" title="statement not covered" >if (expr) {</span>
+<span class="cstat-no" title="statement not covered" >                parameters.push(expr.value);</span>
+<span class="cstat-no" title="statement not covered" >                index = expr.next;</span>
+<span class="cstat-no" title="statement not covered" >                index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >                var comma = Lexer.COMMA(value, index);</span>
+<span class="cstat-no" title="statement not covered" >                if (parameters.length &lt; min &amp;&amp; !comma) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >                if (comma) <span class="cstat-no" title="statement not covered" >index = comma;</span></span>
+                else <span class="cstat-no" title="statement not covered" >break;</span>
+<span class="cstat-no" title="statement not covered" >                index = Lexer.BWS(value, index);</span>
+            } else <span class="cstat-no" title="statement not covered" >break;</span>
+        }
+    }
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
-		method: method,
-		parameters: parameters
-	}, Lexer.TokenType.MethodCallExpression);
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, {</span>
+        method: method,
+        parameters: parameters
+    }, Lexer.TokenType.MethodCallExpression);
 };
 export function containsMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'contains', 2); }
 export function startsWithMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'startswith', 2); }
@@ -1918,497 +1926,501 @@ export function geoLengthMethodCallExpr(value:number[] | Uint8Array, index:numbe
 export function intersectsMethodCallExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return methodCallExprFactory(value, index, 'geo.intersects', 2); }
 &nbsp;
 export function isofExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, 'isof')) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index += 4;</span>
-<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var expr = commonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (expr) {</span>
-<span class="cstat-no" title="statement not covered" >		index = expr.next;</span>
-<span class="cstat-no" title="statement not covered" >		index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		if (!comma) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		index = comma;</span>
-<span class="cstat-no" title="statement not covered" >		index = Lexer.BWS(value, index);</span>
-	}
-<span class="cstat-no" title="statement not covered" >	var typeName = NameOrIdentifier.qualifiedTypeName(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!typeName) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = typeName.next;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, 'isof')) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index += 4;</span>
+<span class="cstat-no" title="statement not covered" >    var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var expr = commonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (expr) {</span>
+<span class="cstat-no" title="statement not covered" >        index = expr.next;</span>
+<span class="cstat-no" title="statement not covered" >        index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        var comma = Lexer.COMMA(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        if (!comma) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        index = comma;</span>
+<span class="cstat-no" title="statement not covered" >        index = Lexer.BWS(value, index);</span>
+    }
+<span class="cstat-no" title="statement not covered" >    var typeName = NameOrIdentifier.qualifiedTypeName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!typeName) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = typeName.next;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
-		target: expr,
-		typename: typeName
-	}, Lexer.TokenType.IsOfExpression);
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, {</span>
+        target: expr,
+        typename: typeName
+    }, Lexer.TokenType.IsOfExpression);
 }
 <span class="fstat-no" title="function not covered" >export function castExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	if (!Utils.equals(value, index, 'cast')) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index += 4;</span>
-<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var expr = commonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (expr) {</span>
-<span class="cstat-no" title="statement not covered" >		index = expr.next;</span>
-<span class="cstat-no" title="statement not covered" >		index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		if (!comma) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		index = comma;</span>
-<span class="cstat-no" title="statement not covered" >		index = Lexer.BWS(value, index);</span>
-	}
-<span class="cstat-no" title="statement not covered" >	var typeName = NameOrIdentifier.qualifiedTypeName(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!typeName) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = typeName.next;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+<span class="cstat-no" title="statement not covered" >    if (!Utils.equals(value, index, 'cast')) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index += 4;</span>
+<span class="cstat-no" title="statement not covered" >    var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var expr = commonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (expr) {</span>
+<span class="cstat-no" title="statement not covered" >        index = expr.next;</span>
+<span class="cstat-no" title="statement not covered" >        index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        var comma = Lexer.COMMA(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        if (!comma) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        index = comma;</span>
+<span class="cstat-no" title="statement not covered" >        index = Lexer.BWS(value, index);</span>
+    }
+<span class="cstat-no" title="statement not covered" >    var typeName = NameOrIdentifier.qualifiedTypeName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!typeName) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = typeName.next;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
-		target: expr,
-		typename: typeName
-	}, Lexer.TokenType.CastExpression);
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, {</span>
+        target: expr,
+        typename: typeName
+    }, Lexer.TokenType.CastExpression);
 }
 &nbsp;
 <span class="fstat-no" title="function not covered" >export function negateExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	if (value[index] != 0x2d) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index++;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var expr = commonExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (value[index] != 0x2d) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index++;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var expr = commonExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, expr.next, expr, Lexer.TokenType.NegateExpression);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, expr.next, expr, Lexer.TokenType.NegateExpression);</span>
 }
 &nbsp;
 export function firstMemberExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = inscopeVariableExpr(value, index);
-	var member;
-	var start = index;
+    var token = inscopeVariableExpr(value, index);
+    var member;
+    var start = index;
 &nbsp;
-	if (token) {
-		<span class="missing-if-branch" title="else path not taken" >E</span>if (value[token.next] == 0x2f) {
-			index = token.next + 1;
-			member = memberExpr(value, index);
-			<span class="missing-if-branch" title="if path not taken" >I</span>if (!member) <span class="cstat-no" title="statement not covered" >return;</span>
+    if (token) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (value[token.next] == 0x2f) {
+            index = token.next + 1;
+            member = memberExpr(value, index);
+            <span class="missing-if-branch" title="if path not taken" >I</span>if (!member) <span class="cstat-no" title="statement not covered" >return;</span>
 &nbsp;
-			return Lexer.tokenize(value, start, member.next, [token, member], Lexer.TokenType.FirstMemberExpression);
-		}
-	} else member = memberExpr(value, index);
+            return Lexer.tokenize(value, start, member.next, [token, member], Lexer.TokenType.FirstMemberExpression);
+        }
+    } else member = memberExpr(value, index);
 &nbsp;
-	token = token || member;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
+    token = token || member;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
 &nbsp;
-	return Lexer.tokenize(value, start, token.next, token, Lexer.TokenType.FirstMemberExpression);
+    return Lexer.tokenize(value, start, token.next, token, Lexer.TokenType.FirstMemberExpression);
 }
 export function memberExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var start = index;
-	var token = NameOrIdentifier.qualifiedEntityTypeName(value, index);
+    var start = index;
+    var token = NameOrIdentifier.qualifiedEntityTypeName(value, index);
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (token) {
-<span class="cstat-no" title="statement not covered" >		if (value[token.next] != 0x2f) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		index = token.next + 1;</span>
-	}
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (token) {
+<span class="cstat-no" title="statement not covered" >        if (value[token.next] != 0x2f) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        index = token.next + 1;</span>
+    }
 &nbsp;
-	var next = propertyPathExpr(value, index) ||
-<span class="branch-1 cbranch-no" title="branch not covered" >		boundFunctionExpr(value, index);</span>
+    var next = propertyPathExpr(value, index) ||
+<span class="branch-1 cbranch-no" title="branch not covered" >        boundFunctionExpr(value, index);</span>
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!next) <span class="cstat-no" title="statement not covered" >return;</span>
-	return Lexer.tokenize(value, start, next.next, token ? <span class="branch-0 cbranch-no" title="branch not covered" >{ name: token, value: next } </span>: next, Lexer.TokenType.MemberExpression);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!next) <span class="cstat-no" title="statement not covered" >return;</span>
+    return Lexer.tokenize(value, start, next.next, token ? <span class="branch-0 cbranch-no" title="branch not covered" >{ name: token, value: next } </span>: next, Lexer.TokenType.MemberExpression);
 }
 export function propertyPathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token:any = NameOrIdentifier.odataIdentifier(value, index);
+    var token:any = NameOrIdentifier.odataIdentifier(value, index);
     var start = index;
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (token){
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (token){
         index = token.next;
-		var nav = collectionPathExpr(value, token.next) ||
-			collectionNavigationExpr(value, token.next) ||
-			singleNavigationExpr(value, token.next) ||
-			complexPathExpr(value, token.next) ||
-			singlePathExpr(value, token.next);
+        var nav = collectionPathExpr(value, token.next) ||
+            collectionNavigationExpr(value, token.next) ||
+            singleNavigationExpr(value, token.next) ||
+            complexPathExpr(value, token.next) ||
+            singlePathExpr(value, token.next);
 &nbsp;
-		if (nav) {
+        if (nav) {
             index = nav.next;
-			token = {
+            token = {
                 current: Lexer.clone(token),
-				next: nav
+                next: nav
             };
-		}
-	}else <span class="cstat-no" title="statement not covered" >if (!token){</span>
+        }
+    }else <span class="cstat-no" title="statement not covered" >if (!token){</span>
 <span class="cstat-no" title="statement not covered" >        token = NameOrIdentifier.streamProperty(value, index);</span>
 <span class="cstat-no" title="statement not covered" >        if (token) <span class="cstat-no" title="statement not covered" >index = token.next;</span></span>
     }
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
-	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.PropertyPathExpression);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return;</span>
+    return Lexer.tokenize(value, start, index, token, Lexer.TokenType.PropertyPathExpression);
 }
 export function inscopeVariableExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	return implicitVariableExpr(value, index) ||
-		(isLambdaPredicate ? lambdaVariableExpr(value, index) : undefined);
+    return implicitVariableExpr(value, index) ||
+        (isLambdaPredicate ? lambdaVariableExpr(value, index) : undefined);
 }
 export function implicitVariableExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (Utils.equals(value, index, '$it')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 3, '$it', Lexer.TokenType.ImplicitVariableExpression);</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (Utils.equals(value, index, '$it')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 3, '$it', Lexer.TokenType.ImplicitVariableExpression);</span>
 }
 var isLambdaPredicate = false;
 var hasLambdaVariableExpr = false;
 export function lambdaVariableExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = NameOrIdentifier.odataIdentifier(value, index, Lexer.TokenType.LambdaVariableExpression);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (token){
-		hasLambdaVariableExpr = true;
-		return token;
-	}
+    var token = NameOrIdentifier.odataIdentifier(value, index, Lexer.TokenType.LambdaVariableExpression);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (token){
+        hasLambdaVariableExpr = true;
+        return token;
+    }
 }
 export function lambdaPredicateExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	isLambdaPredicate = true;
-	var token = boolCommonExpr(value, index);
-	isLambdaPredicate = false;
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (token &amp;&amp; hasLambdaVariableExpr){
-		hasLambdaVariableExpr = false;
-		return Lexer.tokenize(value, token.position, token.next, token, Lexer.TokenType.LambdaPredicateExpression);
-	}
+    isLambdaPredicate = true;
+    var token = boolCommonExpr(value, index);
+    isLambdaPredicate = false;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (token &amp;&amp; hasLambdaVariableExpr){
+        hasLambdaVariableExpr = false;
+        return Lexer.tokenize(value, token.position, token.next, token, Lexer.TokenType.LambdaPredicateExpression);
+    }
 }
 export function anyExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, 'any')) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index += 3;</span>
-<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var variable = lambdaVariableExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var predicate;</span>
-<span class="cstat-no" title="statement not covered" >	if (variable){</span>
-<span class="cstat-no" title="statement not covered" >		index = variable.next;</span>
-<span class="cstat-no" title="statement not covered" >		index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		var colon = Lexer.COLON(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		if (!colon) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		index = colon;</span>
-<span class="cstat-no" title="statement not covered" >		index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		predicate = lambdaPredicateExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		if (!predicate) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		index = predicate.next;</span>
-	}
-<span class="cstat-no" title="statement not covered" >	index = Lexer.BWS(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, 'any')) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index += 3;</span>
+<span class="cstat-no" title="statement not covered" >    var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var variable = lambdaVariableExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var predicate;</span>
+<span class="cstat-no" title="statement not covered" >    if (variable){</span>
+<span class="cstat-no" title="statement not covered" >        index = variable.next;</span>
+<span class="cstat-no" title="statement not covered" >        index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        var colon = Lexer.COLON(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        if (!colon) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        index = colon;</span>
+<span class="cstat-no" title="statement not covered" >        index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        predicate = lambdaPredicateExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        if (!predicate) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        index = predicate.next;</span>
+    }
+<span class="cstat-no" title="statement not covered" >    index = Lexer.BWS(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
-		variable: variable,
-		predicate: predicate
-	}, Lexer.TokenType.AnyExpression);
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, {</span>
+        variable: variable,
+        predicate: predicate
+    }, Lexer.TokenType.AnyExpression);
 }
 export function allExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!Utils.equals(value, index, 'all')) <span class="cstat-no" title="statement not covered" >return;</span>
-	var start = index;
-	index += 3;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!Utils.equals(value, index, 'all')) <span class="cstat-no" title="statement not covered" >return;</span>
+    var start = index;
+    index += 3;
 &nbsp;
-	var open = Lexer.OPEN(value, index);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!open) <span class="cstat-no" title="statement not covered" >return;</span>
-	index = open;
+    var open = Lexer.OPEN(value, index);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!open) <span class="cstat-no" title="statement not covered" >return;</span>
+    index = open;
 &nbsp;
-	index = Lexer.BWS(value, index);
-	var variable = lambdaVariableExpr(value, index);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!variable) <span class="cstat-no" title="statement not covered" >return;</span>
-	index = variable.next;
+    index = Lexer.BWS(value, index);
+    var variable = lambdaVariableExpr(value, index);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!variable) <span class="cstat-no" title="statement not covered" >return;</span>
+    index = variable.next;
 &nbsp;
-	index = Lexer.BWS(value, index);
+    index = Lexer.BWS(value, index);
 &nbsp;
-	var colon = Lexer.COLON(value, index);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!colon) <span class="cstat-no" title="statement not covered" >return;</span>
-	index = colon;
+    var colon = Lexer.COLON(value, index);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!colon) <span class="cstat-no" title="statement not covered" >return;</span>
+    index = colon;
 &nbsp;
-	index = Lexer.BWS(value, index);
+    index = Lexer.BWS(value, index);
 &nbsp;
-	var predicate = lambdaPredicateExpr(value, index);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!predicate) <span class="cstat-no" title="statement not covered" >return;</span>
-	index = predicate.next;
+    var predicate = lambdaPredicateExpr(value, index);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!predicate) <span class="cstat-no" title="statement not covered" >return;</span>
+    index = predicate.next;
 &nbsp;
-	index = Lexer.BWS(value, index);
+    index = Lexer.BWS(value, index);
 &nbsp;
-	var close = Lexer.CLOSE(value, index);
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (!close) <span class="cstat-no" title="statement not covered" >return;</span>
-	index = close;
+    var close = Lexer.CLOSE(value, index);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!close) <span class="cstat-no" title="statement not covered" >return;</span>
+    index = close;
 &nbsp;
-	return Lexer.tokenize(value, start, index, {
-		variable: variable,
-		predicate: predicate
-	}, Lexer.TokenType.AllExpression);
+    return Lexer.tokenize(value, start, index, {
+        variable: variable,
+        predicate: predicate
+    }, Lexer.TokenType.AllExpression);
 }
 &nbsp;
 export function collectionNavigationExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var start = index;
-	var entity, predicate, navigation, path;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (value[index] == 0x2f){
-<span class="cstat-no" title="statement not covered" >		index++;</span>
-<span class="cstat-no" title="statement not covered" >		entity = NameOrIdentifier.qualifiedEntityTypeName(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		if (!entity) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		index = entity.next;</span>
-	}
+    var start = index;
+    var entity, predicate, navigation, path;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (value[index] == 0x2f){
+<span class="cstat-no" title="statement not covered" >        index++;</span>
+<span class="cstat-no" title="statement not covered" >        entity = NameOrIdentifier.qualifiedEntityTypeName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        if (!entity) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        index = entity.next;</span>
+    }
 &nbsp;
-	predicate = keyPredicate(value, index);
+    predicate = keyPredicate(value, index);
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (predicate){
-<span class="cstat-no" title="statement not covered" >		index = predicate.next;</span>
-<span class="cstat-no" title="statement not covered" >		navigation = singleNavigationExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		if (navigation) <span class="cstat-no" title="statement not covered" >index = navigation.next;</span></span>
-	}else{
-		path = collectionPathExpr(value, index);
-		<span class="missing-if-branch" title="if path not taken" >I</span>if (path) <span class="cstat-no" title="statement not covered" >index = path.next;</span>
-	}
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (predicate){
+<span class="cstat-no" title="statement not covered" >        index = predicate.next;</span>
+<span class="cstat-no" title="statement not covered" >        navigation = singleNavigationExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        if (navigation) <span class="cstat-no" title="statement not covered" >index = navigation.next;</span></span>
+    }else{
+        path = collectionPathExpr(value, index);
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (path) <span class="cstat-no" title="statement not covered" >index = path.next;</span>
+    }
 &nbsp;
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (index &gt; start){
-<span class="cstat-no" title="statement not covered" >		return Lexer.tokenize(value, start, index, {</span>
-			entity: entity,
-			predicate: predicate,
-			navigation: navigation,
-			path: path
-		}, Lexer.TokenType.CollectionNavigationExpression);
-	}
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (index &gt; start){
+<span class="cstat-no" title="statement not covered" >        return Lexer.tokenize(value, start, index, {</span>
+            entity: entity,
+            predicate: predicate,
+            navigation: navigation,
+            path: path
+        }, Lexer.TokenType.CollectionNavigationExpression);
+    }
 }
 export function keyPredicate(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
-	return simpleKey(value, index, metadataContext) ||
-		compoundKey(value, index);
+    return simpleKey(value, index, metadataContext) ||
+        compoundKey(value, index);
 }
 export function simpleKey(value:number[] | Uint8Array, index:number, metadataContext?:any):Lexer.Token {
-	var open = Lexer.OPEN(value, index);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!open) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
+    var open = Lexer.OPEN(value, index);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!open) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var token = keyPropertyValue(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var token = keyPropertyValue(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, token.next);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, token.next);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var key;</span>
-<span class="cstat-no" title="statement not covered" >	if (typeof metadataContext == 'object'){</span>
-<span class="cstat-no" title="statement not covered" >		key = metadataContext.key.propertyRefs[0].name;</span>
-	}
+<span class="cstat-no" title="statement not covered" >    var key;</span>
+<span class="cstat-no" title="statement not covered" >    if (typeof metadataContext == 'object' &amp;&amp;</span>
+        metadataContext.key &amp;&amp;
+        metadataContext.key.propertyRefs &amp;&amp;
+        metadataContext.key.propertyRefs[0] &amp;&amp;
+        metadataContext.key.propertyRefs[0].name){
+<span class="cstat-no" title="statement not covered" >        key = metadataContext.key.propertyRefs[0].name;</span>
+    }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, close, { key: key, value: token }, Lexer.TokenType.SimpleKey);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, close, { key: key, value: token }, Lexer.TokenType.SimpleKey);</span>
 }
 export function compoundKey(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var open = Lexer.OPEN(value, index);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!open) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
+    var open = Lexer.OPEN(value, index);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!open) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var pair = keyValuePair(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!pair) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var pair = keyValuePair(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!pair) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var keys = [];</span>
-<span class="cstat-no" title="statement not covered" >	while (pair){</span>
-<span class="cstat-no" title="statement not covered" >		keys.push(pair);</span>
-<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, pair.next);</span>
-<span class="cstat-no" title="statement not covered" >		if (comma) <span class="cstat-no" title="statement not covered" >pair = keyValuePair(value, comma);</span></span>
-		else <span class="cstat-no" title="statement not covered" >pair = null;</span>
-	}
+<span class="cstat-no" title="statement not covered" >    var keys = [];</span>
+<span class="cstat-no" title="statement not covered" >    while (pair){</span>
+<span class="cstat-no" title="statement not covered" >        keys.push(pair);</span>
+<span class="cstat-no" title="statement not covered" >        var comma = Lexer.COMMA(value, pair.next);</span>
+<span class="cstat-no" title="statement not covered" >        if (comma) <span class="cstat-no" title="statement not covered" >pair = keyValuePair(value, comma);</span></span>
+        else <span class="cstat-no" title="statement not covered" >pair = null;</span>
+    }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	index = keys[keys.length - 1].next;</span>
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+<span class="cstat-no" title="statement not covered" >    index = keys[keys.length - 1].next;</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, keys, Lexer.TokenType.CompoundKey);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, keys, Lexer.TokenType.CompoundKey);</span>
 }
 <span class="fstat-no" title="function not covered" >export function keyValuePair(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	var prop = NameOrIdentifier.primitiveKeyProperty(value, index) ||</span>
-		keyPropertyAlias(value, index);
+<span class="cstat-no" title="statement not covered" >    var prop = NameOrIdentifier.primitiveKeyProperty(value, index) ||</span>
+        keyPropertyAlias(value, index);
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    if (!prop) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, prop.next);</span>
-<span class="cstat-no" title="statement not covered" >	if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var eq = Lexer.EQ(value, prop.next);</span>
+<span class="cstat-no" title="statement not covered" >    if (!eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var val = keyPropertyValue(value, eq);</span>
-<span class="cstat-no" title="statement not covered" >	if (val) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, val.next, {</span></span>
-		key: prop,
-		value: val
-	}, Lexer.TokenType.KeyValuePair);
+<span class="cstat-no" title="statement not covered" >    var val = keyPropertyValue(value, eq);</span>
+<span class="cstat-no" title="statement not covered" >    if (val) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, val.next, {</span></span>
+        key: prop,
+        value: val
+    }, Lexer.TokenType.KeyValuePair);
 }
 <span class="fstat-no" title="function not covered" >export function keyPropertyValue(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	var token = PrimitiveLiteral.primitiveLiteral(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (token){</span>
-<span class="cstat-no" title="statement not covered" >		token.type = Lexer.TokenType.KeyPropertyValue;</span>
-<span class="cstat-no" title="statement not covered" >		return token;</span>
-	}
+<span class="cstat-no" title="statement not covered" >    var token = PrimitiveLiteral.primitiveLiteral(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (token){</span>
+<span class="cstat-no" title="statement not covered" >        token.type = Lexer.TokenType.KeyPropertyValue;</span>
+<span class="cstat-no" title="statement not covered" >        return token;</span>
+    }
 }
 <span class="fstat-no" title="function not covered" >export function keyPropertyAlias(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return NameOrIdentifier.odataIdentifier(value, index, Lexer.TokenType.KeyPropertyAlias); </span>}
 &nbsp;
 export function singleNavigationExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (value[index] != 0x2f) return;
-<span class="cstat-no" title="statement not covered" >	var member = memberExpr(value, index + 1);</span>
-<span class="cstat-no" title="statement not covered" >	if (member) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, member.next, member, Lexer.TokenType.SingleNavigationExpression);</span></span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (value[index] != 0x2f) return;
+<span class="cstat-no" title="statement not covered" >    var member = memberExpr(value, index + 1);</span>
+<span class="cstat-no" title="statement not covered" >    if (member) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, member.next, member, Lexer.TokenType.SingleNavigationExpression);</span></span>
 }
 export function collectionPathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var token = countExpr(value, index);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!token) {
-		if (value[index] == 0x2f) {
-			token = boundFunctionExpr(value, index + 1) ||
-			anyExpr(value, index + 1) ||
-			allExpr(value, index + 1);
-		}
-	}
+    var token = countExpr(value, index);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!token) {
+        if (value[index] == 0x2f) {
+            token = boundFunctionExpr(value, index + 1) ||
+            anyExpr(value, index + 1) ||
+            allExpr(value, index + 1);
+        }
+    }
 &nbsp;
-	if (token) return Lexer.tokenize(value, index, token.next, token, Lexer.TokenType.CollectionPathExpression);
+    if (token) return Lexer.tokenize(value, index, token.next, token, Lexer.TokenType.CollectionPathExpression);
 }
 export function complexPathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (value[index] != 0x2f) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index++;</span>
-<span class="cstat-no" title="statement not covered" >	var token = NameOrIdentifier.qualifiedComplexTypeName(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (token) {</span>
-<span class="cstat-no" title="statement not covered" >		if (value[token.next] != 0x2f) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		index = token.next + 1;</span>
-	}
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (value[index] != 0x2f) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index++;</span>
+<span class="cstat-no" title="statement not covered" >    var token = NameOrIdentifier.qualifiedComplexTypeName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (token) {</span>
+<span class="cstat-no" title="statement not covered" >        if (value[token.next] != 0x2f) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        index = token.next + 1;</span>
+    }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var expr = propertyPathExpr(value, index) ||</span>
-		boundFunctionExpr(value, index);
+<span class="cstat-no" title="statement not covered" >    var expr = propertyPathExpr(value, index) ||</span>
+        boundFunctionExpr(value, index);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	if (expr) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, start, expr.next, token ? [token, expr] : [expr], Lexer.TokenType.ComplexPathExpression);</span></span>
+<span class="cstat-no" title="statement not covered" >    if (expr) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, start, expr.next, token ? [token, expr] : [expr], Lexer.TokenType.ComplexPathExpression);</span></span>
 }
 export function singlePathExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (value[index] != 0x2f) return;
-<span class="cstat-no" title="statement not covered" >	var boundFunction = boundFunctionExpr(value, index + 1);</span>
-<span class="cstat-no" title="statement not covered" >	if (boundFunction) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, boundFunction.next, boundFunction, Lexer.TokenType.SinglePathExpression);</span></span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (value[index] != 0x2f) return;
+<span class="cstat-no" title="statement not covered" >    var boundFunction = boundFunctionExpr(value, index + 1);</span>
+<span class="cstat-no" title="statement not covered" >    if (boundFunction) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, boundFunction.next, boundFunction, Lexer.TokenType.SinglePathExpression);</span></span>
 }
 export function functionExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var namespaceNext = NameOrIdentifier.namespace(value, index);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = namespaceNext + 1;</span>
+    var namespaceNext = NameOrIdentifier.namespace(value, index);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (namespaceNext == index || value[namespaceNext] != 0x2e) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = namespaceNext + 1;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var token = NameOrIdentifier.odataIdentifier(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var token = NameOrIdentifier.odataIdentifier(value, index);</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	token.position = start;</span>
-<span class="cstat-no" title="statement not covered" >	token.raw = Utils.stringify(value, start, token.next)</span>
+<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    token.position = start;</span>
+<span class="cstat-no" title="statement not covered" >    token.raw = Utils.stringify(value, start, token.next)</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	index = token.next;</span>
-<span class="cstat-no" title="statement not covered" >	var params = functionExprParameters(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    index = token.next;</span>
+<span class="cstat-no" title="statement not covered" >    var params = functionExprParameters(value, index);</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	if (!params) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!params) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	index = params.next;</span>
-<span class="cstat-no" title="statement not covered" >	var expr = collectionPathExpr(value, index) ||</span>
-		collectionNavigationExpr(value, index) ||
-		singleNavigationExpr(value, index) ||
-		complexPathExpr(value, index) ||
-		singlePathExpr(value, index);
+<span class="cstat-no" title="statement not covered" >    index = params.next;</span>
+<span class="cstat-no" title="statement not covered" >    var expr = collectionPathExpr(value, index) ||</span>
+        collectionNavigationExpr(value, index) ||
+        singleNavigationExpr(value, index) ||
+        complexPathExpr(value, index) ||
+        singlePathExpr(value, index);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	if (expr) <span class="cstat-no" title="statement not covered" >index = expr.next;</span></span>
+<span class="cstat-no" title="statement not covered" >    if (expr) <span class="cstat-no" title="statement not covered" >index = expr.next;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
-		fn: token,
-		params: params,
-		expression: expr
-	}, Lexer.TokenType.FunctionExpression);
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, {</span>
+        fn: token,
+        params: params,
+        expression: expr
+    }, Lexer.TokenType.FunctionExpression);
 }
 export function boundFunctionExpr(value:number[] | Uint8Array, index:number):Lexer.Token { return functionExpr(value, index); }
 &nbsp;
 <span class="fstat-no" title="function not covered" >export function functionExprParameters(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	var open = Lexer.OPEN(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = open;</span>
+<span class="cstat-no" title="statement not covered" >    var open = Lexer.OPEN(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!open) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = open;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var params = [];</span>
-<span class="cstat-no" title="statement not covered" >	var expr = functionExprParameter(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	while (expr) {</span>
-<span class="cstat-no" title="statement not covered" >		params.push(expr);</span>
-<span class="cstat-no" title="statement not covered" >		var comma = Lexer.COMMA(value, expr.next);</span>
-<span class="cstat-no" title="statement not covered" >		if (comma) {</span>
-<span class="cstat-no" title="statement not covered" >			index = comma;</span>
-<span class="cstat-no" title="statement not covered" >			expr = functionExprParameter(value, index);</span>
-<span class="cstat-no" title="statement not covered" >			if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
-		} else {
-<span class="cstat-no" title="statement not covered" >			index = expr.next;</span>
-<span class="cstat-no" title="statement not covered" >			expr = null;</span>
-		}
-	}
+<span class="cstat-no" title="statement not covered" >    var params = [];</span>
+<span class="cstat-no" title="statement not covered" >    var expr = functionExprParameter(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    while (expr) {</span>
+<span class="cstat-no" title="statement not covered" >        params.push(expr);</span>
+<span class="cstat-no" title="statement not covered" >        var comma = Lexer.COMMA(value, expr.next);</span>
+<span class="cstat-no" title="statement not covered" >        if (comma) {</span>
+<span class="cstat-no" title="statement not covered" >            index = comma;</span>
+<span class="cstat-no" title="statement not covered" >            expr = functionExprParameter(value, index);</span>
+<span class="cstat-no" title="statement not covered" >            if (!expr) <span class="cstat-no" title="statement not covered" >return;</span></span>
+        } else {
+<span class="cstat-no" title="statement not covered" >            index = expr.next;</span>
+<span class="cstat-no" title="statement not covered" >            expr = null;</span>
+        }
+    }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var close = Lexer.CLOSE(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	index = close;</span>
+<span class="cstat-no" title="statement not covered" >    var close = Lexer.CLOSE(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (!close) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = close;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, params, Lexer.TokenType.FunctionExpressionParameters);</span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, params, Lexer.TokenType.FunctionExpressionParameters);</span>
 }
 <span class="fstat-no" title="function not covered" >export function functionExprParameter(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	var name = parameterName(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var eq = Lexer.EQ(value, name.next);</span>
-<span class="cstat-no" title="statement not covered" >	if (!name || !eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    var name = parameterName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var eq = Lexer.EQ(value, name.next);</span>
+<span class="cstat-no" title="statement not covered" >    if (!name || !eq) <span class="cstat-no" title="statement not covered" >return;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index = eq;</span>
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index = eq;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var param = parameterAlias(value, index) ||</span>
-		parameterValue(value, index);
+<span class="cstat-no" title="statement not covered" >    var param = parameterAlias(value, index) ||</span>
+        parameterValue(value, index);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	if (!param) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, param.next, {</span>
-		name: name,
-		value: param
-	}, Lexer.TokenType.FunctionExpressionParameter);
+<span class="cstat-no" title="statement not covered" >    if (!param) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, param.next, {</span>
+        name: name,
+        value: param
+    }, Lexer.TokenType.FunctionExpressionParameter);
 }
 <span class="fstat-no" title="function not covered" >export function parameterName(value:number[] | Uint8Array, index:number)</span>:Lexer.Token { <span class="cstat-no" title="statement not covered" >return NameOrIdentifier.odataIdentifier(value, index, Lexer.TokenType.ParameterName); </span>}
 export function parameterAlias(value:number[] | Uint8Array, index:number):Lexer.Token {
-	var at = Lexer.AT(value, index);
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!at) return;
-<span class="cstat-no" title="statement not covered" >	var id = NameOrIdentifier.odataIdentifier(value, at);</span>
-<span class="cstat-no" title="statement not covered" >	if (id) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, id.next, id.value, Lexer.TokenType.ParameterAlias);</span></span>
+    var at = Lexer.AT(value, index);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!at) return;
+<span class="cstat-no" title="statement not covered" >    var id = NameOrIdentifier.odataIdentifier(value, at);</span>
+<span class="cstat-no" title="statement not covered" >    if (id) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, id.next, id.value, Lexer.TokenType.ParameterAlias);</span></span>
 }
 <span class="fstat-no" title="function not covered" >export function parameterValue(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	var token = ArrayOrObject.arrayOrObject(value, index) ||</span>
-		commonExpr(value, index);
-<span class="cstat-no" title="statement not covered" >	if (token) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, token.next, token.value, Lexer.TokenType.ParameterValue);</span></span>
+<span class="cstat-no" title="statement not covered" >    var token = ArrayOrObject.arrayOrObject(value, index) ||</span>
+        commonExpr(value, index);
+<span class="cstat-no" title="statement not covered" >    if (token) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, token.next, token.value, Lexer.TokenType.ParameterValue);</span></span>
 }
 &nbsp;
 export function countExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="if path not taken" >I</span>if (Utils.equals(value, index, '/$count')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 7, '/$count', Lexer.TokenType.CountExpression);</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (Utils.equals(value, index, '/$count')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 7, '/$count', Lexer.TokenType.CountExpression);</span>
 }
 <span class="fstat-no" title="function not covered" >export function refExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	if (Utils.equals(value, index, '/$ref')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 5, '/$ref', Lexer.TokenType.RefExpression);</span></span>
+<span class="cstat-no" title="statement not covered" >    if (Utils.equals(value, index, '/$ref')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 5, '/$ref', Lexer.TokenType.RefExpression);</span></span>
 }
 <span class="fstat-no" title="function not covered" >export function valueExpr(value:number[] | Uint8Array, index:number)</span>:Lexer.Token {
-<span class="cstat-no" title="statement not covered" >	if (Utils.equals(value, index, '/$value')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 7, '/$value', Lexer.TokenType.ValueExpression);</span></span>
+<span class="cstat-no" title="statement not covered" >    if (Utils.equals(value, index, '/$value')) <span class="cstat-no" title="statement not covered" >return Lexer.tokenize(value, index, index + 7, '/$value', Lexer.TokenType.ValueExpression);</span></span>
 }
 &nbsp;
 export function rootExpr(value:number[] | Uint8Array, index:number):Lexer.Token {
-	<span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, '$root/')) return;
-<span class="cstat-no" title="statement not covered" >	var start = index;</span>
-<span class="cstat-no" title="statement not covered" >	index += 6;</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!Utils.equals(value, index, '$root/')) return;
+<span class="cstat-no" title="statement not covered" >    var start = index;</span>
+<span class="cstat-no" title="statement not covered" >    index += 6;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	var entitySet = NameOrIdentifier.entitySetName(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	var predicate, entity, token;</span>
-<span class="cstat-no" title="statement not covered" >	if (entitySet) <span class="cstat-no" title="statement not covered" >predicate = keyPredicate(value, entitySet.next);</span></span>
-<span class="cstat-no" title="statement not covered" >	if (!(entitySet &amp;&amp; predicate)){</span>
-<span class="cstat-no" title="statement not covered" >		entity = NameOrIdentifier.singletonEntity(value, index);</span>
-<span class="cstat-no" title="statement not covered" >		if (!entity) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >		token = {</span>
-			entity: entity
-		};
-	}else <span class="cstat-no" title="statement not covered" >token = {</span>
-		entitySet: entitySet,
-		keys: predicate
-	}
+<span class="cstat-no" title="statement not covered" >    var entitySet = NameOrIdentifier.entitySetName(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    var predicate, entity, token;</span>
+<span class="cstat-no" title="statement not covered" >    if (entitySet) <span class="cstat-no" title="statement not covered" >predicate = keyPredicate(value, entitySet.next);</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!(entitySet &amp;&amp; predicate)){</span>
+<span class="cstat-no" title="statement not covered" >        entity = NameOrIdentifier.singletonEntity(value, index);</span>
+<span class="cstat-no" title="statement not covered" >        if (!entity) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >        token = {</span>
+            entity: entity
+        };
+    }else <span class="cstat-no" title="statement not covered" >token = {</span>
+        entitySet: entitySet,
+        keys: predicate
+    }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	index = (predicate || entity).next;</span>
-<span class="cstat-no" title="statement not covered" >	var nav = singleNavigationExpr(value, index);</span>
-<span class="cstat-no" title="statement not covered" >	if (nav) <span class="cstat-no" title="statement not covered" >index = nav.next;</span></span>
+<span class="cstat-no" title="statement not covered" >    index = (predicate || entity).next;</span>
+<span class="cstat-no" title="statement not covered" >    var nav = singleNavigationExpr(value, index);</span>
+<span class="cstat-no" title="statement not covered" >    if (nav) <span class="cstat-no" title="statement not covered" >index = nav.next;</span></span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return Lexer.tokenize(value, start, index, {</span>
-		current: token,
-		next: nav
-	}, Lexer.TokenType.RootExpression);
+<span class="cstat-no" title="statement not covered" >    return Lexer.tokenize(value, start, index, {</span>
+        current: token,
+        next: nav
+    }, Lexer.TokenType.RootExpression);
 }
 &nbsp;</pre></td></tr>
 </table></pre>
@@ -2416,7 +2428,7 @@ export function rootExpr(value:number[] | Uint8Array, index:number):Lexer.Token 
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Sep 05 2016 09:54:34 GMT+0200 (Central Europe Daylight Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Oct 11 2016 12:05:00 GMT+0200 (Central Europe Daylight Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

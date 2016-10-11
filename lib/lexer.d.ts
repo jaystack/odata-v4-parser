@@ -27,7 +27,7 @@ export declare class TokenType {
     static PrimitiveNonKeyProperty: string;
     static PrimitiveCollectionProperty: string;
     static ComplexProperty: string;
-    static ComplexColProperty: string;
+    static ComplexCollectionProperty: string;
     static StreamProperty: string;
     static NavigationProperty: string;
     static EntityNavigationProperty: string;

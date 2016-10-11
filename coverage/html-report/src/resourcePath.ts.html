@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">16.37% </span>
+        <span class="strong">16.09% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>56/342</span>
+        <span class='fraction'>56/348</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>0/26</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">11.48% </span>
+        <span class="strong">11.23% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>31/270</span>
+        <span class='fraction'>31/276</span>
       </div>
     </div>
   </div>
@@ -479,7 +479,13 @@
 434
 435
 436
-437</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+437
+438
+439
+440
+441
+442
+443</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
@@ -506,11 +512,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -942,26 +954,32 @@ import * as Expressions from './expressions';
 	
 <span class="cstat-no" title="statement not covered" >	switch (resource.type){</span>
 		case Lexer.TokenType.EntitySetName:
-		case Lexer.TokenType.EntityFunctionImportCall:
 <span class="cstat-no" title="statement not covered" >			navigation = collectionNavigation(value, resource.next, resource.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete resource.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
+		case Lexer.TokenType.EntityCollectionFunctionImportCall:
+<span class="cstat-no" title="statement not covered" >			navigation = collectionNavigation(value, resource.next, resource.value.import.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			delete resource.metadata;</span>
+<span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.SingletonEntity:
-		case Lexer.TokenType.EntityFunctionImportCall:
 <span class="cstat-no" title="statement not covered" >			navigation = singleNavigation(value, resource.next, resource.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			delete resource.metadata;</span>
+<span class="cstat-no" title="statement not covered" >			break;</span>
+		case Lexer.TokenType.EntityFunctionImportCall:
+<span class="cstat-no" title="statement not covered" >			navigation = singleNavigation(value, resource.next, resource.value.import.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete resource.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.ComplexCollectionFunctionImportCall:
 		case Lexer.TokenType.PrimitiveCollectionFunctionImportCall:
-<span class="cstat-no" title="statement not covered" >			navigation = collectionPath(value, resource.next, resource.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = collectionPath(value, resource.next, resource.value.import.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete resource.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.ComplexFunctionImportCall:
-<span class="cstat-no" title="statement not covered" >			navigation = complexPath(value, resource.next, resource.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = complexPath(value, resource.next, resource.value.import.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete resource.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.PrimitiveFunctionImportCall:
-<span class="cstat-no" title="statement not covered" >			navigation = singlePath(value, resource.next, resource.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = singlePath(value, resource.next, resource.value.import.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete resource.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 	}
@@ -1080,7 +1098,7 @@ import * as Expressions from './expressions';
 <span class="cstat-no" title="statement not covered" >			navigation = singleNavigation(value, index, token.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete token.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
-		case Lexer.TokenType.ComplexColProperty:
+		case Lexer.TokenType.ComplexCollectionProperty:
 <span class="cstat-no" title="statement not covered" >			navigation = collectionPath(value, index, token.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete token.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
@@ -1157,31 +1175,31 @@ import * as Expressions from './expressions';
 		case Lexer.TokenType.BoundActionCall:
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.BoundEntityCollectionFunctionCall:
-<span class="cstat-no" title="statement not covered" >			navigation = collectionNavigation(value, index, operation.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = collectionNavigation(value, index, operation.value.call.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete operation.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.BoundEntityFunctionCall:
-<span class="cstat-no" title="statement not covered" >			navigation = singleNavigation(value, index, operation.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = singleNavigation(value, index, operation.value.call.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete operation.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.BoundComplexCollectionFunctionCall:
 <span class="cstat-no" title="statement not covered" >			if (value[index] == 0x2f){</span>
-<span class="cstat-no" title="statement not covered" >				name = NameOrIdentifier.qualifiedComplexTypeName(value, index + 1, operation.metadata);</span>
+<span class="cstat-no" title="statement not covered" >				name = NameOrIdentifier.qualifiedComplexTypeName(value, index + 1, operation.value.call.metadata);</span>
 <span class="cstat-no" title="statement not covered" >				if (name) <span class="cstat-no" title="statement not covered" >index = name.next;</span></span>
 			}
-<span class="cstat-no" title="statement not covered" >			navigation = collectionPath(value, index, operation.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = collectionPath(value, index, operation.value.call.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete operation.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.BoundComplexFunctionCall:
-<span class="cstat-no" title="statement not covered" >			navigation = complexPath(value, index, operation.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = complexPath(value, index, operation.value.call.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete operation.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.BoundPrimitiveCollectionFunctionCall:
-<span class="cstat-no" title="statement not covered" >			navigation = collectionPath(value, index, operation.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = collectionPath(value, index, operation.value.call.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete operation.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 		case Lexer.TokenType.BoundPrimitiveFunctionCall:
-<span class="cstat-no" title="statement not covered" >			navigation = singlePath(value, index, operation.metadata);</span>
+<span class="cstat-no" title="statement not covered" >			navigation = singlePath(value, index, operation.value.call.metadata);</span>
 <span class="cstat-no" title="statement not covered" >			delete operation.metadata;</span>
 <span class="cstat-no" title="statement not covered" >			break;</span>
 	}
@@ -1357,7 +1375,7 @@ import * as Expressions from './expressions';
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Sep 05 2016 09:54:34 GMT+0200 (Central Europe Daylight Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Oct 11 2016 12:05:00 GMT+0200 (Central Europe Daylight Time)
 </div>
 </div>
 <script src="../prettify.js"></script>

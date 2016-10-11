@@ -29,7 +29,7 @@ export class TokenType{
 	static PrimitiveNonKeyProperty = 'PrimitiveNonKeyProperty'
 	static PrimitiveCollectionProperty = 'PrimitiveCollectionProperty'
 	static ComplexProperty = 'ComplexProperty'
-	static ComplexColProperty = 'ComplexColProperty'
+	static ComplexCollectionProperty = 'ComplexCollectionProperty'
 	static StreamProperty = 'StreamProperty'
 	static NavigationProperty = 'NavigationProperty'
 	static EntityNavigationProperty = 'EntityNavigationProperty'

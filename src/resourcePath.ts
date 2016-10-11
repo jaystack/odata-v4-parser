@@ -25,26 +25,32 @@ export function resourcePath(value:number[] | Uint8Array, index:number, metadata
 	
 	switch (resource.type){
 		case Lexer.TokenType.EntitySetName:
-		case Lexer.TokenType.EntityFunctionImportCall:
 			navigation = collectionNavigation(value, resource.next, resource.metadata);
 			delete resource.metadata;
 			break;
+		case Lexer.TokenType.EntityCollectionFunctionImportCall:
+			navigation = collectionNavigation(value, resource.next, resource.value.import.metadata);
+			delete resource.metadata;
+			break;
 		case Lexer.TokenType.SingletonEntity:
-		case Lexer.TokenType.EntityFunctionImportCall:
 			navigation = singleNavigation(value, resource.next, resource.metadata);
+			delete resource.metadata;
+			break;
+		case Lexer.TokenType.EntityFunctionImportCall:
+			navigation = singleNavigation(value, resource.next, resource.value.import.metadata);
 			delete resource.metadata;
 			break;
 		case Lexer.TokenType.ComplexCollectionFunctionImportCall:
 		case Lexer.TokenType.PrimitiveCollectionFunctionImportCall:
-			navigation = collectionPath(value, resource.next, resource.metadata);
+			navigation = collectionPath(value, resource.next, resource.value.import.metadata);
 			delete resource.metadata;
 			break;
 		case Lexer.TokenType.ComplexFunctionImportCall:
-			navigation = complexPath(value, resource.next, resource.metadata);
+			navigation = complexPath(value, resource.next, resource.value.import.metadata);
 			delete resource.metadata;
 			break;
 		case Lexer.TokenType.PrimitiveFunctionImportCall:
-			navigation = singlePath(value, resource.next, resource.metadata);
+			navigation = singlePath(value, resource.next, resource.value.import.metadata);
 			delete resource.metadata;
 			break;
 	}
@@ -163,7 +169,7 @@ export function propertyPath(value:number[] | Uint8Array, index:number, metadata
 			navigation = singleNavigation(value, index, token.metadata);
 			delete token.metadata;
 			break;
-		case Lexer.TokenType.ComplexColProperty:
+		case Lexer.TokenType.ComplexCollectionProperty:
 			navigation = collectionPath(value, index, token.metadata);
 			delete token.metadata;
 			break;
@@ -240,31 +246,31 @@ export function boundOperation(value:number[] | Uint8Array, index:number, isColl
 		case Lexer.TokenType.BoundActionCall:
 			break;
 		case Lexer.TokenType.BoundEntityCollectionFunctionCall:
-			navigation = collectionNavigation(value, index, operation.metadata);
+			navigation = collectionNavigation(value, index, operation.value.call.metadata);
 			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundEntityFunctionCall:
-			navigation = singleNavigation(value, index, operation.metadata);
+			navigation = singleNavigation(value, index, operation.value.call.metadata);
 			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundComplexCollectionFunctionCall:
 			if (value[index] == 0x2f){
-				name = NameOrIdentifier.qualifiedComplexTypeName(value, index + 1, operation.metadata);
+				name = NameOrIdentifier.qualifiedComplexTypeName(value, index + 1, operation.value.call.metadata);
 				if (name) index = name.next;
 			}
-			navigation = collectionPath(value, index, operation.metadata);
+			navigation = collectionPath(value, index, operation.value.call.metadata);
 			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundComplexFunctionCall:
-			navigation = complexPath(value, index, operation.metadata);
+			navigation = complexPath(value, index, operation.value.call.metadata);
 			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundPrimitiveCollectionFunctionCall:
-			navigation = collectionPath(value, index, operation.metadata);
+			navigation = collectionPath(value, index, operation.value.call.metadata);
 			delete operation.metadata;
 			break;
 		case Lexer.TokenType.BoundPrimitiveFunctionCall:
-			navigation = singlePath(value, index, operation.metadata);
+			navigation = singlePath(value, index, operation.value.call.metadata);
 			delete operation.metadata;
 			break;
 	}
