@@ -127,6 +127,7 @@ export declare class TokenType {
     static SelectPath: string;
     static AliasAndValue: string;
     static SkipToken: string;
+    static Id: string;
     static Crossjoin: string;
     static AllResource: string;
     static ActionImportCall: string;

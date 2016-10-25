@@ -129,6 +129,7 @@ export class TokenType{
 	static SelectPath = 'SelectPath'
 	static AliasAndValue = 'AliasAndValue'
 	static SkipToken = 'SkipToken'
+	static Id = 'Id';
 	static Crossjoin = 'Crossjoin'
 	static AllResource = 'AllResource'
 	static ActionImportCall = 'ActionImportCall'

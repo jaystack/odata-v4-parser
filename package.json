@@ -1,6 +1,6 @@
 {
   "name": "odata-v4-parser",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "OData v4 Parser",
   "main": "lib/parser.js",
   "repository": {
@@ -22,10 +22,11 @@
     "gulp-istanbul": "^0.10.4",
     "gulp-mocha": "^2.2.0",
     "gulp-sourcemaps": "^2.0.0-alpha",
-    "gulp-typescript": "^2.10.0",
+    "gulp-typescript": "^2.14.1",
     "merge2": "^1.0.0",
     "mocha": "^2.3.4",
-    "remap-istanbul": "^0.6.3"
+    "remap-istanbul": "^0.6.3",
+    "typescript": "^2.0.3"
   },
   "typings": "lib/parser.d.ts"
 }

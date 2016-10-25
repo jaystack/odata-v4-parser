@@ -54,7 +54,10 @@ export function id(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!eq) return;
 	index = eq;
 
-	//TODO: navigation
+	while (value[index] != 0x26 && index < value.length) index++;
+	if (index == eq) return;
+
+	return Lexer.tokenize(value, start, index, Utils.stringify(value, eq, index), Lexer.TokenType.Id);
 }
 
 export function expand(value:number[] | Uint8Array, index:number):Lexer.Token {
@@ -583,8 +586,6 @@ export function inlinecount(value:number[] | Uint8Array, index:number):Lexer.Tok
 
 	return Lexer.tokenize(value, start, index, token, Lexer.TokenType.InlineCount);
 }
-
-//TODO: search
 
 export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
 	if (!Utils.equals(value, index, '$select')) return;
