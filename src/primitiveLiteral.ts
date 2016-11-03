@@ -150,7 +150,8 @@ export function stringValue(value:number[] | Uint8Array, index:number):Lexer.Tok
 				if (!squote) {
 					var close = Lexer.CLOSE(value, index);
                     var comma = Lexer.COMMA(value, index);
-					if (Lexer.pcharNoSQUOTE(value, index) > index && !close && !comma && Lexer.RWS(value, index) == index) return;
+					var amp = value[index] == 0x26;
+					if (Lexer.pcharNoSQUOTE(value, index) > index && !amp && !close && !comma && Lexer.RWS(value, index) == index) return;
 					break;
 				} else {
 					index = squote;
