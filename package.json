@@ -1,6 +1,6 @@
 {
   "name": "odata-v4-parser",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "OData v4 Parser",
   "main": "lib/parser.js",
   "repository": {

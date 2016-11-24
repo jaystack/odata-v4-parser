@@ -46,9 +46,13 @@ export function systemQueryOption(value:number[] | Uint8Array, index:number):Lex
 }
 
 export function id(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$id')) return;
 	var start = index;
-	index += 3;
+	if (Utils.equals(value, index, '%24id')){
+		index += 5;
+	}else
+	if (Utils.equals(value, index, '$id')){
+		index += 3;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -61,9 +65,13 @@ export function id(value:number[] | Uint8Array, index:number):Lexer.Token {
 }
 
 export function expand(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$expand')) return;
 	var start = index;
-	index += 7;
+	if (Utils.equals(value, index, '%24expand')){
+		index += 9;
+	}else
+	if (Utils.equals(value, index, '$expand')){
+		index += 7;
+	}else return;
 	
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -290,9 +298,13 @@ export function expandPath(value:number[] | Uint8Array, index:number):Lexer.Toke
 }
 
 export function search(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$search')) return;
 	var start = index;
-	index += 7;
+	if (Utils.equals(value, index, '%24search')){
+		index += 9;
+	}else
+	if (Utils.equals(value, index, '$search')){
+		index += 7;
+	}else return;
 	
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -428,9 +440,13 @@ export function searchParenExpr(value:number[] | Uint8Array, index:number):Lexer
 }
 
 export function levels(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$levels')) return;
 	var start = index;
-	index += 7;
+	if (Utils.equals(value, index, '%24levels')){
+		index += 9;
+	}else
+	if (Utils.equals(value, index, '$levels')){
+		index += 7;
+	}else return;
 	
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -451,9 +467,13 @@ export function levels(value:number[] | Uint8Array, index:number):Lexer.Token {
 }
 
 export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$filter')) return;
 	var start = index;
-	index += 7;
+	if (Utils.equals(value, index, '%24filter')){
+		index += 9;
+	}else
+	if (Utils.equals(value, index, '$filter')){
+		index += 7;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -467,9 +487,13 @@ export function filter(value:number[] | Uint8Array, index:number):Lexer.Token {
 }
 
 export function orderby(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$orderby')) return;
 	var start = index;
-	index += 8;
+	if (Utils.equals(value, index, '%24orderby')){
+		index += 10;
+	}else
+	if (Utils.equals(value, index, '$orderby')){
+		index += 8;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -516,9 +540,13 @@ export function orderbyItem(value:number[] | Uint8Array, index:number):Lexer.Tok
 }
 
 export function skip(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$skip')) return;
 	var start = index;
-	index += 5;
+	if (Utils.equals(value, index, '%24skip')){
+		index += 7;
+	}else
+	if (Utils.equals(value, index, '$skip')){
+		index += 5;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -532,9 +560,13 @@ export function skip(value:number[] | Uint8Array, index:number):Lexer.Token {
 }
 
 export function top(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$top')) return;
 	var start = index;
-	index += 4;
+	if (Utils.equals(value, index, '%24top')){
+		index += 6;
+	}else
+	if (Utils.equals(value, index, '$top')){
+		index += 4;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -548,9 +580,13 @@ export function top(value:number[] | Uint8Array, index:number):Lexer.Token {
 }
 
 export function format(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$format')) return;
 	var start = index;
-	index += 7;
+	if (Utils.equals(value, index, '%24format')){
+		index += 9;
+	}else
+	if (Utils.equals(value, index, '$format')){
+		index += 7;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -572,9 +608,13 @@ export function format(value:number[] | Uint8Array, index:number):Lexer.Token {
 }
 
 export function inlinecount(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$count')) return;
 	var start = index;
-	index += 6;
+	if (Utils.equals(value, index, '%24count')){
+		index += 8;
+	}else
+	if (Utils.equals(value, index, '$count')){
+		index += 6;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -588,9 +628,13 @@ export function inlinecount(value:number[] | Uint8Array, index:number):Lexer.Tok
 }
 
 export function select(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$select')) return;
 	var start = index;
-	index += 7;
+	if (Utils.equals(value, index, '%24select')){
+		index += 9;
+	}else
+	if (Utils.equals(value, index, '$select')){
+		index += 7;
+	}else return;
 
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
@@ -751,9 +795,13 @@ export function qualifiedFunctionName(value:number[] | Uint8Array, index:number)
 }
 
 export function skiptoken(value:number[] | Uint8Array, index:number):Lexer.Token {
-	if (!Utils.equals(value, index, '$skiptoken')) return;
 	var start = index;
-	index += 10;
+	if (Utils.equals(value, index, '%24skiptoken')){
+		index += 12;
+	}else
+	if (Utils.equals(value, index, '$skiptoken')){
+		index += 10;
+	}else return;
 	
 	var eq = Lexer.EQ(value, index);
 	if (!eq) return;
