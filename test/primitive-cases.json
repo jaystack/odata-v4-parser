@@ -264,6 +264,16 @@
     }
   },
   {
+    "-Name": "DateTimeOffset: 20th hour UTC",
+    "-Rule": "dateTimeOffsetValue",
+    "Input": "2012-11-28T20:00:00.000Z",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.DateTimeOffset"
+    }
+  },
+  {
     "-Name": "Decimal",
     "-Rule": "decimalValue",
     "Input": "3.14",

@@ -367,7 +367,7 @@ export function day(value:number[] | Uint8Array, index:number):number {
 }
 export function hour(value:number[] | Uint8Array, index:number):number {
 	if (((value[index] == 0x30 || value[index] == 0x31) && DIGIT(value[index + 1])) ||
-		(value[index] == 0x32 && (value[index + 1] == 0x31 || value[index + 1] == 0x32 || value[index + 1] == 0x33))) return index + 2;
+		(value[index] == 0x32 && (value[index + 1] == 0x30 || value[index + 1] == 0x31 || value[index + 1] == 0x32 || value[index + 1] == 0x33))) return index + 2;
 	return index;
 }
 export function minute(value:number[] | Uint8Array, index:number):number {
