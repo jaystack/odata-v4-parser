@@ -1,2 +1,5 @@
 src/*.js
 coverage
+docs
+report
+*.log*

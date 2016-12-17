@@ -1,6 +1,6 @@
 {
   "name": "odata-v4-parser",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "OData v4 Parser",
   "main": "lib/parser.js",
   "repository": {
@@ -14,19 +14,29 @@
   "author": "JayStack",
   "license": "MIT",
   "scripts": {
-    "prepublish": "gulp"
+    "prebuild": "npm run lint",
+    "build": "tsc",
+    "build:w": "tsc -w",
+    "lint": "tslint src/**/*.ts --fix",
+    "tdd": "concurrently \"tsc -w\" \"mocha -w\"",
+    "coverage": "rm -rf coverage && tsc && node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha test/**/*.spec.js --config=.istanbul.yaml -x config/**/*.js && node node_modules/remap-istanbul/bin/remap-istanbul -i coverage/coverage.json -o coverage/html-report -t html",
+    "typedoc": "typedoc --name \"JayStack OData v4 Parser\" --excludeExternals --excludeNotExported --hideGenerator --excludeExternals --excludePrivate --out docs src",
+    "pretest": "npm run build",
+    "test": "mocha test/**/*.spec.js --reporter mochawesome --reporter-options reportDir=report,reportName=odata-v4-parser,reportTitle=\"JayStack OData V4 Parser\"",
+    "prepublish": "npm run test"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "gulp": "^3.9.0",
-    "gulp-istanbul": "^0.10.4",
-    "gulp-mocha": "^2.2.0",
-    "gulp-sourcemaps": "^2.0.0-alpha",
-    "gulp-typescript": "^2.14.1",
-    "merge2": "^1.0.0",
-    "mocha": "^2.3.4",
-    "remap-istanbul": "^0.6.3",
-    "typescript": "^2.0.3"
+    "chai": "^3.5.0",
+    "concurrently": "^3.1.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0",
+    "mochawesome": "^1.5.4",
+    "remap-istanbul": "^0.6.4",
+    "tslint": "^4.1.1",
+    "typedoc": "^0.5.1",
+    "typedoc-default-themes": "^0.4.1",
+    "typedoc-plugin-external-module-name": "^1.0.5",
+    "typescript": "^2.1.4"
   },
   "typings": "lib/parser.d.ts"
 }
