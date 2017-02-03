@@ -168,7 +168,7 @@ export function entitySetName(value: number[] | Uint8Array, index: number, metad
         if (!entitySet) return;
 
         let entityType;
-        metadataContext.dataServices.schemas.forEach(schema => entitySet.entityType.indexOf(schema.namespace) === 0 && schema.entityTypes.filter((type) => {
+        metadataContext.dataServices.schemas.forEach(schema => entitySet.entityType.indexOf(schema.namespace + ".") === 0 && schema.entityTypes.filter((type) => {
             let eq = type.name === entitySet.entityType.replace(schema.namespace + ".", "");
             if (eq) entityType = type;
             return eq;
@@ -330,7 +330,7 @@ export function complexProperty(value: number[] | Uint8Array, index: number, met
             if (prop.name === token.raw) {
                 if (prop.type.indexOf("Collection") === 0 || isPrimitiveTypeName(prop.type)) return;
                 let root = getMetadataRoot(metadataContext);
-                let schema = root.schemas.filter(it => prop.type.indexOf(it.namespace) === 0)[0];
+                let schema = root.schemas.filter(it => prop.type.indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
 
                 let complexType = schema.complexTypes.filter(it => it.name === prop.type.split(".").pop())[0];
@@ -356,7 +356,7 @@ export function complexColProperty(value: number[] | Uint8Array, index: number, 
             if (prop.name === token.raw) {
                 if (prop.type.indexOf("Collection") === -1 || isPrimitiveTypeName(prop.type.slice(11, -1))) return;
                 let root = getMetadataRoot(metadataContext);
-                let schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace) === 0)[0];
+                let schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
 
                 let complexType = schema.complexTypes.filter(it => it.name === prop.type.slice(11, -1).split(".").pop())[0];
@@ -405,7 +405,7 @@ export function entityNavigationProperty(value: number[] | Uint8Array, index: nu
             let prop = metadataContext.navigationProperties[i];
             if (prop.name === token.raw && prop.type.indexOf("Collection") === -1 && !isPrimitiveTypeName(prop.type.slice(11, -1))) {
                 let root = getMetadataRoot(metadataContext);
-                let schema = root.schemas.filter(it => prop.type.indexOf(it.namespace) === 0)[0];
+                let schema = root.schemas.filter(it => prop.type.indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
 
                 let entityType = schema.entityTypes.filter(it => it.name === prop.type.split(".").pop())[0];
@@ -428,7 +428,7 @@ export function entityColNavigationProperty(value: number[] | Uint8Array, index:
             let prop = metadataContext.navigationProperties[i];
             if (prop.name === token.raw && prop.type.indexOf("Collection") === 0 && !isPrimitiveTypeName(prop.type.slice(11, -1))) {
                 let root = getMetadataRoot(metadataContext);
-                let schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace) === 0)[0];
+                let schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
 
                 let entityType = schema.entityTypes.filter(it => it.name === prop.type.slice(11, -1).split(".").pop())[0];
@@ -511,7 +511,7 @@ function getOperationType(operation: string, metadataContext: any, token: Lexer.
     let type;
     for (let i = 0; i < root.schemas.length; i++) {
         let schema = root.schemas[i];
-        if (elementType.indexOf(schema.namespace) === 0) {
+        if (elementType.indexOf(schema.namespace + ".") === 0) {
             for (let j = 0; j < schema[types].length; j++) {
                 let it = schema[types][j];
                 if (schema.namespace + "." + it.name === elementType) {
@@ -621,7 +621,7 @@ function getOperationImportType(operation: string, metadataContext: any, token: 
     let fn;
     for (let i = 0; i < metadataContext.dataServices.schemas.length; i++) {
         let schema = metadataContext.dataServices.schemas[i];
-        if (fnImport[operation].indexOf(schema.namespace) === 0) {
+        if (fnImport[operation].indexOf(schema.namespace + ".") === 0) {
             for (let j = 0; j < schema[operation + "s"].length; j++) {
                 let it = schema[operation + "s"][j];
                 if (it.name === fnImport.name) {
@@ -644,7 +644,7 @@ function getOperationImportType(operation: string, metadataContext: any, token: 
     let type;
     for (let i = 0; i < metadataContext.dataServices.schemas.length; i++) {
         let schema = metadataContext.dataServices.schemas[i];
-        if (elementType.indexOf(schema.namespace) === 0) {
+        if (elementType.indexOf(schema.namespace + ".") === 0) {
             for (let j = 0; j < schema[types].length; j++) {
                 let it = schema[types][j];
                 if (schema.namespace + "." + it.name === elementType) {
