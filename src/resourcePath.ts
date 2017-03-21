@@ -56,6 +56,7 @@ export function resourcePath(value: number[] | Uint8Array, index: number, metada
     }
 
     if (navigation) index = navigation.next;
+    if (value[index] === 0x2f) index++;
     if (resource) return Lexer.tokenize(value, start, index, { resource, navigation }, Lexer.TokenType.ResourcePath);
 }
 
