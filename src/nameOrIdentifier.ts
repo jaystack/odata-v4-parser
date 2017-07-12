@@ -254,7 +254,18 @@ const primitiveTypes: string[] = [
     "Edm.GeographyCollection", "Edm.GeographyLineString", "Edm.GeographyMultiLineString", "Edm.GeographyMultiPoint", "Edm.GeographyMultiPolygon", "Edm.GeographyPoint", "Edm.GeographyPolygon",
     "Edm.GeometryCollection", "Edm.GeometryLineString", "Edm.GeometryMultiLineString", "Edm.GeometryMultiPoint", "Edm.GeometryMultiPolygon", "Edm.GeometryPoint", "Edm.GeometryPolygon"
 ];
-function isPrimitiveTypeName(type: string): boolean {
+function isPrimitiveTypeName(type: string, metadataContext?: any): boolean {
+    let root = getMetadataRoot(metadataContext);
+    let schemas = root.schemas || (root.dataServices && root.dataServices.schemas) || [];
+    let schema = schemas.filter(function (it) { return type.indexOf(it.namespace + ".") === 0; })[0];
+    if (schema) {
+        return ((schema.enumTypes && schema.enumTypes.filter(function (it) { return it.name === type.split(".").pop(); })[0]) ||
+            (schema.typeDefinitions && schema.typeDefinitions.filter(function (it) { return it.name === type.split(".").pop(); })[0])) &&
+            !(
+                (schema.entityTypes && schema.entityTypes.filter(function (it) { return it.name === type.split(".").pop(); })[0]) ||
+                (schema.complexTypes && schema.complexTypes.filter(function (it) { return it.name === type.split(".").pop(); })[0])
+            );
+    }
     return primitiveTypes.indexOf(type) >= 0;
 }
 function getMetadataRoot(metadataContext: any) {
@@ -272,7 +283,7 @@ export function primitiveProperty(value: number[] | Uint8Array, index: number, m
         for (let i = 0; i < metadataContext.properties.length; i++) {
             let prop = metadataContext.properties[i];
             if (prop.name === token.raw) {
-                if (prop.type.indexOf("Collection") === 0 || !isPrimitiveTypeName(prop.type)) return;
+                if (prop.type.indexOf("Collection") === 0 || !isPrimitiveTypeName(prop.type, metadataContext)) return;
                 token.metadata = prop;
 
                 if (metadataContext.key && metadataContext.key.propertyRefs.filter(it => it.name === prop.name).length > 0) {
@@ -304,7 +315,7 @@ export function primitiveColProperty(value: number[] | Uint8Array, index: number
         for (let i = 0; i < metadataContext.properties.length; i++) {
             let prop = metadataContext.properties[i];
             if (prop.name === token.raw) {
-                if (prop.type.indexOf("Collection") === -1 || !isPrimitiveTypeName(prop.type.slice(11, -1))) return;
+                if (prop.type.indexOf("Collection") === -1 || !isPrimitiveTypeName(prop.type.slice(11, -1), metadataContext)) return;
                 token.metadata = prop;
 
                 if (metadataContext.key.propertyRefs.filter(it => it.name === prop.name).length > 0) {
@@ -328,7 +339,7 @@ export function complexProperty(value: number[] | Uint8Array, index: number, met
         for (let i = 0; i < metadataContext.properties.length; i++) {
             let prop = metadataContext.properties[i];
             if (prop.name === token.raw) {
-                if (prop.type.indexOf("Collection") === 0 || isPrimitiveTypeName(prop.type)) return;
+                if (prop.type.indexOf("Collection") === 0 || isPrimitiveTypeName(prop.type, metadataContext)) return;
                 let root = getMetadataRoot(metadataContext);
                 let schema = root.schemas.filter(it => prop.type.indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
@@ -354,7 +365,7 @@ export function complexColProperty(value: number[] | Uint8Array, index: number, 
         for (let i = 0; i < metadataContext.properties.length; i++) {
             let prop = metadataContext.properties[i];
             if (prop.name === token.raw) {
-                if (prop.type.indexOf("Collection") === -1 || isPrimitiveTypeName(prop.type.slice(11, -1))) return;
+                if (prop.type.indexOf("Collection") === -1 || isPrimitiveTypeName(prop.type.slice(11, -1), metadataContext)) return;
                 let root = getMetadataRoot(metadataContext);
                 let schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
@@ -403,7 +414,7 @@ export function entityNavigationProperty(value: number[] | Uint8Array, index: nu
     if (typeof metadataContext === "object") {
         for (let i = 0; i < metadataContext.navigationProperties.length; i++) {
             let prop = metadataContext.navigationProperties[i];
-            if (prop.name === token.raw && prop.type.indexOf("Collection") === -1 && !isPrimitiveTypeName(prop.type.slice(11, -1))) {
+            if (prop.name === token.raw && prop.type.indexOf("Collection") === -1 && !isPrimitiveTypeName(prop.type.slice(11, -1), metadataContext)) {
                 let root = getMetadataRoot(metadataContext);
                 let schema = root.schemas.filter(it => prop.type.indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
@@ -426,7 +437,7 @@ export function entityColNavigationProperty(value: number[] | Uint8Array, index:
     if (typeof metadataContext === "object") {
         for (let i = 0; i < metadataContext.navigationProperties.length; i++) {
             let prop = metadataContext.navigationProperties[i];
-            if (prop.name === token.raw && prop.type.indexOf("Collection") === 0 && !isPrimitiveTypeName(prop.type.slice(11, -1))) {
+            if (prop.name === token.raw && prop.type.indexOf("Collection") === 0 && !isPrimitiveTypeName(prop.type.slice(11, -1), metadataContext)) {
                 let root = getMetadataRoot(metadataContext);
                 let schema = root.schemas.filter(it => prop.type.slice(11, -1).indexOf(it.namespace + ".") === 0)[0];
                 if (!schema) return;
@@ -504,8 +515,8 @@ function getOperationType(operation: string, metadataContext: any, token: Lexer.
 
     if (fnDef.returnType.type.indexOf("Collection") === isCollection ? -1 : 0) return;
     let elementType = isCollection ? fnDef.returnType.type.slice(11, -1) : fnDef.returnType.type;
-    if (isPrimitiveTypeName(elementType) && !isPrimitive) return;
-    if (!isPrimitiveTypeName(elementType) && isPrimitive) return;
+    if (isPrimitiveTypeName(elementType, metadataContext) && !isPrimitive) return;
+    if (!isPrimitiveTypeName(elementType, metadataContext) && isPrimitive) return;
     if (isPrimitive) return elementType;
 
     let type;
@@ -637,8 +648,8 @@ function getOperationImportType(operation: string, metadataContext: any, token: 
     if (operation === "action") return fn;
     if (fn.returnType.type.indexOf("Collection") === isCollection ? -1 : 0) return;
     let elementType = isCollection ? fn.returnType.type.slice(11, -1) : fn.returnType.type;
-    if (isPrimitiveTypeName(elementType) && !isPrimitive) return;
-    if (!isPrimitiveTypeName(elementType) && isPrimitive) return;
+    if (isPrimitiveTypeName(elementType, metadataContext) && !isPrimitive) return;
+    if (!isPrimitiveTypeName(elementType, metadataContext) && isPrimitive) return;
     if (isPrimitive) return elementType;
 
     let type;
