@@ -4,8 +4,8 @@ import * as PrimitiveLiteral from "./primitiveLiteral";
 import * as NameOrIdentifier from "./nameOrIdentifier";
 import * as Expressions from "./expressions";
 
-export function queryOptions(value: number[] | Uint8Array, index: number): Lexer.Token {
-    let token = queryOption(value, index);
+export function queryOptions(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
+    let token = queryOption(value, index, metadataContext);
     if (!token) return;
     let start = index;
     index = token.next;
@@ -17,7 +17,7 @@ export function queryOptions(value: number[] | Uint8Array, index: number): Lexer
         if (value[index] !== 0x26) break;
         index++;
 
-        token = queryOption(value, index);
+        token = queryOption(value, index, metadataContext);
         if (!token) return;
         index = token.next;
     }
@@ -25,14 +25,14 @@ export function queryOptions(value: number[] | Uint8Array, index: number): Lexer
     return Lexer.tokenize(value, start, index, { options }, Lexer.TokenType.QueryOptions);
 }
 
-export function queryOption(value: number[] | Uint8Array, index: number): Lexer.Token {
-    return systemQueryOption(value, index) ||
+export function queryOption(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
+    return systemQueryOption(value, index, metadataContext) ||
         aliasAndValue(value, index); // ||
         // customQueryOption(value, index);
 }
 
-export function systemQueryOption(value: number[] | Uint8Array, index: number): Lexer.Token {
-    return expand(value, index) ||
+export function systemQueryOption(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
+    return expand(value, index, metadataContext) ||
         filter(value, index) ||
         format(value, index) ||
         id(value, index) ||
@@ -64,7 +64,7 @@ export function id(value: number[] | Uint8Array, index: number): Lexer.Token {
     return Lexer.tokenize(value, start, index, Utils.stringify(value, eq, index), Lexer.TokenType.Id);
 }
 
-export function expand(value: number[] | Uint8Array, index: number): Lexer.Token {
+export function expand(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let start = index;
     if (Utils.equals(value, index, "%24expand")) {
         index += 9;
@@ -78,7 +78,7 @@ export function expand(value: number[] | Uint8Array, index: number): Lexer.Token
     index = eq;
 
     let items = [];
-    let token = expandItem(value, index);
+    let token = expandItem(value, index, metadataContext);
     if (!token) return;
     index = token.next;
 
@@ -88,7 +88,7 @@ export function expand(value: number[] | Uint8Array, index: number): Lexer.Token
         let comma = Lexer.COMMA(value, index);
         if (comma) {
             index = comma;
-            let token = expandItem(value, index);
+            let token = expandItem(value, index, metadataContext);
             if (!token) return;
             index = token.next;
         }else break;
@@ -97,7 +97,7 @@ export function expand(value: number[] | Uint8Array, index: number): Lexer.Token
     return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Expand);
 }
 
-export function expandItem(value: number[] | Uint8Array, index: number): Lexer.Token {
+export function expandItem(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let start = index;
     let star = Lexer.STAR(value, index);
     if (star) {
@@ -123,7 +123,7 @@ export function expandItem(value: number[] | Uint8Array, index: number): Lexer.T
         }
     }
 
-    let path = expandPath(value, index);
+    let path = expandPath(value, index, metadataContext);
     if (!path) return;
     index = path.next;
 
@@ -246,51 +246,59 @@ export function expandOption(value: number[] | Uint8Array, index: number): Lexer
         levels(value, index);
 }
 
-export function expandPath(value: number[] | Uint8Array, index: number): Lexer.Token {
+export function expandPath(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let start = index;
     let path = [];
 
-    let token = NameOrIdentifier.qualifiedEntityTypeName(value, index) ||
-        NameOrIdentifier.qualifiedComplexTypeName(value, index);
+    let token = NameOrIdentifier.qualifiedEntityTypeName(value, index, metadataContext) ||
+        NameOrIdentifier.qualifiedComplexTypeName(value, index, metadataContext);
 
     if (token) {
         index = token.next;
         path.push(token);
         if (value[index] !== 0x2f) return;
         index++;
+        metadataContext = token.value.metadata;
+        delete token.value.metadata;
     }
 
-    let complex = NameOrIdentifier.complexProperty(value, index) ||
-        NameOrIdentifier.complexColProperty(value, index);
+    let complex = NameOrIdentifier.complexProperty(value, index, metadataContext) ||
+        NameOrIdentifier.complexColProperty(value, index, metadataContext);
     while (complex) {
         if (value[complex.next] === 0x2f) {
             index = complex.next + 1;
             path.push(complex);
 
-            let complexTypeName = NameOrIdentifier.qualifiedComplexTypeName(value, index);
+            let complexTypeName = NameOrIdentifier.qualifiedComplexTypeName(value, index, metadataContext);
             if (complexTypeName) {
                 if (value[complexTypeName.next] === 0x2f) {
                     index = complexTypeName.next + 1;
                     path.push(complexTypeName);
                 }
+                metadataContext = complexTypeName.value.metadata;
+                delete complexTypeName.value.metadata;
             }
 
-            complex = NameOrIdentifier.complexProperty(value, index) ||
-                NameOrIdentifier.complexColProperty(value, index);
+            complex = NameOrIdentifier.complexProperty(value, index, metadataContext) ||
+                NameOrIdentifier.complexColProperty(value, index, metadataContext);
         }else break;
     }
 
-    let nav = NameOrIdentifier.navigationProperty(value, index);
+    let nav = NameOrIdentifier.navigationProperty(value, index, metadataContext);
 
     if (!nav) return;
     index = nav.next;
     path.push(nav);
+    metadataContext = nav.metadata;
+    delete nav.metadata;
 
     if (value[index] === 0x2f) {
-        let typeName = NameOrIdentifier.qualifiedEntityTypeName(value, index + 1);
-        if (typeName) {;
+        let typeName = NameOrIdentifier.qualifiedEntityTypeName(value, index + 1, metadataContext);
+        if (typeName) {
             index = typeName.next;
             path.push(typeName);
+            metadataContext = typeName.value.metadata;
+            delete typeName.value.metadata;
         }
     }
 

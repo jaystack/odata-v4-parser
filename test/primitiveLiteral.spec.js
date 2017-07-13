@@ -38,3 +38,7 @@ function getLiteralFunctionName(itemRule) {
       return itemRule
   }
 }
+
+process.on("warning", warning => {
+    console.log(warning.stack);
+});

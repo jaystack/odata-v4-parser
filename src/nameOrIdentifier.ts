@@ -83,7 +83,7 @@ export function qualifiedTypeName(value: number[] | Uint8Array, index: number): 
         token.raw = Utils.stringify(value, token.position, token.next);
         token.type = Lexer.TokenType.Collection;
     } else return singleQualifiedTypeName(value, index);
-};
+}
 export function qualifiedEntityTypeName(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let start = index;
     let namespaceNext = namespace(value, index);
@@ -97,7 +97,7 @@ export function qualifiedEntityTypeName(value: number[] | Uint8Array, index: num
     if (!name) return;
 
     return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedEntityTypeName);
-};
+}
 export function qualifiedComplexTypeName(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let start = index;
     let namespaceNext = namespace(value, index);
@@ -110,7 +110,7 @@ export function qualifiedComplexTypeName(value: number[] | Uint8Array, index: nu
     if (!name) return;
 
     return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedComplexTypeName);
-};
+}
 export function qualifiedTypeDefinitionName(value: number[] | Uint8Array, index: number): Lexer.Token {
     let start = index;
     let namespaceNext = namespace(value, index);
@@ -119,7 +119,7 @@ export function qualifiedTypeDefinitionName(value: number[] | Uint8Array, index:
     if (nameNext && nameNext.next === namespaceNext + 1) return;
 
     return Lexer.tokenize(value, start, nameNext.next, "TypeDefinitionName", Lexer.TokenType.Identifier);
-};
+}
 export function qualifiedEnumTypeName(value: number[] | Uint8Array, index: number): Lexer.Token {
     let start = index;
     let namespaceNext = namespace(value, index);
@@ -128,7 +128,7 @@ export function qualifiedEnumTypeName(value: number[] | Uint8Array, index: numbe
     if (nameNext && nameNext.next === namespaceNext + 1) return;
 
     return Lexer.tokenize(value, start, nameNext.next, "EnumTypeName", Lexer.TokenType.Identifier);
-};
+}
 export function namespace(value: number[] | Uint8Array, index: number): number {
     let part = namespacePart(value, index);
     while (part && part.next > index) {
@@ -141,7 +141,7 @@ export function namespace(value: number[] | Uint8Array, index: number): number {
     }
 
     return index - 1;
-};
+}
 export function odataIdentifier(value: number[] | Uint8Array, index: number, tokenType?: Lexer.TokenType): Lexer.Token {
     let start = index;
     if (Lexer.identifierLeadingCharacter(value[index])) {
@@ -247,7 +247,7 @@ export function primitiveTypeName(value: number[] | Uint8Array, index: number): 
         );
 
     if (end > index) return Lexer.tokenize(value, start, end, "PrimitiveTypeName", Lexer.TokenType.Identifier);
-};
+}
 const primitiveTypes: string[] = [
     "Edm.Binary", "Edm.Boolean", "Edm.Byte", "Edm.Date", "Edm.DateTimeOffset", "Edm.Decimal", "Edm.Double", "Edm.Duration", "Edm.Guid",
     "Edm.Int16", "Edm.Int32", "Edm.Int64", "Edm.SByte", "Edm.Single", "Edm.Stream", "Edm.String", "Edm.TimeOfDay",
@@ -273,7 +273,7 @@ function getMetadataRoot(metadataContext: any) {
     while (root.parent) {
         root = root.parent;
     }
-    return root;
+    return root.dataServices || root;
 }
 export function primitiveProperty(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let token = odataIdentifier(value, index, Lexer.TokenType.PrimitiveProperty);
@@ -404,8 +404,8 @@ export function streamProperty(value: number[] | Uint8Array, index: number, meta
 }
 
 export function navigationProperty(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
-    return entityNavigationProperty(value, index) ||
-        entityColNavigationProperty(value, index);
+    return entityNavigationProperty(value, index, metadataContext) ||
+        entityColNavigationProperty(value, index, metadataContext);
 }
 export function entityNavigationProperty(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let token = odataIdentifier(value, index, Lexer.TokenType.EntityNavigationProperty);

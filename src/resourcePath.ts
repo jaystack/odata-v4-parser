@@ -89,7 +89,11 @@ export function collectionNavigation(value: number[] | Uint8Array, index: number
     let name;
     if (value[index] === 0x2f) {
         name = NameOrIdentifier.qualifiedEntityTypeName(value, index + 1, metadataContext);
-        if (name) index = name.next;
+        if (name) {
+            index = name.next;
+            metadataContext = name.value.metadata;
+            delete name.value.metadata;
+        }
     }
 
     let path = collectionNavigationPath(value, index, metadataContext);
@@ -129,16 +133,19 @@ export function singleNavigation(value: number[] | Uint8Array, index: number, me
 
     let start = index;
     let name;
-    if (value[index] === 0x2f) {
-        token = propertyPath(value, index + 1, metadataContext);
-        if (!token) return;
-        index = token.next;
-    }
 
     if (value[index] === 0x2f) {
         name = NameOrIdentifier.qualifiedEntityTypeName(value, index + 1, metadataContext);
-        if (!name) return;
-        index = name.next;
+        if (name) {
+            index = name.next;
+            metadataContext = name.value.metadata;
+            delete name.value.metadata;
+        }
+    }
+
+    if (value[index] === 0x2f) {
+        token = propertyPath(value, index + 1, metadataContext);
+        if (token) index = token.next;
     }
 
     if (!name && !token) return;

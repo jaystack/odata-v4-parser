@@ -17,7 +17,7 @@ export function odataUri(value: number[] | Uint8Array, index: number, metadataCo
 
     let query;
     if (value[index] === 0x3f) {
-        query = Query.queryOptions(value, index + 1);
+        query = Query.queryOptions(value, index + 1, metadataContext);
         if (!query) return;
         index = query.next;
     }

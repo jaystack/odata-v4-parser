@@ -35,7 +35,7 @@ export function commonExpr(value: number[] | Uint8Array, index: number): Lexer.T
     }
 
     if (token) return Lexer.tokenize(value, token.position, token.next, token, Lexer.TokenType.CommonExpression);
-};
+}
 
 export function boolCommonExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
     let token = isofExpr(value, index) ||
@@ -91,7 +91,7 @@ export function boolCommonExpr(value: number[] | Uint8Array, index: number): Lex
     }
 
     return token;
-};
+}
 
 export function andExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
     let rws = Lexer.RWS(value, index);
@@ -105,7 +105,7 @@ export function andExpr(value: number[] | Uint8Array, index: number): Lexer.Toke
     if (!token) return;
 
     return Lexer.tokenize(value, start, index, token, Lexer.TokenType.AndExpression);
-};
+}
 
 export function orExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
     let rws = Lexer.RWS(value, index);
@@ -119,7 +119,7 @@ export function orExpr(value: number[] | Uint8Array, index: number): Lexer.Token
     if (!token) return;
 
     return Lexer.tokenize(value, start, index, token, Lexer.TokenType.OrExpression);
-};
+}
 
 export function leftRightExpr(value: number[] | Uint8Array, index: number, expr: string, tokenType: Lexer.TokenType): Lexer.Token {
     let rws = Lexer.RWS(value, index);
@@ -135,7 +135,7 @@ export function leftRightExpr(value: number[] | Uint8Array, index: number, expr:
     if (!token) return;
 
     return Lexer.tokenize(value, start, index, token.value, tokenType);
-};
+}
 export function eqExpr(value: number[] | Uint8Array, index: number): Lexer.Token { return leftRightExpr(value, index, "eq", Lexer.TokenType.EqualsExpression); }
 export function neExpr(value: number[] | Uint8Array, index: number): Lexer.Token { return leftRightExpr(value, index, "ne", Lexer.TokenType.NotEqualsExpression); }
 export function ltExpr(value: number[] | Uint8Array, index: number): Lexer.Token { return leftRightExpr(value, index, "lt", Lexer.TokenType.LesserThanExpression); }
@@ -161,7 +161,7 @@ export function notExpr(value: number[] | Uint8Array, index: number): Lexer.Toke
     if (!token) return;
 
     return Lexer.tokenize(value, start, token.next, token, Lexer.TokenType.NotExpression);
-};
+}
 
 export function boolParenExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
     let open = Lexer.OPEN(value, index);
@@ -177,7 +177,7 @@ export function boolParenExpr(value: number[] | Uint8Array, index: number): Lexe
     index = close;
 
     return Lexer.tokenize(value, start, index, token, Lexer.TokenType.BoolParenExpression);
-};
+}
 export function parenExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
     let open = Lexer.OPEN(value, index);
     if (!open) return;
@@ -192,14 +192,14 @@ export function parenExpr(value: number[] | Uint8Array, index: number): Lexer.To
     index = close;
 
     return Lexer.tokenize(value, start, index, token.value, Lexer.TokenType.ParenExpression);
-};
+}
 
 export function boolMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
     return endsWithMethodCallExpr(value, index) ||
         startsWithMethodCallExpr(value, index) ||
         containsMethodCallExpr(value, index) ||
         intersectsMethodCallExpr(value, index);
-};
+}
 export function methodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
     return indexOfMethodCallExpr(value, index) ||
         toLowerMethodCallExpr(value, index) ||
@@ -228,7 +228,7 @@ export function methodCallExpr(value: number[] | Uint8Array, index: number): Lex
         minDateTimeMethodCallExpr(value, index) ||
         maxDateTimeMethodCallExpr(value, index) ||
         nowMethodCallExpr(value, index);
-};
+}
 export function methodCallExprFactory(value: number[] | Uint8Array, index: number, method: string, min?: number, max?: number): Lexer.Token {
     if (typeof min === "undefined") min = 0;
     if (typeof max === "undefined") max = min;
@@ -267,7 +267,7 @@ export function methodCallExprFactory(value: number[] | Uint8Array, index: numbe
         method: method,
         parameters: parameters
     }, Lexer.TokenType.MethodCallExpression);
-};
+}
 export function containsMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token { return methodCallExprFactory(value, index, "contains", 2); }
 export function startsWithMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token { return methodCallExprFactory(value, index, "startswith", 2); }
 export function endsWithMethodCallExpr(value: number[] | Uint8Array, index: number): Lexer.Token { return methodCallExprFactory(value, index, "endswith", 2); }
