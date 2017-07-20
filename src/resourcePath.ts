@@ -21,43 +21,50 @@ export function resourcePath(value: number[] | Uint8Array, index: number, metada
     if (!resource) return;
     let start = index;
     index = resource.next;
-    let navigation;
+    let navigation: Lexer.Token;
 
     switch (resource.type) {
         case Lexer.TokenType.EntitySetName:
             navigation = collectionNavigation(value, resource.next, resource.metadata);
+            metadataContext = resource.metadata;
             delete resource.metadata;
             break;
         case Lexer.TokenType.EntityCollectionFunctionImportCall:
             navigation = collectionNavigation(value, resource.next, resource.value.import.metadata);
-            delete resource.metadata;
+            metadataContext = resource.value.import.metadata;
+            delete resource.value.import.metadata;
             break;
         case Lexer.TokenType.SingletonEntity:
             navigation = singleNavigation(value, resource.next, resource.metadata);
+            metadataContext = resource.metadata;
             delete resource.metadata;
             break;
         case Lexer.TokenType.EntityFunctionImportCall:
             navigation = singleNavigation(value, resource.next, resource.value.import.metadata);
-            delete resource.metadata;
+            metadataContext = resource.value.import.metadata;
+            delete resource.value.import.metadata;
             break;
         case Lexer.TokenType.ComplexCollectionFunctionImportCall:
         case Lexer.TokenType.PrimitiveCollectionFunctionImportCall:
             navigation = collectionPath(value, resource.next, resource.value.import.metadata);
-            delete resource.metadata;
+            metadataContext = resource.value.import.metadata;
+            delete resource.value.import.metadata;
             break;
         case Lexer.TokenType.ComplexFunctionImportCall:
             navigation = complexPath(value, resource.next, resource.value.import.metadata);
-            delete resource.metadata;
+            metadataContext = resource.value.import.metadata;
+            delete resource.value.import.metadata;
             break;
         case Lexer.TokenType.PrimitiveFunctionImportCall:
             navigation = singlePath(value, resource.next, resource.value.import.metadata);
-            delete resource.metadata;
+            metadataContext = resource.value.import.metadata;
+            delete resource.value.import.metadata;
             break;
     }
 
     if (navigation) index = navigation.next;
     if (value[index] === 0x2f) index++;
-    if (resource) return Lexer.tokenize(value, start, index, { resource, navigation }, Lexer.TokenType.ResourcePath);
+    if (resource) return Lexer.tokenize(value, start, index, { resource, navigation }, Lexer.TokenType.ResourcePath, navigation || <any>{ metadata: metadataContext });
 }
 
 export function batch(value: number[] | Uint8Array, index: number): Lexer.Token {
@@ -101,7 +108,7 @@ export function collectionNavigation(value: number[] | Uint8Array, index: number
 
     if (!name && !path) return;
 
-    return Lexer.tokenize(value, start, index, { name, path }, Lexer.TokenType.CollectionNavigation);
+    return Lexer.tokenize(value, start, index, { name, path }, Lexer.TokenType.CollectionNavigation, path || name);
 }
 
 export function collectionNavigationPath(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
@@ -121,7 +128,7 @@ export function collectionNavigationPath(value: number[] | Uint8Array, index: nu
             index = navigation.next;
         }
 
-        return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.CollectionNavigationPath);
+        return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.CollectionNavigationPath, navigation || <any>{ metadata: metadataContext });
     }
 }
 
@@ -150,7 +157,7 @@ export function singleNavigation(value: number[] | Uint8Array, index: number, me
 
     if (!name && !token) return;
 
-    return Lexer.tokenize(value, start, index, { name: name, path: token }, Lexer.TokenType.SingleNavigation);
+    return Lexer.tokenize(value, start, index, { name: name, path: token }, Lexer.TokenType.SingleNavigation, token);
 }
 
 export function propertyPath(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
@@ -202,7 +209,7 @@ export function propertyPath(value: number[] | Uint8Array, index: number, metada
 
     if (navigation) index = navigation.next;
 
-    return Lexer.tokenize(value, start, index, { path: token, navigation }, Lexer.TokenType.PropertyPath);
+    return Lexer.tokenize(value, start, index, { path: token, navigation }, Lexer.TokenType.PropertyPath, navigation);
 }
 
 export function collectionPath(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
@@ -231,7 +238,7 @@ export function complexPath(value: number[] | Uint8Array, index: number, metadat
 
     if (!name && !token) return;
 
-    return Lexer.tokenize(value, start, index, { name: name, path: token }, Lexer.TokenType.ComplexPath);
+    return Lexer.tokenize(value, start, index, { name: name, path: token }, Lexer.TokenType.ComplexPath, token);
 }
 
 export function boundOperation(value: number[] | Uint8Array, index: number, isCollection: boolean, metadataContext?: any): Lexer.Token {
@@ -285,7 +292,7 @@ export function boundOperation(value: number[] | Uint8Array, index: number, isCo
 
     if (navigation) index = navigation.next;
 
-    return Lexer.tokenize(value, start, index, { operation, name, navigation }, Lexer.TokenType.BoundOperation);
+    return Lexer.tokenize(value, start, index, { operation, name, navigation }, Lexer.TokenType.BoundOperation, navigation);
 }
 
 export function boundActionCall(value: number[] | Uint8Array, index: number, isCollection: boolean, metadataContext?: any): Lexer.Token {
@@ -301,7 +308,7 @@ export function boundActionCall(value: number[] | Uint8Array, index: number, isC
     if (!action) return;
     action.value.namespace = Utils.stringify(value, start, namespaceNext);
 
-    return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.BoundActionCall);
+    return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.BoundActionCall, action);
 }
 
 function boundFunctionCall(value: number[] | Uint8Array, index: number, odataFunction: Function, tokenType: Lexer.TokenType, isCollection: boolean, metadataContext?: any): Lexer.Token {
@@ -322,7 +329,7 @@ function boundFunctionCall(value: number[] | Uint8Array, index: number, odataFun
     if (!params) return;
     index = params.next;
 
-    return Lexer.tokenize(value, start, index, { call, params }, tokenType);
+    return Lexer.tokenize(value, start, index, { call, params }, tokenType, call);
 }
 
 export function boundEntityFuncCall(value: number[] | Uint8Array, index: number, isCollection: boolean, metadataContext?: any): Lexer.Token {
@@ -346,7 +353,7 @@ export function boundPrimitiveColFuncCall(value: number[] | Uint8Array, index: n
 
 export function actionImportCall(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let action = NameOrIdentifier.actionImport(value, index, metadataContext);
-    if (action) return Lexer.tokenize(value, index, action.next, action, Lexer.TokenType.ActionImportCall);
+    if (action) return Lexer.tokenize(value, index, action.next, action, Lexer.TokenType.ActionImportCall, action);
 }
 
 export function functionImportCall(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
@@ -365,7 +372,7 @@ export function functionImportCall(value: number[] | Uint8Array, index: number, 
     if (!params) return;
     index = params.next;
 
-    return Lexer.tokenize(value, start, index, { import: fnImport, params: params.value }, fnImport.type + "Call");
+    return Lexer.tokenize(value, start, index, { import: fnImport, params: params.value }, fnImport.type + "Call", fnImport);
 }
 
 export function functionParameters(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {

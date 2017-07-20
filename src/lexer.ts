@@ -175,17 +175,23 @@ export class Token {
         this.value = token.value;
         this.type = token.type;
         this.raw = token.raw;
+        if (token.metadata) this.metadata = token.metadata;
     }
 }
 
-export function tokenize(value: number[] | Uint8Array, index: number, next: number, tokenValue: any, tokenType: TokenType): Token {
-    return new Token({
+export function tokenize(value: number[] | Uint8Array, index: number, next: number, tokenValue: any, tokenType: TokenType, metadataContextContainer?: Token): Token {
+    let token = new Token({
         position: index,
         next: next,
         value: tokenValue,
         type: tokenType,
         raw: Utils.stringify(value, index, next)
     });
+    if (metadataContextContainer && metadataContextContainer.metadata) {
+        token.metadata = metadataContextContainer.metadata;
+        delete metadataContextContainer.metadata;
+    }
+    return token;
 }
 
 export function clone(token): Token {
