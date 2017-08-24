@@ -326,9 +326,10 @@ export function positionLiteral(value: number[] | Uint8Array, index: number): Le
     let longitude = doubleValue(value, index);
     if (!longitude) return;
 
-    if (!Lexer.SP(value[longitude.next])) return;
+    let next = Lexer.RWS(value, longitude.next);
+    if (next === longitude.next) return;
 
-    let latitude = doubleValue(value, longitude.next + 1);
+    let latitude = doubleValue(value, next);
     if (!latitude) return;
 
     return Lexer.tokenize(value, index, latitude.next, { longitude, latitude }, Lexer.TokenType.Literal);
