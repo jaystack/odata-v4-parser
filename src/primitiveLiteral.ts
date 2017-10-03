@@ -641,3 +641,15 @@ export function primitiveLiteral(value: number[] | Uint8Array, index: number): L
         geometryPoint(value, index) ||
         geometryPolygon(value, index);
 }
+export function customValue(value: number[] | Uint8Array, index: number): Lexer.Token {
+    const start = index;
+    let ch = Lexer.qcharNoAMP(value, index);
+    while (ch > index && index < value.length && (index - start < 128)) {
+        index = ch;
+        ch = Lexer.qcharNoAMP(value, index);
+    }
+    if (index <= start) return;
+    index = ch;
+
+    return Lexer.tokenize(value, start, index, Utils.stringify(value, start, index), Lexer.TokenType.CustomValue);
+}

@@ -1,6 +1,170 @@
 import * as Utils from "./utils";
 
-export class TokenType {
+export type TokenType =
+"Literal" |
+"ArrayOrObject" |
+"Array" |
+"Object" |
+"Property" |
+"Annotation" |
+"Enum" |
+"EnumValue" |
+"EnumMemberValue" |
+"Identifier" |
+"QualifiedEntityTypeName" |
+"QualifiedComplexTypeName" |
+"ODataIdentifier" |
+"Collection" |
+"NamespacePart" |
+"EntitySetName" |
+"SingletonEntity" |
+"EntityTypeName" |
+"ComplexTypeName" |
+"TypeDefinitionName" |
+"EnumerationTypeName" |
+"EnumerationMember" |
+"TermName" |
+"PrimitiveProperty" |
+"PrimitiveKeyProperty" |
+"PrimitiveNonKeyProperty" |
+"PrimitiveCollectionProperty" |
+"ComplexProperty" |
+"ComplexCollectionProperty" |
+"StreamProperty" |
+"NavigationProperty" |
+"EntityNavigationProperty" |
+"EntityCollectionNavigationProperty" |
+"Action" |
+"ActionImport" |
+"Function" |
+"EntityFunction" |
+"EntityCollectionFunction" |
+"ComplexFunction" |
+"ComplexCollectionFunction" |
+"PrimitiveFunction" |
+"PrimitiveCollectionFunction" |
+"EntityFunctionImport" |
+"EntityCollectionFunctionImport" |
+"ComplexFunctionImport" |
+"ComplexCollectionFunctionImport" |
+"PrimitiveFunctionImport" |
+"PrimitiveCollectionFunctionImport" |
+"CommonExpression" |
+"AndExpression" |
+"OrExpression" |
+"EqualsExpression" |
+"NotEqualsExpression" |
+"LesserThanExpression" |
+"LesserOrEqualsExpression" |
+"GreaterThanExpression" |
+"GreaterOrEqualsExpression" |
+"HasExpression" |
+"AddExpression" |
+"SubExpression" |
+"MulExpression" |
+"DivExpression" |
+"ModExpression" |
+"NotExpression" |
+"BoolParenExpression" |
+"ParenExpression" |
+"MethodCallExpression" |
+"IsOfExpression" |
+"CastExpression" |
+"NegateExpression" |
+"FirstMemberExpression" |
+"MemberExpression" |
+"PropertyPathExpression" |
+"ImplicitVariableExpression" |
+"LambdaVariable" |
+"LambdaVariableExpression" |
+"LambdaPredicateExpression" |
+"AnyExpression" |
+"AllExpression" |
+"CollectionNavigationExpression" |
+"SimpleKey" |
+"CompoundKey" |
+"KeyValuePair" |
+"KeyPropertyValue" |
+"KeyPropertyAlias" |
+"SingleNavigationExpression" |
+"CollectionPathExpression" |
+"ComplexPathExpression" |
+"SinglePathExpression" |
+"FunctionExpression" |
+"FunctionExpressionParameters" |
+"FunctionExpressionParameter" |
+"ParameterName" |
+"ParameterAlias" |
+"ParameterValue" |
+"CustomQueryOption" |
+"CustomName" |
+"CustomValue" |
+"CountExpression" |
+"RefExpression" |
+"ValueExpression" |
+"RootExpression" |
+"QueryOptions" |
+"Expand" |
+"ExpandItem" |
+"ExpandPath" |
+"ExpandCountOption" |
+"ExpandRefOption" |
+"ExpandOption" |
+"Levels" |
+"Search" |
+"SearchExpression" |
+"SearchParenExpression" |
+"SearchNotExpression" |
+"SearchOrExpression" |
+"SearchAndExpression" |
+"SearchTerm" |
+"SearchPhrase" |
+"SearchWord" |
+"Filter" |
+"OrderBy" |
+"OrderByItem" |
+"Skip" |
+"Top" |
+"Format" |
+"InlineCount" |
+"Select" |
+"SelectItem" |
+"SelectPath" |
+"AliasAndValue" |
+"SkipToken" |
+"Id" |
+"Crossjoin" |
+"AllResource" |
+"ActionImportCall" |
+"FunctionImportCall" |
+"EntityCollectionFunctionImportCall" |
+"EntityFunctionImportCall" |
+"ComplexCollectionFunctionImportCall" |
+"ComplexFunctionImportCall" |
+"PrimitiveCollectionFunctionImportCall" |
+"PrimitiveFunctionImportCall" |
+"FunctionParameters" |
+"FunctionParameter" |
+"ResourcePath" |
+"CollectionNavigation" |
+"CollectionNavigationPath" |
+"SingleNavigation" |
+"PropertyPath" |
+"ComplexPath" |
+"BoundOperation" |
+"BoundActionCall" |
+"BoundEntityFunctionCall" |
+"BoundEntityCollectionFunctionCall" |
+"BoundComplexFunctionCall" |
+"BoundComplexCollectionFunctionCall" |
+"BoundPrimitiveFunctionCall" |
+"BoundPrimitiveCollectionFunctionCall" |
+"ODataUri" |
+"Batch" |
+"Entity" |
+"Metadata";
+
+export const TokenType: {[K in TokenType]: K} = <any>class TokenType {
     static Literal = "Literal";
     static ArrayOrObject = "ArrayOrObject";
     static Array = "Array";
@@ -96,6 +260,9 @@ export class TokenType {
     static ParameterName = "ParameterName";
     static ParameterAlias = "ParameterAlias";
     static ParameterValue = "ParameterValue";
+    static CustomQueryOption = "CustomQueryOption";
+    static CustomName = "CustomName";
+    static CustomValue = "CustomValue";
     static CountExpression = "CountExpression";
     static RefExpression = "RefExpression";
     static ValueExpression = "ValueExpression";
@@ -160,7 +327,7 @@ export class TokenType {
     static Batch = "Batch";
     static Entity = "Entity";
     static Metadata = "Metadata";
-}
+};
 
 export class Token {
     position: number;
@@ -315,6 +482,14 @@ export function pcharNoSQUOTE(value: number[] | Uint8Array, index: number): numb
 export function qcharNoAMP(value: number[] | Uint8Array, index: number): number {
     if (unreserved(value[index]) || value[index] === 0x3a || value[index] === 0x40 || value[index] === 0x2f || value[index] === 0x3f || value[index] === 0x24 || value[index] === 0x27 || value[index] === 0x3d) return index + 1;
     else return pctEncoded(value, index) || otherDelims(value, index) || index;
+}
+export function qcharNoAMP_EQ(value: number[] | Uint8Array, index: number): number {
+    if (unreserved(value[index]) || value[index] === 0x3a || value[index] === 0x40 || value[index] === 0x2f || value[index] === 0x3f || value[index] === 0x24 || value[index] === 0x27) return index + 1;
+    else return pctEncoded(value, index) || otherDelims(value, index);
+}
+export function qcharNoAMP_EQ_AT_DOLLAR(value: number[] | Uint8Array, index: number): number {
+    if (unreserved(value[index]) || value[index] === 0x3a                          || value[index] === 0x2f || value[index] === 0x3f                          || value[index] === 0x27) return index + 1;
+    else return pctEncoded(value, index) || otherDelims(value, index);
 }
 export function qcharNoAMPDQUOTE(value: number[] | Uint8Array, index: number): number {
     if (unreserved(value[index]) || value[index] === 0x3a || value[index] === 0x40 || value[index] === 0x2f || value[index] === 0x3f || value[index] === 0x24 || value[index] === 0x27 || value[index] === 0x3d) return index + 1;

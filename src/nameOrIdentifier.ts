@@ -741,3 +741,16 @@ export function primitiveColFunctionImport(value: number[] | Uint8Array, index: 
 
     return token;
 }
+
+export function customName(value: number[] | Uint8Array, index: number): Lexer.Token {
+    const start = index;
+    let ch = Lexer.qcharNoAMP_EQ_AT_DOLLAR(value, index);
+    while (ch > index && index < value.length && (index - start < 128)) {
+        index = ch;
+        ch = Lexer.qcharNoAMP_EQ(value, index);
+    }
+    if (index <= start) return;
+    index = ch;
+
+    return Lexer.tokenize(value, start, index, Utils.stringify(value, start, index), Lexer.TokenType.CustomName);
+}
