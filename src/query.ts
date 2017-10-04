@@ -27,8 +27,7 @@ export function queryOptions(value: number[] | Uint8Array, index: number, metada
 
 export function queryOption(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     return systemQueryOption(value, index, metadataContext) ||
-        aliasAndValue(value, index); // ||
-        // customQueryOption(value, index);
+        aliasAndValue(value, index);
 }
 
 export function systemQueryOption(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
@@ -775,6 +774,7 @@ export function qualifiedActionName(value: number[] | Uint8Array, index: number)
 
     let action = NameOrIdentifier.action(value, index);
     if (!action) return;
+    action.value.namespace = Utils.stringify(value, start, namespaceNext);
 
     return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.Action);
 }
@@ -787,6 +787,7 @@ export function qualifiedFunctionName(value: number[] | Uint8Array, index: numbe
 
     let fn = NameOrIdentifier.odataFunction(value, index);
     if (!fn) return;
+    fn.value.namespace = Utils.stringify(value, start, namespaceNext);
     index = fn.next;
     let tokenValue: any = { name: fn };
 
@@ -861,5 +862,3 @@ export function aliasAndValue(value: number[] | Uint8Array, index: number): Lexe
         value: paramValue
     }, Lexer.TokenType.AliasAndValue);
 }
-
-// TODO: customQueryOption

@@ -95,6 +95,7 @@ export function qualifiedEntityTypeName(value: number[] | Uint8Array, index: num
     }
     let name = entityTypeName(value, namespaceNext + 1, schema);
     if (!name) return;
+    name.value.namespace = Utils.stringify(value, start, namespaceNext);
 
     return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedEntityTypeName);
 }
@@ -108,6 +109,7 @@ export function qualifiedComplexTypeName(value: number[] | Uint8Array, index: nu
     }
     let name = complexTypeName(value, namespaceNext + 1, schema);
     if (!name) return;
+    name.value.namespace = Utils.stringify(value, start, namespaceNext);
 
     return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedComplexTypeName);
 }

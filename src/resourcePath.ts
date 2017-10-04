@@ -372,7 +372,7 @@ export function functionImportCall(value: number[] | Uint8Array, index: number, 
     if (!params) return;
     index = params.next;
 
-    return Lexer.tokenize(value, start, index, { import: fnImport, params: params.value }, fnImport.type + "Call", fnImport);
+    return Lexer.tokenize(value, start, index, { import: fnImport, params: params.value }, <Lexer.TokenType>(fnImport.type + "Call"), fnImport);
 }
 
 export function functionParameters(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {

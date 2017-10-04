@@ -682,6 +682,7 @@ export function functionExpr(value: number[] | Uint8Array, index: number): Lexer
 
     if (!token) return;
     token.position = start;
+    token.value.namespace = Utils.stringify(value, start, namespaceNext);
     token.raw = Utils.stringify(value, start, token.next);
 
     index = token.next;
@@ -735,6 +736,7 @@ export function functionExprParameters(value: number[] | Uint8Array, index: numb
 }
 export function functionExprParameter(value: number[] | Uint8Array, index: number): Lexer.Token {
     let name = parameterName(value, index);
+    if (!name) return;
     let eq = Lexer.EQ(value, name.next);
     if (!name || !eq) return;
 
