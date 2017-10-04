@@ -15,6 +15,7 @@ export class TokenType {
     static QualifiedComplexTypeName = "QualifiedComplexTypeName";
     static ODataIdentifier = "ODataIdentifier";
     static Collection = "Collection";
+    static Namespace = "Namespace";
     static NamespacePart = "NamespacePart";
     static EntitySetName = "EntitySetName";
     static SingletonEntity = "SingletonEntity";
@@ -127,6 +128,7 @@ export class TokenType {
     static Select = "Select";
     static SelectItem = "SelectItem";
     static SelectPath = "SelectPath";
+    static AllOperationsInSchema = "AllOperationsInSchema";
     static AliasAndValue = "AliasAndValue";
     static SkipToken = "SkipToken";
     static Id = "Id";
@@ -169,6 +171,7 @@ export class Token {
     type: TokenType;
     raw: string;
     metadata: any;
+    namespace?: Token;
     constructor(token) {
         this.position = token.position;
         this.next = token.next;
@@ -179,7 +182,7 @@ export class Token {
     }
 }
 
-export function tokenize(value: number[] | Uint8Array, index: number, next: number, tokenValue: any, tokenType: TokenType, metadataContextContainer?: Token): Token {
+export function tokenize(value: number[] | Uint8Array, index: number, next: number, tokenValue: any, tokenType: TokenType, metadataContextContainer?: Token, namespace?: Token): Token {
     let token = new Token({
         position: index,
         next: next,
@@ -191,6 +194,7 @@ export function tokenize(value: number[] | Uint8Array, index: number, next: numb
         token.metadata = metadataContextContainer.metadata;
         delete metadataContextContainer.metadata;
     }
+    if (namespace) token.namespace = namespace;
     return token;
 }
 

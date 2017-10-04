@@ -673,10 +673,10 @@ export function singlePathExpr(value: number[] | Uint8Array, index: number): Lex
     if (boundFunction) return Lexer.tokenize(value, index, boundFunction.next, boundFunction, Lexer.TokenType.SinglePathExpression);
 }
 export function functionExpr(value: number[] | Uint8Array, index: number): Lexer.Token {
-    let namespaceNext = NameOrIdentifier.namespace(value, index);
-    if (namespaceNext === index || value[namespaceNext] !== 0x2e) return;
+    let ns = NameOrIdentifier.namespace(value, index);
+    if (!ns || value[ns.next] !== 0x2e) return;
     let start = index;
-    index = namespaceNext + 1;
+    index = ns.next + 1;
 
     let token = NameOrIdentifier.odataIdentifier(value, index);
 
@@ -702,7 +702,7 @@ export function functionExpr(value: number[] | Uint8Array, index: number): Lexer
         fn: token,
         params: params,
         expression: expr
-    }, Lexer.TokenType.FunctionExpression);
+    }, Lexer.TokenType.FunctionExpression, undefined, ns);
 }
 export function boundFunctionExpr(value: number[] | Uint8Array, index: number): Lexer.Token { return functionExpr(value, index); }
 
