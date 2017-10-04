@@ -684,11 +684,11 @@ export function select(value: number[] | Uint8Array, index: number): Lexer.Token
 export function selectItem(value: number[] | Uint8Array, index: number): Lexer.Token {
     let start = index;
     let item;
-    let op = allOperationsInSchema(value, index);
+    let allInSchema = allOperationsInSchema(value, index);
     let star = Lexer.STAR(value, index);
-    if (op > index) {
-        item = { namespace: Utils.stringify(value, index, op - 2), value: "*" };
-        index = op;
+    if (allInSchema) {
+        item = { namespace: Utils.stringify(value, index, allInSchema.next - 2), value: "*" };
+        index = allInSchema.next;
     }else if (star) {
         item = { value: "*" };
         index = star;
@@ -712,14 +712,15 @@ export function selectItem(value: number[] | Uint8Array, index: number): Lexer.T
         item = name ? { name, select } : select;
     }
 
-    if (index > start) return Lexer.tokenize(value, start, index, item, Lexer.TokenType.SelectItem);
+    if (index > start) return Lexer.tokenize(value, start, index, item, Lexer.TokenType.SelectItem, undefined, allInSchema ? allInSchema.namespace : undefined);
 }
 
-export function allOperationsInSchema(value: number[] | Uint8Array, index: number): number {
-    let namespaceNext = NameOrIdentifier.namespace(value, index);
-    let star = Lexer.STAR(value, namespaceNext + 1);
-    if (namespaceNext > index && value[namespaceNext] === 0x2e && star) return star;
-    return index;
+export function allOperationsInSchema(value: number[] | Uint8Array, index: number): Lexer.Token {
+    const start = index;
+    let ns = NameOrIdentifier.namespace(value, index);
+    let star = Lexer.STAR(value, (ns ? ns.next : index) + 1);
+    if (ns && value[ns.next] === 0x2e && star) index = star;
+    return Lexer.tokenize(value, start, index, "AllOperationsInSchema", Lexer.TokenType.AllOperationsInSchema, undefined, ns);
 }
 
 export function selectProperty(value: number[] | Uint8Array, index: number): Lexer.Token {
@@ -768,22 +769,22 @@ export function selectPath(value: number[] | Uint8Array, index: number): Lexer.T
 }
 
 export function qualifiedActionName(value: number[] | Uint8Array, index: number): Lexer.Token {
-    let namespaceNext = NameOrIdentifier.namespace(value, index);
-    if (namespaceNext === index || value[namespaceNext] !== 0x2e) return;
+    let ns = NameOrIdentifier.namespace(value, index);
+    if (!ns || value[ns.next] !== 0x2e) return;
     let start = index;
-    index = namespaceNext + 1;
+    index = ns.next + 1;
 
     let action = NameOrIdentifier.action(value, index);
     if (!action) return;
 
-    return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.Action);
+    return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.Action, undefined, ns);
 }
 
 export function qualifiedFunctionName(value: number[] | Uint8Array, index: number): Lexer.Token {
-    let namespaceNext = NameOrIdentifier.namespace(value, index);
-    if (namespaceNext === index || value[namespaceNext] !== 0x2e) return;
+    let ns = NameOrIdentifier.namespace(value, index);
+    if (!ns || value[ns.next] !== 0x2e) return;
     let start = index;
-    index = namespaceNext + 1;
+    index = ns.next + 1;
 
     let fn = NameOrIdentifier.odataFunction(value, index);
     if (!fn) return;
@@ -814,7 +815,7 @@ export function qualifiedFunctionName(value: number[] | Uint8Array, index: numbe
         index = close;
     }
 
-    return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.Function);
+    return Lexer.tokenize(value, start, index, tokenValue, Lexer.TokenType.Function, undefined, ns);
 }
 
 export function skiptoken(value: number[] | Uint8Array, index: number): Lexer.Token {

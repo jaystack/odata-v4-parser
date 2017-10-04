@@ -296,40 +296,44 @@ export function boundOperation(value: number[] | Uint8Array, index: number, isCo
 }
 
 export function boundActionCall(value: number[] | Uint8Array, index: number, isCollection: boolean, metadataContext?: any): Lexer.Token {
-    let namespaceNext = NameOrIdentifier.namespace(value, index);
-    if (namespaceNext === index) return;
+    let ns = NameOrIdentifier.namespace(value, index);
+    if (!ns) return;
     let start = index;
-    index = namespaceNext;
+    index = ns.next;
 
     if (value[index] !== 0x2e) return;
     index++;
 
     let action = NameOrIdentifier.action(value, index, isCollection, metadataContext);
     if (!action) return;
-    action.value.namespace = Utils.stringify(value, start, namespaceNext);
+    action.value.namespace = Utils.stringify(value, start, ns.next);
 
-    return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.BoundActionCall, action);
+    return Lexer.tokenize(value, start, action.next, action, Lexer.TokenType.BoundActionCall, action, ns);
 }
 
-function boundFunctionCall(value: number[] | Uint8Array, index: number, odataFunction: Function, tokenType: Lexer.TokenType, isCollection: boolean, metadataContext?: any): Lexer.Token {
-    let namespaceNext = NameOrIdentifier.namespace(value, index);
-    if (namespaceNext === index) return;
+type OdataFunction = {
+    (value: number[] | Uint8Array, index: number, isCollection: boolean, metadataContext?: any): Lexer.Token
+};
+
+function boundFunctionCall(value: number[] | Uint8Array, index: number, odataFunction: OdataFunction, tokenType: Lexer.TokenType, isCollection: boolean, metadataContext?: any): Lexer.Token {
+    let ns = NameOrIdentifier.namespace(value, index);
+    if (!ns) return;
     let start = index;
-    index = namespaceNext;
+    index = ns.next;
 
     if (value[index] !== 0x2e) return;
     index++;
 
     let call = odataFunction(value, index, isCollection, metadataContext);
     if (!call) return;
-    call.value.namespace = Utils.stringify(value, start, namespaceNext);
+    call.value.namespace = Utils.stringify(value, start, ns.next);
     index = call.next;
 
     let params = functionParameters(value, index);
     if (!params) return;
     index = params.next;
 
-    return Lexer.tokenize(value, start, index, { call, params }, tokenType, call);
+    return Lexer.tokenize(value, start, index, { call, params }, tokenType, call, ns);
 }
 
 export function boundEntityFuncCall(value: number[] | Uint8Array, index: number, isCollection: boolean, metadataContext?: any): Lexer.Token {

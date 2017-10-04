@@ -86,61 +86,65 @@ export function qualifiedTypeName(value: number[] | Uint8Array, index: number): 
 }
 export function qualifiedEntityTypeName(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let start = index;
-    let namespaceNext = namespace(value, index);
+    let ns = namespace(value, index);
 
-    if (namespaceNext === index || value[namespaceNext] !== 0x2e) return;
+    if (!ns || value[ns.next] !== 0x2e) return;
     let schema;
     if (typeof metadataContext === "object") {
-        schema = getMetadataRoot(metadataContext).schemas.filter(it => it.namespace === Utils.stringify(value, start, namespaceNext))[0];
+        schema = getMetadataRoot(metadataContext).schemas.filter(it => it.namespace === Utils.stringify(value, start, ns.next))[0];
     }
-    let name = entityTypeName(value, namespaceNext + 1, schema);
+    let name = entityTypeName(value, ns.next + 1, schema);
     if (!name) return;
 
-    return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedEntityTypeName);
+    return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedEntityTypeName, undefined, ns);
 }
 export function qualifiedComplexTypeName(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
     let start = index;
-    let namespaceNext = namespace(value, index);
-    if (namespaceNext === index || value[namespaceNext] !== 0x2e) return;
+    let ns = namespace(value, index);
+
+    if (!ns || value[ns.next] !== 0x2e) return;
     let schema;
     if (typeof metadataContext === "object") {
-        schema = getMetadataRoot(metadataContext).schemas.filter(it => it.namespace === Utils.stringify(value, start, namespaceNext))[0];
+        schema = getMetadataRoot(metadataContext).schemas.filter(it => it.namespace === Utils.stringify(value, start, ns.next))[0];
     }
-    let name = complexTypeName(value, namespaceNext + 1, schema);
+    let name = complexTypeName(value, ns.next + 1, schema);
     if (!name) return;
 
-    return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedComplexTypeName);
+    return Lexer.tokenize(value, start, name.next, name, Lexer.TokenType.QualifiedComplexTypeName, undefined, ns);
 }
 export function qualifiedTypeDefinitionName(value: number[] | Uint8Array, index: number): Lexer.Token {
     let start = index;
-    let namespaceNext = namespace(value, index);
-    if (namespaceNext === index || value[namespaceNext] !== 0x2e) return;
-    let nameNext = typeDefinitionName(value, namespaceNext + 1);
-    if (nameNext && nameNext.next === namespaceNext + 1) return;
+    let ns = namespace(value, index);
+    if (!ns || value[ns.next] !== 0x2e) return;
+    let nameNext = typeDefinitionName(value, ns.next + 1);
+    if (nameNext && nameNext.next === ns.next + 1) return;
 
-    return Lexer.tokenize(value, start, nameNext.next, "TypeDefinitionName", Lexer.TokenType.Identifier);
+    return Lexer.tokenize(value, start, nameNext.next, "TypeDefinitionName", Lexer.TokenType.Identifier, undefined, ns);
 }
 export function qualifiedEnumTypeName(value: number[] | Uint8Array, index: number): Lexer.Token {
     let start = index;
-    let namespaceNext = namespace(value, index);
-    if (namespaceNext === index || value[namespaceNext] !== 0x2e) return;
-    let nameNext = enumerationTypeName(value, namespaceNext + 1);
-    if (nameNext && nameNext.next === namespaceNext + 1) return;
+    let ns = namespace(value, index);
+    if (!ns || value[ns.next] !== 0x2e) return;
+    let nameNext = enumerationTypeName(value, ns.next + 1);
+    if (nameNext && nameNext.next === ns.next + 1) return;
 
-    return Lexer.tokenize(value, start, nameNext.next, "EnumTypeName", Lexer.TokenType.Identifier);
+    return Lexer.tokenize(value, start, nameNext.next, "EnumTypeName", Lexer.TokenType.Identifier, undefined, ns);
 }
-export function namespace(value: number[] | Uint8Array, index: number): number {
+export function namespace(value: number[] | Uint8Array, index: number): Lexer.Token {
+    let start = index;
     let part = namespacePart(value, index);
+    let parts = [part];
     while (part && part.next > index) {
         index = part.next;
         if (value[part.next] === 0x2e) {
             index++;
             part = namespacePart(value, index);
-            if (part && value[part.next] !== 0x2e) return index - 1;
+            parts.push(part);
+            if (part && value[part.next] !== 0x2e) break;
         }
     }
 
-    return index - 1;
+    if (index > start) return Lexer.tokenize(value, start, index - 1, parts, Lexer.TokenType.Namespace);
 }
 export function odataIdentifier(value: number[] | Uint8Array, index: number, tokenType?: Lexer.TokenType): Lexer.Token {
     let start = index;

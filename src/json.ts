@@ -182,10 +182,10 @@ export function annotationInUri(value: number[] | Uint8Array, index: number): Le
     if (!at) return;
     index = at;
 
-    let namespaceNext = NameOrIdentifier.namespace(value, index);
-    if (namespaceNext === index) return;
+    let ns = NameOrIdentifier.namespace(value, index);
+    if (!ns) return;
     let namespaceStart = index;
-    index = namespaceNext;
+    index = ns.next;
 
     if (value[index] !== 0x2e) return;
     index++;
@@ -210,9 +210,9 @@ export function annotationInUri(value: number[] | Uint8Array, index: number): Le
     index = token.next;
 
     return Lexer.tokenize(value, start, index, {
-        key: "@" + Utils.stringify(value, namespaceStart, namespaceNext) + "." + term.raw,
+        key: "@" + Utils.stringify(value, namespaceStart, ns.next) + "." + term.raw,
         value: token
-    }, Lexer.TokenType.Annotation);
+    }, Lexer.TokenType.Annotation, undefined, ns);
 }
 
 export function keyValuePairInUri(value: number[] | Uint8Array, index: number, keyFn: Function, valueFn: Function): Lexer.Token {
