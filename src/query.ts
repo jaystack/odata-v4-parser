@@ -87,7 +87,7 @@ export function expand(value: number[] | Uint8Array, index: number, metadataCont
         let comma = Lexer.COMMA(value, index);
         if (comma) {
             index = comma;
-            let token = expandItem(value, index, metadataContext);
+            token = expandItem(value, index, metadataContext);
             if (!token) return;
             index = token.next;
         }else break;
