@@ -412,7 +412,7 @@ export function searchAndExpr(value: number[] | Uint8Array, index: number): Lexe
 
 export function searchPhrase(value: number[] | Uint8Array, index: number): Lexer.Token {
     let mark = Lexer.quotationMark(value, index);
-    if (!mark) return;
+    if (mark === index) return;
     let start = index;
     index = mark;
 

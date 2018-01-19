@@ -317,6 +317,7 @@ export function qcharNoAMP(value: number[] | Uint8Array, index: number): number 
     else return pctEncoded(value, index) || otherDelims(value, index) || index;
 }
 export function qcharNoAMPDQUOTE(value: number[] | Uint8Array, index: number): number {
+    index = BWS(value, index);
     if (unreserved(value[index]) || value[index] === 0x3a || value[index] === 0x40 || value[index] === 0x2f || value[index] === 0x3f || value[index] === 0x24 || value[index] === 0x27 || value[index] === 0x3d) return index + 1;
     else return otherDelims(value, index) || pctEncodedUnescaped(value, index);
 }
