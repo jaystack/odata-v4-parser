@@ -1,28 +1,32 @@
-import * as Utils from "./utils";
-import * as Lexer from "./lexer";
-import * as PrimitiveLiteral from "./primitiveLiteral";
-import * as Expressions from "./expressions";
-import * as Query from "./query";
-import * as ResourcePath from "./resourcePath";
+import Utils from "./utils";
+import Lexer from "./lexer";
+import PrimitiveLiteral from "./primitiveLiteral";
+import Expressions from "./expressions";
+import Query from "./query";
+import ResourcePath from "./resourcePath";
 
-export function odataUri(value: number[] | Uint8Array, index: number, metadataContext?: any): Lexer.Token {
-    let resource = ResourcePath.resourcePath(value, index, metadataContext);
-    while (!resource && index < value.length) {
-        while (value[++index] !== 0x2f && index < value.length);
-        resource = ResourcePath.resourcePath(value, index, metadataContext);
+export namespace ODataUri {
+    export function odataUri(value: Utils.SourceArray, index: number, metadataContext?: any): Lexer.Token {
+        let resource = ResourcePath.resourcePath(value, index, metadataContext);
+        while (!resource && index < value.length) {
+            while (value[++index] !== 0x2f && index < value.length);
+            resource = ResourcePath.resourcePath(value, index, metadataContext);
+        }
+        if (!resource) return;
+        let start = index;
+        index = resource.next;
+        metadataContext = resource.metadata;
+
+        let query;
+        if (value[index] === 0x3f) {
+            query = Query.queryOptions(value, index + 1, metadataContext);
+            if (!query) return;
+            index = query.next;
+            delete resource.metadata;
+        }
+
+        return Lexer.tokenize(value, start, index, { resource, query }, Lexer.TokenType.ODataUri, <any>{ metadata: metadataContext });
     }
-    if (!resource) return;
-    let start = index;
-    index = resource.next;
-    metadataContext = resource.metadata;
-
-    let query;
-    if (value[index] === 0x3f) {
-        query = Query.queryOptions(value, index + 1, metadataContext);
-        if (!query) return;
-        index = query.next;
-        delete resource.metadata;
-    }
-
-    return Lexer.tokenize(value, start, index, { resource, query }, Lexer.TokenType.ODataUri, <any>{ metadata: metadataContext });
 }
+
+export default ODataUri;

@@ -1,15 +1,14 @@
-import * as Utils from "./utils";
-import * as Lexer from "./lexer";
-import * as PrimitiveLiteral from "./primitiveLiteral";
-import * as Expressions from "./expressions";
-import * as Query from "./query";
-import * as ResourcePath from "./resourcePath";
-import * as ODataUri from "./odataUri";
+import Lexer from "./lexer";
+import PrimitiveLiteral from "./primitiveLiteral";
+import Expressions from "./expressions";
+import Query from "./query";
+import ResourcePath from "./resourcePath";
+import ODataUri from "./odataUri";
 
-let parserFactory = function(fn) {
+export const parserFactory = function(fn) {
     return function (source, options) {
         options = options || {};
-        let raw = new Uint8Array(source.length);
+        const raw = new Uint16Array(source.length);
         let pos = 0;
         for (let i = 0; i < source.length; i++) {
             raw[i] = source.charCodeAt(i);

@@ -1,9 +1,6 @@
 const expect = require('chai').expect;
 
 const Parser = require('../lib/parser').Parser;
-const PrimitiveLiteral = require('../lib/primitiveLiteral');
-const NameOrIdentifier = require('../lib/nameOrIdentifier');
-const Expressions = require('../lib/expressions');
 
 describe('Parser', () => {
 	it('should instantiate odata parser', () => {

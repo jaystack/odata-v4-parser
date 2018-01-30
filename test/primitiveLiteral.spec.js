@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const PrimitiveLiteral = require('../lib/primitiveLiteral');
+const { PrimitiveLiteral } = require('../lib/primitiveLiteral');
 const cases = require('./primitive-cases');
 
 describe('Primitive literals from json', () => {
