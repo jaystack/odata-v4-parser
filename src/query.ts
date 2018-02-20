@@ -533,7 +533,7 @@ export namespace Query {
             let comma = Lexer.COMMA(value, index);
             if (comma) {
                 index = comma;
-                let token = Query.orderbyItem(value, index);
+                token = Query.orderbyItem(value, index);
                 if (!token) return;
                 index = token.next;
             }else break;
