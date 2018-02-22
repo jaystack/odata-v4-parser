@@ -28,7 +28,8 @@ export namespace Query {
 
     export function queryOption(value: Utils.SourceArray, index: number, metadataContext?: any): Lexer.Token {
         return Query.systemQueryOption(value, index, metadataContext) ||
-            Query.aliasAndValue(value, index);
+            Query.aliasAndValue(value, index) ||
+            Query.customQueryOption(value, index);
     }
 
     export function systemQueryOption(value: Utils.SourceArray, index: number, metadataContext?: any): Lexer.Token {
@@ -43,6 +44,22 @@ export namespace Query {
             Query.skip(value, index) ||
             Query.skiptoken(value, index) ||
             Query.top(value, index);
+    }
+
+    export function customQueryOption(value: Utils.SourceArray, index: number): Lexer.Token {
+      let key = NameOrIdentifier.odataIdentifier(value, index);
+      if (!key) return;
+      let start = index;
+      index = key.next;
+
+      let eq = Lexer.EQ(value, index);
+      if (!eq) return;
+      index = eq;
+
+      while (value[index] !== 0x26 && index < value.length) index++;
+      if (index === eq) return;
+
+      return Lexer.tokenize(value, start, index, { key: key.raw, value: Utils.stringify(value, eq, index) }, Lexer.TokenType.CustomQueryOption);
     }
 
     export function id(value: Utils.SourceArray, index: number): Lexer.Token {

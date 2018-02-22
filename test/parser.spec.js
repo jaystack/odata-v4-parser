@@ -24,4 +24,23 @@ describe("Parser", () => {
     expect(ast.value.options[0].value.items[0].raw).to.equal("foo");
     expect(ast.value.options[0].value.items[1].raw).to.equal("bar");
   });
+
+  it("should parse custom query options", () => {
+    var parser = new Parser();
+    var ast = parser.query("foo=123&bar=foobar");
+    expect(ast.value.options[0].value.key).to.equal("foo");
+    expect(ast.value.options[0].value.value).to.equal("123");
+    expect(ast.value.options[1].value.key).to.equal("bar");
+    expect(ast.value.options[1].value.value).to.equal("foobar");
+  });
+
+  it("should throw error parsing invalid custom query options", () => {
+    var parser = new Parser();
+    var error = false;
+    try{
+      var ast = parser.query("$foo=123");
+      error = true;
+    }catch(err){}
+    expect(error).to.be.false;
+  });
 });

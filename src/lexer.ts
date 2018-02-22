@@ -101,6 +101,7 @@ export enum TokenType {
     ValueExpression = "ValueExpression",
     RootExpression = "RootExpression",
     QueryOptions = "QueryOptions",
+    CustomQueryOption = "CustomQueryOption",
     Expand = "Expand",
     ExpandItem = "ExpandItem",
     ExpandPath = "ExpandPath",
