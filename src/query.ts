@@ -56,7 +56,8 @@ export namespace Query {
       if (!eq) return;
       index = eq;
 
-      while (value[index] !== 0x26 && index < value.length) index++;
+      // read to next ampersand, semicolon, or close paren
+      while (value[index] !== 0x26 && value[index] !== 0x3B && value[index] !== 0x29 && index < value.length) index++;
       if (index === eq) return;
 
       return Lexer.tokenize(value, start, index, { key: key.raw, value: Utils.stringify(value, eq, index) }, Lexer.TokenType.CustomQueryOption);
@@ -250,6 +251,7 @@ export namespace Query {
 
     export function expandRefOption(value: Utils.SourceArray, index: number): Lexer.Token {
         return Query.expandCountOption(value, index) ||
+            Query.customQueryOption(value, index) ||
             Query.orderby(value, index) ||
             Query.skip(value, index) ||
             Query.top(value, index) ||
