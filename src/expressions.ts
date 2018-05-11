@@ -48,7 +48,10 @@ export namespace Expressions {
         if (!token) return;
 
         let commonMoreExpr = undefined;
-        if (token.type === Lexer.TokenType.CommonExpression) {
+        if (
+            token.type === Lexer.TokenType.CommonExpression ||
+            token.type === Lexer.TokenType.MethodCallExpression
+        ) {
             commonMoreExpr = eqExpr(value, token.next) ||
             neExpr(value, token.next) ||
             ltExpr(value, token.next) ||
@@ -58,10 +61,18 @@ export namespace Expressions {
             hasExpr(value, token.next);
 
             if (commonMoreExpr) {
-                token.value = {
-                    left: token.value,
-                    right: commonMoreExpr.value
-                };
+                if (token.type === Lexer.TokenType.CommonExpression) {
+                    token.value = {
+                        left: token.value,
+                        right: commonMoreExpr.value
+                    };
+                } else if (token.type === Lexer.TokenType.MethodCallExpression) {
+                    token.value = {
+                        left: Lexer.clone(token),
+                        right: commonMoreExpr.value
+                    };
+                }
+
                 token.next = commonMoreExpr.value.next;
                 token.type = commonMoreExpr.type;
                 token.raw = Utils.stringify(value, token.position, token.next);
