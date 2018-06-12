@@ -66,10 +66,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24id")) {
             index += 5;
-        }else
+        } else
         if (Utils.equals(value, index, "$id")) {
             index += 3;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -85,10 +85,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24expand")) {
             index += 9;
-        }else
+        } else
         if (Utils.equals(value, index, "$expand")) {
             index += 7;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -108,7 +108,7 @@ export namespace Query {
                 token = Query.expandItem(value, index, metadataContext);
                 if (!token) return;
                 index = token.next;
-            }else break;
+            } else break;
         }
 
         return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Expand);
@@ -169,7 +169,7 @@ export namespace Query {
 
                         option = Query.expandRefOption(value, index);
                         if (!option) return;
-                    }else break;
+                    } else break;
                 }
 
                 let close = Lexer.CLOSE(value, index);
@@ -202,7 +202,7 @@ export namespace Query {
 
                             option = Query.expandCountOption(value, index);
                             if (!option) return;
-                        }else break;
+                        } else break;
                     }
 
                     let close = Lexer.CLOSE(value, index);
@@ -229,7 +229,7 @@ export namespace Query {
 
                             option = Query.expandOption(value, index);
                             if (!option) return;
-                        }else break;
+                        } else break;
                     }
 
                     let close = Lexer.CLOSE(value, index);
@@ -298,7 +298,7 @@ export namespace Query {
 
                 complex = NameOrIdentifier.complexProperty(value, index, metadataContext) ||
                     NameOrIdentifier.complexColProperty(value, index, metadataContext);
-            }else break;
+            } else break;
         }
 
         let nav = NameOrIdentifier.navigationProperty(value, index, metadataContext);
@@ -326,10 +326,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24search")) {
             index += 9;
-        }else
+        } else
         if (Utils.equals(value, index, "$search")) {
             index += 7;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -483,10 +483,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24levels")) {
             index += 9;
-        }else
+        } else
         if (Utils.equals(value, index, "$levels")) {
             index += 7;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -510,10 +510,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24filter")) {
             index += 9;
-        }else
+        } else
         if (Utils.equals(value, index, "$filter")) {
             index += 7;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -530,10 +530,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24orderby")) {
             index += 10;
-        }else
+        } else
         if (Utils.equals(value, index, "$orderby")) {
             index += 8;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -553,7 +553,7 @@ export namespace Query {
                 token = Query.orderbyItem(value, index);
                 if (!token) return;
                 index = token.next;
-            }else break;
+            } else break;
         }
 
         return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.OrderBy);
@@ -573,7 +573,7 @@ export namespace Query {
             else if (Utils.equals(value, index, "desc")) {
                 index += 4;
                 direction = -1;
-            }else return;
+            } else return;
         }
 
         return Lexer.tokenize(value, start, index, { expr, direction }, Lexer.TokenType.OrderByItem);
@@ -583,10 +583,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24skip")) {
             index += 7;
-        }else
+        } else
         if (Utils.equals(value, index, "$skip")) {
             index += 5;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -603,10 +603,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24top")) {
             index += 6;
-        }else
+        } else
         if (Utils.equals(value, index, "$top")) {
             index += 4;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -623,10 +623,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24format")) {
             index += 9;
-        }else
+        } else
         if (Utils.equals(value, index, "$format")) {
             index += 7;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -636,10 +636,10 @@ export namespace Query {
         if (Utils.equals(value, index, "atom")) {
             format = "atom";
             index += 4;
-        }else if (Utils.equals(value, index, "json")) {
+        } else if (Utils.equals(value, index, "json")) {
             format = "json";
             index += 4;
-        }else if (Utils.equals(value, index, "xml")) {
+        } else if (Utils.equals(value, index, "xml")) {
             format = "xml";
             index += 3;
         }
@@ -651,10 +651,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24count")) {
             index += 8;
-        }else
+        } else
         if (Utils.equals(value, index, "$count")) {
             index += 6;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -671,10 +671,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24select")) {
             index += 9;
-        }else
+        } else
         if (Utils.equals(value, index, "$select")) {
             index += 7;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;
@@ -692,7 +692,7 @@ export namespace Query {
                 index = comma;
                 token = Query.selectItem(value, index);
                 if (!token) return;
-            }else break;
+            } else break;
         }
 
         return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Select);
@@ -706,7 +706,7 @@ export namespace Query {
         if (op > index) {
             item = { namespace: Utils.stringify(value, index, op - 2), value: "*" };
             index = op;
-        }else if (star) {
+        } else if (star) {
             item = { value: "*" };
             index = star;
         } else {
@@ -825,7 +825,7 @@ export namespace Query {
                     index = comma;
                     let param = Expressions.parameterName(value, index);
                     if (!param) return;
-                }else break;
+                } else break;
             }
 
             let close = Lexer.CLOSE(value, index);
@@ -840,10 +840,10 @@ export namespace Query {
         let start = index;
         if (Utils.equals(value, index, "%24skiptoken")) {
             index += 12;
-        }else
+        } else
         if (Utils.equals(value, index, "$skiptoken")) {
             index += 10;
-        }else return;
+        } else return;
 
         let eq = Lexer.EQ(value, index);
         if (!eq) return;

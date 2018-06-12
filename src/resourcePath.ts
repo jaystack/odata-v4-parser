@@ -235,7 +235,7 @@ export namespace ResourcePath {
             token = ResourcePath.propertyPath(value, index + 1, metadataContext);
             if (!token) return;
             index = token.next;
-        }else token = ResourcePath.boundOperation(value, index, false, metadataContext);
+        } else token = ResourcePath.boundOperation(value, index, false, metadataContext);
 
         if (!name && !token) return;
 
@@ -393,7 +393,7 @@ export namespace ResourcePath {
                 index = comma;
                 token = ResourcePath.functionParameter(value, index);
                 if (!token) return;
-            }else break;
+            } else break;
         }
 
         let close = Lexer.CLOSE(value, index);
@@ -444,7 +444,7 @@ export namespace ResourcePath {
                 index = comma;
                 token = NameOrIdentifier.entitySetName(value, index, metadataContext);
                 if (!token) return;
-            }else break;
+            } else break;
         }
 
         let close = Lexer.CLOSE(value, index);

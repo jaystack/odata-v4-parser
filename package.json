@@ -26,18 +26,18 @@
     "prepublish": "npm run test"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.1.2",
     "concurrently": "^3.5.1",
     "istanbul": "^0.4.5",
-    "mocha": "^3.5.3",
-    "mochawesome": "^3.0.1",
-    "remap-istanbul": "^0.6.4",
+    "mocha": "^5.2.0",
+    "mochawesome": "^3.0.2",
+    "remap-istanbul": "^0.11.1",
     "rimraf": "^2.6.2",
-    "tslint": "^4.5.1",
-    "typedoc": "^0.9.0",
-    "typedoc-default-themes": "^0.4.4",
-    "typedoc-plugin-external-module-name": "^1.0.10",
-    "typescript": "^2.6.2"
+    "tslint": "^5.10.0",
+    "typedoc": "^0.11.1",
+    "typedoc-default-themes": "^0.5.0",
+    "typedoc-plugin-external-module-name": "^1.1.1",
+    "typescript": "^2.9.1"
   },
   "typings": "lib/parser.d.ts"
 }

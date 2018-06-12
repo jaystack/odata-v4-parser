@@ -484,7 +484,7 @@ export namespace PrimitiveLiteral {
                 if (!geo) return;
                 index = geo.next;
             }
-        }else index++;
+        } else index++;
 
         return Lexer.tokenize(value, start, index, { items }, Lexer.TokenType.Literal);
     }

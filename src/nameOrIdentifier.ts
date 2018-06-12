@@ -39,7 +39,7 @@ export namespace NameOrIdentifier {
             if (comma) {
                 index = comma;
                 val = NameOrIdentifier.singleEnumValue(value, index);
-            }else break;
+            } else break;
         }
 
         return Lexer.tokenize(value, start, index, { values: arr }, Lexer.TokenType.EnumValue);
