@@ -25,6 +25,26 @@ describe("Parser", () => {
     expect(ast.value.options[0].value.items[1].raw).to.equal("bar");
   });
 
+  it("should parse solo custom query option in $expand clause", () => {
+      var parser = new Parser();
+      var ast = parser.query("$expand=Items(skipToken=100)");
+      expect(ast.value.options[0].value.items[0].value.options[0].value.value).to.equal("100");
+  });
+
+  it("should parse custom query options in $expand clause", () => {
+      var parser = new Parser();
+      var ast = parser.query("$expand=Items($top=1;skipToken=100)");
+      expect(ast.value.options[0].value.items[0].value.options[0].value.raw).to.equal("1");
+      expect(ast.value.options[0].value.items[0].value.options[1].value.value).to.equal("100");
+  });
+
+  it("should parse custom query options in $expand clause when custom query option is first", () => {
+      var parser = new Parser();
+      var ast = parser.query("$expand=Items(skipToken=100;$top=1)");
+      expect(ast.value.options[0].value.items[0].value.options[0].value.value).to.equal("100");
+      expect(ast.value.options[0].value.items[0].value.options[1].value.raw).to.equal("1");
+  });
+
   it("should parse custom query options", () => {
     var parser = new Parser();
     var ast = parser.query("foo=123&bar=foobar");
