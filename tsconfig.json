@@ -1,13 +1,16 @@
 {
     "compilerOptions": {
-        "outDir": "lib",
-        "module": "commonjs",
-        "target": "es5",
-        "declaration": true,
-        "sourceMap": true
+      "module": "commonjs",
+      "declaration": true,
+      "removeComments": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "target": "es2017",
+      "sourceMap": true,
+      "outDir": "./dist",
+      "forceConsistentCasingInFileNames": true,
+      "strictFunctionTypes": true,
+      "esModuleInterop": true
     },
-    "exclude": [
-        "lib",
-        "node_modules"
-    ]
-}
+    "exclude": ["node_modules", "dist"]
+  }
