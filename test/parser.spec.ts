@@ -4,7 +4,7 @@ const Parser = require('../dist/parser').Parser;
 describe('Parser', () => {
   it('should instantiate odata parser', () => {
     const parser = new Parser();
-    const ast = parser.filter("Categories/all(d:d/Title eq 'alma')");
+    const ast = parser.filter("Categories/all(d:d/Title eq '[alma]')");
     expect(ast.value.value.value.value.next.value.value.predicate.value.value.right.value).toEqual(
       'Edm.String',
     );

@@ -238,6 +238,14 @@ export namespace Lexer {
   export function AtoF(value: number): boolean {
     return (value >= 0x41 && value <= 0x46) || (value >= 0x61 && value <= 0x66);
   }
+  export function SPECIAL(value: number): boolean {
+    return (
+      (value >= 0x21 && value <= 0x2f) ||
+      (value >= 0x3a && value <= 0x40) ||
+      (value >= 0x5b && value <= 0x60) ||
+      (value >= 0x7b && value <= 0x7e)
+    );
+  }
   export function DQUOTE(value: number): boolean {
     return value === 0x22;
   }
@@ -323,6 +331,7 @@ export namespace Lexer {
     return (
       Lexer.ALPHA(value) ||
       Lexer.DIGIT(value) ||
+      Lexer.SPECIAL(value) ||
       value === 0x2d ||
       value === 0x2e ||
       value === 0x5f ||

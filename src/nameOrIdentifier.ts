@@ -507,7 +507,9 @@ export namespace NameOrIdentifier {
           )
             return;
           const root = NameOrIdentifier.getMetadataRoot(metadataContext);
-          const schema = root.schemas.filter((it) => prop.type.indexOf(it.namespace + '.') === 0)[0];
+          const schema = root.schemas.filter(
+            (it) => prop.type.indexOf(it.namespace + '.') === 0,
+          )[0];
           if (!schema) return;
 
           const complexType = schema.complexTypes.filter(
@@ -622,7 +624,9 @@ export namespace NameOrIdentifier {
           !NameOrIdentifier.isPrimitiveTypeName(prop.type.slice(11, -1), metadataContext)
         ) {
           const root = NameOrIdentifier.getMetadataRoot(metadataContext);
-          const schema = root.schemas.filter((it) => prop.type.indexOf(it.namespace + '.') === 0)[0];
+          const schema = root.schemas.filter(
+            (it) => prop.type.indexOf(it.namespace + '.') === 0,
+          )[0];
           if (!schema) return;
 
           const entityType = schema.entityTypes.filter(
