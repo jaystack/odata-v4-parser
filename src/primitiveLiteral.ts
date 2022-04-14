@@ -187,7 +187,7 @@ export namespace PrimitiveLiteral {
         index++;
         let dayNext = Utils.required(value, index, Lexer.DIGIT, 1);
         if (dayNext === index && value[index + 1] !== 0x54) return;
-        index = dayNext;
+        if (dayNext != 0) index = dayNext;
         if (value[index] === 0x44) index++;
         let end = index;
         if (value[index] === 0x54) {

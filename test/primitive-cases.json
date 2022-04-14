@@ -326,6 +326,86 @@
     }
   },
   {
+    "-Name": "Duration 0 days",
+    "-Rule": "duration",
+    "Input": "duration'P0D'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
+    "-Name": "Duration 2-digit days",
+    "-Rule": "duration",
+    "Input": "duration'P10D'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
+    "-Name": "Duration days and hours",
+    "-Rule": "duration",
+    "Input": "duration'P10DT23H'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
+    "-Name": "Duration 0 days and 2 hours",
+    "-Rule": "duration",
+    "Input": "duration'P0DT2H'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
+    "-Name": "Duration hours no day component",
+    "-Rule": "duration",
+    "Input": "duration'PT2H'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
+    "-Name": "Duration minutes no day component",
+    "-Rule": "duration",
+    "Input": "duration'PT30M'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
+    "-Name": "Duration seconds no day component",
+    "-Rule": "duration",
+    "Input": "duration'PT5S'",
+    "result": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
+    "-Name": "Duration seconds missing T",
+    "-Rule": "duration",
+    "Input": "duration'P5S'",
+    "result_error": {
+      "position": 0,
+      "type": "Literal",
+      "value": "Edm.Duration"
+    }
+  },
+  {
     "-Name": "Decimal: integer",
     "-Rule": "decimalValue",
     "Input": "-2",
